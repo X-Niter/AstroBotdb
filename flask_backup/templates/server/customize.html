@@ -1,0 +1,256 @@
+{% extends "layouts/clean.html" %}
+
+{% block title %}Customize Bot - {{ server.name }}{% endblock %}
+
+{% block styles %}
+<style>
+    .color-swatch {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: inline-block;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    
+    .color-swatch:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
+    }
+    
+    .color-swatch.active {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
+    }
+    
+    .bot-avatar-preview {
+        width: 128px;
+        height: 128px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .bot-preview-card {
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .bot-preview-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto py-6">
+    <div class="mb-6">
+        <a href="{{ url_for('server_index') }}" class="flex items-center text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors">
+            <i class="bi bi-arrow-left mr-2"></i> Back to Servers
+        </a>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Customization Form -->
+        <div class="lg:col-span-2">
+            <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                    Customize Bot for {{ server.name }}
+                </h1>
+                <p class="text-gray-500 dark:text-gray-400 mb-6">
+                    Customize how AstroBot appears in your Discord server.
+                </p>
+                
+                <form method="POST" action="{{ url_for('bot_customization', server_id=server.server_id) }}" enctype="multipart/form-data" 
+                      x-data="{ 
+                        previewName: '{{ customization.custom_name or 'AstroBot' }}',
+                        previewStatus: '{{ customization.custom_status or 'Helping with Minecraft & modding' }}',
+                        previewPlaying: '{{ customization.custom_playing or 'Minecraft' }}',
+                        previewColor: '{{ customization.theme_color or '#5865F2' }}',
+                        avatarFile: null,
+                        avatarPreview: '{{ customization.custom_avatar_url or url_for('static', filename='img/astrobot-logo.svg') }}'
+                      }"
+                      class="space-y-6">
+                    {{ form.csrf_token }}
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label for="custom_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Bot Display Name
+                            </label>
+                            <div class="mt-1">
+                                {{ form.custom_name(class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md", placeholder="AstroBot", x_model="previewName") }}
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Must be between 3-32 characters
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <label for="custom_status" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Status Text
+                            </label>
+                            <div class="mt-1">
+                                {{ form.custom_status(class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md", placeholder="Helping with Minecraft & modding", x_model="previewStatus") }}
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Custom status message (max 100 characters)
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <label for="custom_playing" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Playing Status
+                            </label>
+                            <div class="mt-1">
+                                {{ form.custom_playing(class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md", placeholder="Minecraft", x_model="previewPlaying") }}
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Shows as "Playing [text]" in Discord (max 100 characters)
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <label for="theme_color" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Theme Color
+                            </label>
+                            <div class="flex items-center space-x-4">
+                                <input type="color" 
+                                       name="theme_color" 
+                                       id="theme_color" 
+                                       value="{{ customization.theme_color or '#5865F2' }}" 
+                                       class="h-10 w-10 border-0 rounded cursor-pointer"
+                                       x-model="previewColor">
+                                       
+                                {{ form.theme_color(class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md", x_model="previewColor") }}
+                            </div>
+                            <div class="mt-3 grid grid-cols-6 gap-2">
+                                <div class="color-swatch" style="background-color: #5865F2;" title="Discord Blue" @click="previewColor = '#5865F2'"></div>
+                                <div class="color-swatch" style="background-color: #57F287;" title="Green" @click="previewColor = '#57F287'"></div>
+                                <div class="color-swatch" style="background-color: #FEE75C;" title="Yellow" @click="previewColor = '#FEE75C'"></div>
+                                <div class="color-swatch" style="background-color: #EB459E;" title="Pink" @click="previewColor = '#EB459E'"></div>
+                                <div class="color-swatch" style="background-color: #ED4245;" title="Red" @click="previewColor = '#ED4245'"></div>
+                                <div class="color-swatch" style="background-color: #000000;" title="Black" @click="previewColor = '#000000'"></div>
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                The color used for embeds and bot responses
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <label for="avatar_file" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Bot Avatar
+                            </label>
+                            <div class="mt-1 flex items-center space-x-4">
+                                <div>
+                                    <img :src="avatarPreview" alt="Bot Avatar" class="bot-avatar-preview">
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-center w-full">
+                                        <label for="avatar_file" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500">
+                                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                                <svg aria-hidden="true" class="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                                <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">PNG, JPG or GIF (MAX. 2MB)</p>
+                                            </div>
+                                            <input id="avatar_file" name="avatar_file" type="file" class="hidden" 
+                                                   accept=".jpg,.jpeg,.png,.gif"
+                                                   @change="
+                                                     avatarFile = $event.target.files[0];
+                                                     if (avatarFile) {
+                                                       const reader = new FileReader();
+                                                       reader.onload = (e) => {
+                                                         avatarPreview = e.target.result;
+                                                       };
+                                                       reader.readAsDataURL(avatarFile);
+                                                     }
+                                                   ">
+                                        </label>
+                                    </div>
+                                    <p class="mt-1 text-center text-xs text-gray-500 dark:text-gray-400">
+                                        Recommended: 512x512 pixels
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-end">
+                        <a href="{{ url_for('server_index') }}" class="mr-4 inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Cancel
+                        </a>
+                        <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Live Preview -->
+        <div class="lg:col-span-1">
+            <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 sticky top-6">
+                <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Live Preview</h2>
+                
+                <div class="bot-preview-card bg-gray-100 dark:bg-gray-700 overflow-hidden">
+                    <!-- Discord-like message preview -->
+                    <div class="p-4 bg-gray-200 dark:bg-gray-800 border-b border-gray-300 dark:border-gray-600">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-gray-400 dark:bg-gray-600 mr-2 overflow-hidden">
+                                <img x-bind:src="avatarPreview" alt="Bot Avatar" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <div class="flex items-center">
+                                    <span class="font-medium text-gray-900 dark:text-white" x-text="previewName"></span>
+                                    <span class="ml-2 px-1 py-0.5 text-xs bg-green-500 text-white rounded-sm">BOT</span>
+                                </div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                    <span x-text="previewStatus"></span> • Playing <span x-text="previewPlaying"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Message content -->
+                    <div class="p-4">
+                        <div class="text-sm text-gray-700 dark:text-gray-300">
+                            <span class="font-medium">Hello</span>, I'm your customized AstroBot! I can help you with Minecraft server management, modding, and more.
+                        </div>
+                        
+                        <!-- Embed preview -->
+                        <div class="mt-2 border-l-4 rounded-sm pl-3 py-2" x-bind:style="{ 'border-color': previewColor }">
+                            <div class="text-sm font-medium" x-bind:style="{ 'color': previewColor }">Server Status</div>
+                            <div class="text-xs text-gray-700 dark:text-gray-300 mt-1">
+                                <div class="flex justify-between">
+                                    <span>Players Online:</span>
+                                    <span>3/20</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Uptime:</span>
+                                    <span>2 days</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Version:</span>
+                                    <span>1.20.4</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 p-4 border border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-900/20 rounded-md">
+                    <h3 class="text-sm font-medium text-indigo-800 dark:text-indigo-300 mb-2">Important Notes</h3>
+                    <ul class="text-xs text-indigo-700 dark:text-indigo-400 space-y-1 list-disc list-inside">
+                        <li>Changes may take up to 5 minutes to appear in Discord</li>
+                        <li>Customizations are specific to this server only</li>
+                        <li>Image uploads must be less than 2MB</li>
+                        <li>Inappropriate content will be removed</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

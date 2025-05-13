@@ -1,0 +1,74 @@
+/**
+ * AstroBot AI - Navigation Fixes
+ * Specific fixes for navigation elements to prevent clipping issues
+ */
+
+/* 
+ * Global fix for all navigation elements to prevent left-side clipping 
+ */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+}
+
+/* Fix for all fixed and absolute elements */
+.side-navbar-astro,
+.navbar-astro,
+.mobile-menu,
+.cosmic-navbar-container,
+.cosmic-navbar-menu,
+.cosmic-navbar {
+  transform: translateX(0); /* Force proper positioning */
+  box-sizing: border-box; /* Include padding in width/height calculations */
+  min-width: 0; /* Allow container to shrink below content size */
+  overflow-x: hidden; /* Hide any overflow */
+}
+
+/* Prevent content from going under the navbar or sidebar */
+body {
+  /* Add minimum padding to account for potential fixed elements */
+  padding-left: max(0px, env(safe-area-inset-left));
+  padding-right: max(0px, env(safe-area-inset-right));
+}
+
+/* Add extra safeguard for sidebar */
+.side-navbar-astro::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background: inherit;
+  z-index: -1;
+}
+
+/* Improve mobile responsiveness */
+@media (max-width: 767px) {
+  /* Adjust navbar and sidebar on very small screens */
+  .side-navbar-astro,
+  .navbar-astro {
+    border-radius: 0; /* Remove any border radius on small screens */
+    left: 0 !important; /* Force left alignment */
+  }
+  
+  /* Ensure spacing for iOS devices with notches */
+  .navbar-astro {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+  
+  /* Prevent overflow on mobile */
+  .dropdown-menu-astro {
+    max-width: calc(100vw - 2rem);
+  }
+}
+
+/* Fix for iOS Safari issues */
+@supports (-webkit-touch-callout: none) {
+  body {
+    /* Fix for height on iOS Safari */
+    min-height: -webkit-fill-available;
+  }
+}

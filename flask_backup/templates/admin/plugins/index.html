@@ -1,0 +1,189 @@
+{% extends "layouts/admin.html" %}
+
+{% block admin_title %}Plugin Management{% endblock %}
+{% block admin_subtitle %}Manage and configure your bot's plugin ecosystem{% endblock %}
+
+{% block admin_content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-primary bg-gradient text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            <i class="bi bi-puzzle-piece me-2"></i>Plugins
+        </h5>
+        <div>
+            <a href="{{ url_for('admin_plugins.create_plugin') }}" class="btn btn-light btn-sm">
+                <i class="bi bi-plus-lg me-1"></i>Add Plugin
+            </a>
+            <a href="{{ url_for('admin_plugins.install_from_github') }}" class="btn btn-light btn-sm ms-2">
+                <i class="bi bi-github me-1"></i>Install from GitHub
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+                    {% if plugins %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Key</th>
+                                    <th>Version</th>
+                                    <th>Author</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for plugin in plugins %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('admin_plugins.view_plugin', plugin_id=plugin.id) }}">
+                                            {{ plugin.name }}
+                                        </a>
+                                        {% if plugin.is_system %}
+                                        <span class="badge bg-info ms-2">System</span>
+                                        {% endif %}
+                                    </td>
+                                    <td><code>{{ plugin.key }}</code></td>
+                                    <td>{{ plugin.version }}</td>
+                                    <td>{{ plugin.author or 'Unknown' }}</td>
+                                    <td>
+                                        {% if plugin.enabled %}
+                                        <span class="badge bg-success">Enabled</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Disabled</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{{ url_for('admin_plugins.view_plugin', plugin_id=plugin.id) }}" class="btn btn-outline-primary" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('admin_plugins.edit_plugin', plugin_id=plugin.id) }}" class="btn btn-outline-primary" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{{ url_for('admin_plugins.plugin_settings', plugin_id=plugin.id) }}" class="btn btn-outline-primary" title="Settings">
+                                                <i class="fas fa-cogs"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-outline-primary toggle-plugin" 
+                                                data-plugin-id="{{ plugin.id }}" 
+                                                data-plugin-enabled="{{ 'true' if plugin.enabled else 'false' }}"
+                                                title="{{ 'Disable' if plugin.enabled else 'Enable' }}">
+                                                <i class="fas {{ 'fa-toggle-on text-success' if plugin.enabled else 'fa-toggle-off' }}"></i>
+                                            </button>
+                                            {% if not plugin.is_system %}
+                                            <button type="button" class="btn btn-outline-danger delete-plugin" 
+                                                data-plugin-id="{{ plugin.id }}" 
+                                                data-plugin-name="{{ plugin.name }}"
+                                                title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        No plugins found. <a href="{{ url_for('admin_plugins.create_plugin') }}">Create your first plugin</a> or 
+                        <a href="{{ url_for('admin_plugins.install_from_github') }}">install from GitHub</a>.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+<!-- Delete Plugin Modal -->
+<div class="modal fade" id="deletePluginModal" tabindex="-1" aria-labelledby="deletePluginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deletePluginModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the plugin "<span id="pluginToDelete"></span>"?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deletePluginForm" method="post">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock admin_content %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle plugin enabled/disabled status
+        document.querySelectorAll('.toggle-plugin').forEach(button => {
+            button.addEventListener('click', function() {
+                const pluginId = this.dataset.pluginId;
+                const isEnabled = this.dataset.pluginEnabled === 'true';
+                const icon = this.querySelector('i');
+                
+                fetch(`/admin/plugins/${pluginId}/toggle`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update button state
+                        this.dataset.pluginEnabled = (!isEnabled).toString();
+                        icon.className = isEnabled ? 'fas fa-toggle-off' : 'fas fa-toggle-on text-success';
+                        this.title = isEnabled ? 'Enable' : 'Disable';
+                        
+                        // Update status badge
+                        const statusBadge = this.closest('tr').querySelector('td:nth-child(5) .badge');
+                        statusBadge.className = isEnabled ? 'badge bg-secondary' : 'badge bg-success';
+                        statusBadge.textContent = isEnabled ? 'Disabled' : 'Enabled';
+                        
+                        // Show success message
+                        showToast('success', data.message);
+                    } else {
+                        showToast('error', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('error', 'An error occurred while updating the plugin status.');
+                });
+            });
+        });
+        
+        // Delete plugin modal
+        document.querySelectorAll('.delete-plugin').forEach(button => {
+            button.addEventListener('click', function() {
+                const pluginId = this.dataset.pluginId;
+                const pluginName = this.dataset.pluginName;
+                
+                document.getElementById('pluginToDelete').textContent = pluginName;
+                document.getElementById('deletePluginForm').action = `/admin/plugins/${pluginId}/delete`;
+                
+                const deleteModal = new bootstrap.Modal(document.getElementById('deletePluginModal'));
+                deleteModal.show();
+            });
+        });
+        
+        // Toast notification function
+        function showToast(type, message) {
+            // Check if the global showToast function exists
+            if (typeof window.showToast === 'function') {
+                window.showToast(type, message);
+            } else {
+                // Fallback alert
+                alert(message);
+            }
+        }
+    });
+</script>
+{% endblock scripts %}

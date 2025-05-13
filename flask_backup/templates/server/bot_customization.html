@@ -1,0 +1,475 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="d-flex align-items-center mb-4">
+        <div class="me-auto">
+            <h1 class="mt-4 text-gradient-blue-purple">Bot Customization</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-decoration-none text-primary-light">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('bot_settings') }}" class="text-decoration-none text-primary-light">Bot Settings</a></li>
+                    <li class="breadcrumb-item active text-light-50">Bot Customization</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="robot-animation small"></div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-xl-8">
+            <div class="glass-card cosmic-card-glow mb-4">
+                <div class="cosmic-card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="cosmic-icon-circle bg-primary-soft me-3">
+                            <i class="bi bi-robot text-primary"></i>
+                        </div>
+                        <h5 class="cosmic-card-title mb-0">Customize AstroBot's Appearance</h5>
+                    </div>
+                    
+                    {% if not server.can_customize_bot %}
+                    <div class="cosmic-alert cosmic-alert-info mb-4">
+                        <div class="d-flex">
+                            <div class="me-3">
+                                <i class="bi bi-lock-fill fs-4"></i>
+                            </div>
+                            <div>
+                                <h5 class="fs-5 fw-semibold mb-2">Premium Feature</h5>
+                                <p class="mb-3">Bot customization is a premium feature. Upgrade to premium to customize your bot's name, avatar, status, and more!</p>
+                                <a href="{{ url_for('premium_plans') }}" class="cosmic-button cosmic-button-primary">
+                                    <i class="bi bi-gem me-2"></i> Upgrade to Premium
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <form id="customizationForm" method="POST" action="{{ url_for('save_bot_customization') }}">
+                        <input type="hidden" name="server_id" value="{{ server.id }}">
+                        
+                        <div class="cosmic-form-group">
+                            <label for="customName" class="cosmic-form-label">Bot Name</label>
+                            <input type="text" class="cosmic-form-control" id="customName" name="custom_name" 
+                                  value="{{ customization.custom_name if customization else '' }}"
+                                  placeholder="Default: AstroBot AI">
+                            <div class="cosmic-form-text">The name your bot will display in your server.</div>
+                        </div>
+                        
+                        <div class="cosmic-form-group">
+                            <label for="customAvatar" class="cosmic-form-label">Custom Avatar URL</label>
+                            <div class="cosmic-input-with-icon">
+                                <i class="cosmic-input-icon bi bi-link-45deg"></i>
+                                <input type="url" class="cosmic-form-control" id="customAvatar" name="custom_avatar_url" 
+                                      value="{{ customization.custom_avatar_url if customization else '' }}"
+                                      placeholder="https://example.com/your-custom-avatar.png">
+                            </div>
+                            <div class="cosmic-form-text">Direct link to an image file (PNG, JPG, GIF). Square images work best.</div>
+                        </div>
+                        
+                        <div class="cosmic-form-group">
+                            <label for="customStatus" class="cosmic-form-label">Custom Status</label>
+                            <input type="text" class="cosmic-form-control" id="customStatus" name="custom_status" 
+                                  value="{{ customization.custom_status if customization else '' }}"
+                                  placeholder="e.g. Helping {{ server.name }}">
+                            <div class="cosmic-form-text">Status message shown below the bot's name in the member list.</div>
+                        </div>
+                        
+                        <div class="cosmic-form-group">
+                            <label for="customPlaying" class="cosmic-form-label">Custom "Playing" Status</label>
+                            <input type="text" class="cosmic-form-control" id="customPlaying" name="custom_playing" 
+                                  value="{{ customization.custom_playing if customization else '' }}"
+                                  placeholder="e.g. Managing the server">
+                            <div class="cosmic-form-text">Activity shown in the bot's status (e.g. "Playing Minecraft").</div>
+                        </div>
+                        
+                        <div class="cosmic-form-group">
+                            <label for="themeColor" class="cosmic-form-label">Theme Color</label>
+                            <div class="d-flex align-items-center">
+                                <input type="color" class="form-control form-control-color me-3" style="width: 60px; height: 48px;" id="themeColor" name="theme_color" 
+                                      value="{{ customization.theme_color if customization else '#5865F2' }}">
+                                <div class="flex-grow-1 cosmic-form-control p-0 ps-3" style="background: linear-gradient(to right, {{ customization.theme_color if customization else '#5865F2' }} 0%, rgba(15, 23, 42, 0.4) 100%);">
+                                    <span id="colorHexValue">{{ customization.theme_color if customization else '#5865F2' }}</span>
+                                </div>
+                            </div>
+                            <div class="cosmic-form-text">This color will be used for embeds and other bot messages.</div>
+                        </div>
+                        
+                        <div class="cosmic-form-group">
+                            <label for="customPrefix" class="cosmic-form-label">Custom Command Prefix</label>
+                            <input type="text" class="cosmic-form-control" id="customPrefix" name="custom_prefix" 
+                                  value="{{ customization.custom_prefix if customization else '' }}"
+                                  placeholder="Default: !" maxlength="5">
+                            <div class="cosmic-form-text">Custom prefix for bot commands (e.g. !, $, /, >, etc).</div>
+                        </div>
+                        
+                        <div class="d-flex gap-3 justify-content-end mt-4">
+                            <button type="button" class="cosmic-button cosmic-button-secondary" id="resetCustomization">
+                                <i class="bi bi-arrow-counterclockwise me-2"></i> Reset to Default
+                            </button>
+                            <button type="submit" class="cosmic-button cosmic-button-primary">
+                                <i class="bi bi-save me-2"></i> Save Customization
+                            </button>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-4">
+            <div class="glass-card cosmic-card-glow mb-4">
+                <div class="cosmic-card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="cosmic-icon-circle bg-info-soft me-3">
+                            <i class="bi bi-eye text-info"></i>
+                        </div>
+                        <h5 class="cosmic-card-title mb-0">Live Preview</h5>
+                    </div>
+                    
+                    <div class="cosmic-preview p-4 bg-slate-900/40 backdrop-blur-sm rounded-lg border border-slate-700">
+                        <!-- Discord User Profile Preview -->
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="position-relative">
+                                <div id="previewAvatar" class="rounded-circle bg-gradient-dark d-flex align-items-center justify-content-center me-3" 
+                                     style="width: 64px; height: 64px; overflow: hidden; box-shadow: 0 0 15px rgba(78, 119, 255, 0.2);">
+                                    {% if customization and customization.custom_avatar_url %}
+                                    <img src="{{ customization.custom_avatar_url }}" alt="Bot avatar" class="img-fluid">
+                                    {% else %}
+                                    <i class="bi bi-robot fs-2 text-light"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="position-absolute bottom-0 end-0 bg-success rounded-circle" 
+                                     style="width: 16px; height: 16px; border: 2px solid rgb(15, 23, 42); box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);"></div>
+                            </div>
+                            <div>
+                                <h5 class="mb-0 text-white" id="previewName">
+                                    {{ customization.custom_name if customization and customization.custom_name else 'AstroBot AI' }}
+                                </h5>
+                                <div class="text-light-50 small" id="previewStatus">
+                                    {{ customization.custom_status if customization and customization.custom_status else 'Online' }}
+                                </div>
+                                <div class="text-light-50 small" id="previewPlaying">
+                                    {% if customization and customization.custom_playing %}
+                                    <span class="text-success-light">Playing</span> {{ customization.custom_playing }}
+                                    {% else %}
+                                    <span class="text-success-light">Playing</span> Serving your server
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Discord Message Preview -->
+                        <div class="bot-message-preview mb-4 p-3 bg-slate-800/30 rounded-lg border border-slate-700/50">
+                            <div class="d-flex align-items-start mb-3">
+                                <div id="previewMsgAvatar" class="rounded-circle bg-gradient-dark d-flex align-items-center justify-content-center me-2" 
+                                     style="width: 40px; height: 40px; overflow: hidden; flex-shrink: 0; box-shadow: 0 0 10px rgba(78, 119, 255, 0.15);">
+                                    {% if customization and customization.custom_avatar_url %}
+                                    <img src="{{ customization.custom_avatar_url }}" alt="Bot avatar" class="img-fluid">
+                                    {% else %}
+                                    <i class="bi bi-robot text-light"></i>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <div class="d-flex align-items-center">
+                                        <h6 class="mb-0 me-2 text-white fw-semibold" id="previewMsgName">
+                                            {{ customization.custom_name if customization and customization.custom_name else 'AstroBot AI' }}
+                                        </h6>
+                                        <span class="text-light-50 small">Today at {{ now.strftime('%I:%M %p') }}</span>
+                                    </div>
+                                    <div class="text-light-75 mt-1">Hello! I'm your customized AstroBot AI assistant.</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Discord Embed Preview -->
+                            <div class="ms-5 ps-1 mb-3">
+                                <div class="glass-card" style="background: rgba(20, 30, 50, 0.3);">
+                                    <div class="p-3">
+                                        <div class="d-flex">
+                                            <div class="border-start border-4 me-3" id="previewEmbedBar" 
+                                                 style="border-color: {{ customization.theme_color if customization and customization.theme_color else '#5865F2' }} !important;"></div>
+                                            <div>
+                                                <h6 class="mb-2 text-white">Command Example</h6>
+                                                <div class="small mb-2 text-light-75">Type <code id="previewPrefix" class="bg-slate-700 px-1 py-0.5 rounded text-light">{{ customization.custom_prefix if customization and customization.custom_prefix else '!' }}help</code> for a list of commands</div>
+                                                <div class="text-light-50 small">Custom embed with your theme color</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Command Response -->
+                            <div class="ms-5 ps-1">
+                                <div class="glass-card" style="background: rgba(78, 119, 255, 0.1); border: 1px solid rgba(78, 119, 255, 0.2);">
+                                    <div class="p-3">
+                                        <div class="d-flex">
+                                            <div>
+                                                <h6 class="mb-2 text-primary-light">Help Menu</h6>
+                                                <div class="text-light-75 small mb-2">Here are some available commands:</div>
+                                                <ul class="list-unstyled ps-2 small text-light-75">
+                                                    <li class="mb-1"><code class="bg-slate-700 px-1 py-0.5 rounded text-light">{{ customization.custom_prefix if customization and customization.custom_prefix else '!' }}server</code> - Server info</li>
+                                                    <li class="mb-1"><code class="bg-slate-700 px-1 py-0.5 rounded text-light">{{ customization.custom_prefix if customization and customization.custom_prefix else '!' }}minecraft</code> - Minecraft utilities</li>
+                                                    <li><code class="bg-slate-700 px-1 py-0.5 rounded text-light">{{ customization.custom_prefix if customization and customization.custom_prefix else '!' }}settings</code> - Bot settings</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="small text-light-50 fst-italic px-2">
+                            <i class="bi bi-info-circle me-1"></i> This preview approximates how your bot will appear in Discord.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle real-time preview updates
+    if (document.getElementById('customizationForm')) {
+        // Bot name preview updates
+        const nameInput = document.getElementById('customName');
+        nameInput.addEventListener('input', function() {
+            const previewName = document.getElementById('previewName');
+            const previewMsgName = document.getElementById('previewMsgName');
+            const name = this.value.trim() || 'AstroBot AI';
+            previewName.textContent = name;
+            previewMsgName.textContent = name;
+        });
+        
+        // Bot avatar preview updates
+        const avatarInput = document.getElementById('customAvatar');
+        avatarInput.addEventListener('input', function() {
+            const previewAvatar = document.getElementById('previewAvatar');
+            const previewMsgAvatar = document.getElementById('previewMsgAvatar');
+            const url = this.value.trim();
+            
+            if (url) {
+                // Create a test image to see if URL is valid
+                const testImg = new Image();
+                testImg.onload = function() {
+                    previewAvatar.innerHTML = `<img src="${url}" alt="Bot avatar" class="img-fluid">`;
+                    previewMsgAvatar.innerHTML = `<img src="${url}" alt="Bot avatar" class="img-fluid">`;
+                };
+                testImg.onerror = function() {
+                    previewAvatar.innerHTML = `<i class="bi bi-robot fs-2 text-light"></i>`;
+                    previewMsgAvatar.innerHTML = `<i class="bi bi-robot text-light"></i>`;
+                };
+                testImg.src = url;
+            } else {
+                previewAvatar.innerHTML = `<i class="bi bi-robot fs-2 text-light"></i>`;
+                previewMsgAvatar.innerHTML = `<i class="bi bi-robot text-light"></i>`;
+            }
+        });
+        
+        // Bot status preview
+        const statusInput = document.getElementById('customStatus');
+        statusInput.addEventListener('input', function() {
+            const previewStatus = document.getElementById('previewStatus');
+            previewStatus.textContent = this.value.trim() || 'Online';
+        });
+        
+        // Bot playing status preview
+        const playingInput = document.getElementById('customPlaying');
+        playingInput.addEventListener('input', function() {
+            const previewPlaying = document.getElementById('previewPlaying');
+            const playing = this.value.trim();
+            if (playing) {
+                previewPlaying.innerHTML = `<span class="text-success-light">Playing</span> ${playing}`;
+            } else {
+                previewPlaying.innerHTML = `<span class="text-success-light">Playing</span> Serving your server`;
+            }
+        });
+        
+        // Theme color preview
+        const colorInput = document.getElementById('themeColor');
+        const colorHexValue = document.getElementById('colorHexValue');
+        
+        colorInput.addEventListener('input', function() {
+            const previewEmbedBar = document.getElementById('previewEmbedBar');
+            const gradientBg = document.querySelector('.cosmic-form-control[style*="linear-gradient"]');
+            
+            previewEmbedBar.style.borderColor = this.value;
+            colorHexValue.textContent = this.value;
+            
+            // Update gradient preview
+            gradientBg.style.background = `linear-gradient(to right, ${this.value} 0%, rgba(15, 23, 42, 0.4) 100%)`;
+            
+            // Update all command prefix examples (they show the same prefix)
+            const prefixElements = document.querySelectorAll('code[id^="previewPrefix"]');
+            const prefix = document.getElementById('customPrefix').value.trim() || '!';
+            
+            prefixElements.forEach(element => {
+                if (element.id === 'previewPrefix') {
+                    element.textContent = `${prefix}help`;
+                } else if (element.textContent.includes('server')) {
+                    element.textContent = `${prefix}server`;
+                } else if (element.textContent.includes('minecraft')) {
+                    element.textContent = `${prefix}minecraft`;
+                } else if (element.textContent.includes('settings')) {
+                    element.textContent = `${prefix}settings`;
+                }
+            });
+        });
+        
+        // Command prefix preview
+        const prefixInput = document.getElementById('customPrefix');
+        prefixInput.addEventListener('input', function() {
+            const prefix = this.value.trim() || '!';
+            
+            // Update all prefix displays
+            const prefixElements = document.querySelectorAll('code');
+            prefixElements.forEach(element => {
+                if (element.id === 'previewPrefix') {
+                    element.textContent = `${prefix}help`;
+                } else if (element.textContent.includes('server')) {
+                    element.textContent = `${prefix}server`;
+                } else if (element.textContent.includes('minecraft')) {
+                    element.textContent = `${prefix}minecraft`;
+                } else if (element.textContent.includes('settings')) {
+                    element.textContent = `${prefix}settings`;
+                }
+            });
+        });
+        
+        // Add shimmering effects to the preview
+        const previewCard = document.querySelector('.cosmic-preview');
+        previewCard.classList.add('cosmic-shimmer');
+        
+        // Reset button functionality with confirmation
+        const resetButton = document.getElementById('resetCustomization');
+        resetButton.addEventListener('click', function() {
+            // Create a cosmic-styled confirmation dialog
+            const confirmDialog = document.createElement('div');
+            confirmDialog.className = 'cosmic-dialog-overlay';
+            confirmDialog.innerHTML = `
+                <div class="cosmic-dialog glass-card cosmic-card-glow">
+                    <div class="cosmic-card-body p-4">
+                        <h5 class="cosmic-card-title mb-3">Reset Customization</h5>
+                        <p class="text-light-75 mb-4">Are you sure you want to reset all customizations to default? This cannot be undone.</p>
+                        <div class="d-flex justify-content-end gap-3">
+                            <button class="cosmic-button cosmic-button-secondary cosmic-dialog-cancel">Cancel</button>
+                            <button class="cosmic-button cosmic-button-danger cosmic-dialog-confirm">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add custom styles for the dialog
+            const dialogStyle = document.createElement('style');
+            dialogStyle.textContent = `
+                .cosmic-dialog-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0, 0, 0, 0.7);
+                    backdrop-filter: blur(5px);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 1050;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                }
+                .cosmic-dialog {
+                    width: 90%;
+                    max-width: 400px;
+                    transform: translateY(20px);
+                    transition: transform 0.3s ease;
+                }
+                .cosmic-dialog-active {
+                    opacity: 1;
+                }
+                .cosmic-dialog-active .cosmic-dialog {
+                    transform: translateY(0);
+                }
+            `;
+            
+            document.head.appendChild(dialogStyle);
+            document.body.appendChild(confirmDialog);
+            
+            // Activate the dialog with transition
+            setTimeout(() => {
+                confirmDialog.classList.add('cosmic-dialog-active');
+            }, 10);
+            
+            // Handle confirmation
+            const confirmButton = confirmDialog.querySelector('.cosmic-dialog-confirm');
+            const cancelButton = confirmDialog.querySelector('.cosmic-dialog-cancel');
+            
+            confirmButton.addEventListener('click', function() {
+                // Reset all form values
+                nameInput.value = '';
+                avatarInput.value = '';
+                statusInput.value = '';
+                playingInput.value = '';
+                colorInput.value = '#5865F2';
+                prefixInput.value = '';
+                
+                // Update color hex display
+                colorHexValue.textContent = '#5865F2';
+                
+                // Update gradient preview
+                const gradientBg = document.querySelector('.cosmic-form-control[style*="linear-gradient"]');
+                gradientBg.style.background = 'linear-gradient(to right, #5865F2 0%, rgba(15, 23, 42, 0.4) 100%)';
+                
+                // Update previews
+                document.getElementById('previewName').textContent = 'AstroBot AI';
+                document.getElementById('previewMsgName').textContent = 'AstroBot AI';
+                document.getElementById('previewAvatar').innerHTML = `<i class="bi bi-robot fs-2 text-light"></i>`;
+                document.getElementById('previewMsgAvatar').innerHTML = `<i class="bi bi-robot text-light"></i>`;
+                document.getElementById('previewStatus').textContent = 'Online';
+                document.getElementById('previewPlaying').innerHTML = `<span class="text-success-light">Playing</span> Serving your server`;
+                document.getElementById('previewEmbedBar').style.borderColor = '#5865F2';
+                
+                // Update all command prefix examples
+                const prefixElements = document.querySelectorAll('code');
+                prefixElements.forEach(element => {
+                    if (element.id === 'previewPrefix' || element.textContent.includes('help')) {
+                        element.textContent = '!help';
+                    } else if (element.textContent.includes('server')) {
+                        element.textContent = '!server';
+                    } else if (element.textContent.includes('minecraft')) {
+                        element.textContent = '!minecraft';
+                    } else if (element.textContent.includes('settings')) {
+                        element.textContent = '!settings';
+                    }
+                });
+                
+                // Close dialog with animation
+                confirmDialog.classList.remove('cosmic-dialog-active');
+                setTimeout(() => {
+                    document.body.removeChild(confirmDialog);
+                }, 300);
+            });
+            
+            cancelButton.addEventListener('click', function() {
+                // Close dialog with animation
+                confirmDialog.classList.remove('cosmic-dialog-active');
+                setTimeout(() => {
+                    document.body.removeChild(confirmDialog);
+                }, 300);
+            });
+            
+            // Close on background click
+            confirmDialog.addEventListener('click', function(e) {
+                if (e.target === confirmDialog) {
+                    confirmDialog.classList.remove('cosmic-dialog-active');
+                    setTimeout(() => {
+                        document.body.removeChild(confirmDialog);
+                    }, 300);
+                }
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

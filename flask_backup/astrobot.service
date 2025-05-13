@@ -1,0 +1,31 @@
+[Unit]
+Description=AstroBot AI Discord Bot and Web Dashboard
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User={{user}}
+Group={{user}}
+WorkingDirectory={{app_dir}}
+ExecStart={{python_path}} -m gunicorn --config gunicorn_config.py main:app
+Restart=always
+RestartSec=10
+StartLimitIntervalSec=120
+StartLimitBurst=5
+StandardOutput=journal+console
+StandardError=journal+console
+SyslogIdentifier=astrobot
+Environment="ENVIRONMENT=production"
+Environment="PYTHONUNBUFFERED=1"
+
+# Security options
+PrivateTmp=true
+ProtectHome=read-only
+ProtectSystem=full
+NoNewPrivileges=true
+PrivateDevices=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+[Install]
+WantedBy=multi-user.target

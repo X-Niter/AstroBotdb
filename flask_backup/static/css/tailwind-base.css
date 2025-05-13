@@ -1,0 +1,424 @@
+/* 
+ * AstroBot AI - Tailwind Base CSS
+ * 
+ * Core styling system built on Tailwind CSS
+ * This file establishes the foundation for the entire UI
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Variables */
+:root {
+  /* Core UI Colors */
+  --color-app-bg: 15, 23, 42;              /* slate-900 */
+  --color-card-bg: 30, 41, 59;             /* slate-800 */
+  --color-input-bg: 15, 23, 42;            /* slate-900 */
+  --color-nav-bg: 23, 31, 50;              /* custom dark blue */
+  
+  /* Cosmic Theme - Primary Colors */
+  --color-primary: 79, 70, 229;            /* indigo-600 */
+  --color-primary-light: 99, 102, 241;     /* indigo-500 */
+  --color-primary-dark: 67, 56, 202;       /* indigo-700 */
+  
+  /* Cosmic Theme - Accent Colors */
+  --color-cosmic-glow: 147, 51, 234;       /* purple-600 */
+  --color-cosmic-highlight: 236, 72, 153;  /* pink-600 */
+  --color-cosmic-nebula: 59, 130, 246;     /* blue-500 */
+  
+  /* Status Colors */
+  --color-success: 22, 163, 74;            /* green-600 */
+  --color-warning: 217, 119, 6;            /* amber-600 */
+  --color-error: 220, 38, 38;              /* red-600 */
+  --color-info: 37, 99, 235;               /* blue-600 */
+  
+  /* Text Colors */
+  --color-text-normal: 226, 232, 240;      /* slate-200 */
+  --color-text-muted: 148, 163, 184;       /* slate-400 */
+  --color-text-bright: 255, 255, 255;      /* white */
+  
+  /* Border Colors */
+  --color-border-light: 51, 65, 85;        /* slate-700 */
+  --color-border-highlight: 79, 70, 229;   /* indigo-600 */
+  
+  /* Glass Effect */
+  --glass-opacity: 0.1;
+  --glass-blur: 12px;
+  
+  /* Animations */
+  --transition-fast: 150ms;
+  --transition-normal: 300ms;
+  --transition-slow: 500ms;
+  
+  /* UI Dimensions */
+  --header-height: 64px;
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 70px;
+}
+
+/* Dark Mode Override Variables */
+.dark {
+  --color-app-bg: 15, 23, 42;              /* slate-900 */
+  --color-card-bg: 30, 41, 59;             /* slate-800 */
+  --color-input-bg: 15, 23, 42;            /* slate-900 */
+  --color-text-normal: 226, 232, 240;      /* slate-200 */
+  --color-text-muted: 148, 163, 184;       /* slate-400 */
+}
+
+/* Base Element Styling */
+@layer base {
+  body {
+    @apply bg-cosmic-dark text-gray-200 font-sans antialiased overflow-x-hidden;
+    min-height: 100vh;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-medium tracking-tight;
+  }
+  
+  h1 {
+    @apply text-3xl md:text-4xl;
+  }
+  
+  h2 {
+    @apply text-2xl md:text-3xl;
+  }
+  
+  h3 {
+    @apply text-xl md:text-2xl;
+  }
+  
+  a {
+    @apply text-primary hover:text-primary-light transition-colors duration-300;
+  }
+  
+  /* Form elements */
+  input, select, textarea {
+    @apply bg-cosmic-dark border border-gray-700 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm;
+    margin-bottom: 1rem;
+  }
+  
+  button {
+    @apply transition-all duration-300;
+  }
+  
+  /* Form layout spacing improvements */
+  .form-group, .input-group {
+    @apply mb-6; /* Increased from mb-4 for better spacing between form groups */
+  }
+  
+  .form-control {
+    @apply mb-4 px-4 py-2.5 rounded-lg; /* Added padding and rounded corners */
+  }
+  
+  /* Consistent spacing for all inputs */
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    @apply block w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-2.5 mb-4;
+    @apply focus:ring-2 focus:ring-cosmic-glow/50 focus:border-cosmic-glow/60 focus:outline-none;
+    @apply placeholder:text-gray-500;
+  }
+  
+  /* Proper spacing for form labels */
+  label {
+    @apply block mb-2 text-sm font-medium text-gray-300;
+  }
+  
+  /* Consistent dropdown styling */
+  select {
+    @apply appearance-none bg-no-repeat bg-right pr-10;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-size: 1em 1em;
+  }
+}
+
+/* Component Classes */
+@layer components {
+  /* Cards */
+  .cosmic-card {
+    @apply bg-gray-800/80 backdrop-blur-sm border border-gray-700 rounded-lg p-6 shadow-lg;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .cosmic-card-glow {
+    @apply cosmic-card;
+    
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, theme('colors.cosmic.nebula'), theme('colors.cosmic.highlight'), theme('colors.cosmic.glow'));
+      opacity: 0.8;
+    }
+  }
+  
+  /* Buttons */
+  .btn-cosmic {
+    @apply relative overflow-hidden rounded-md px-5 py-2.5 transition-all duration-300
+           inline-flex items-center justify-center font-medium;
+    
+    &::before {
+      content: '';
+      @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+      background: linear-gradient(45deg, theme('colors.cosmic.nebula/30'), theme('colors.cosmic.highlight/30'), theme('colors.cosmic.glow/30'));
+    }
+    
+    &:hover::before {
+      @apply opacity-100;
+    }
+  }
+  
+  .btn-primary {
+    @apply btn-cosmic bg-primary hover:bg-primary-light text-white;
+  }
+  
+  .btn-secondary {
+    @apply btn-cosmic bg-gray-700 hover:bg-gray-600 text-white;
+  }
+  
+  .btn-outline {
+    @apply btn-cosmic bg-transparent border border-gray-600 hover:border-gray-400 text-gray-200;
+  }
+  
+  /* Navigation */
+  .nav-wrapper {
+    @apply fixed w-full z-30 transition-all duration-300;
+    backdrop-filter: blur(10px);
+  }
+  
+  /* Content layout */
+  .cosmic-container {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8 py-6;
+  }
+  
+  .content-area {
+    @apply pt-[var(--header-height)] min-h-screen pb-20;
+  }
+  
+  /* Sidebar layout */
+  .sidebar-layout {
+    @apply flex min-h-screen;
+  }
+  
+  .sidebar {
+    @apply fixed top-0 left-0 h-full bg-gray-800/90 backdrop-blur-md border-r border-gray-700 shadow-lg transition-all duration-300 z-40;
+    width: var(--sidebar-width);
+  }
+  
+  .sidebar-collapsed {
+    width: var(--sidebar-collapsed-width);
+  }
+  
+  .content-with-sidebar {
+    @apply transition-all duration-300;
+    margin-left: var(--sidebar-width);
+  }
+  
+  .sidebar-collapsed .content-with-sidebar {
+    margin-left: var(--sidebar-collapsed-width);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 1024px) {
+    .sidebar {
+      @apply transform -translate-x-full;
+    }
+    
+    .content-with-sidebar {
+      margin-left: 0;
+    }
+    
+    body.mobile-menu-open .sidebar {
+      @apply translate-x-0;
+    }
+  }
+  
+  /* Form elements */
+  .cosmic-input {
+    @apply bg-cosmic-dark/75 border-gray-700 rounded-md px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent transition-all;
+  }
+  
+  .cosmic-input-with-icon {
+    @apply relative;
+  }
+  
+  .cosmic-input-icon {
+    @apply absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400;
+  }
+  
+  .cosmic-input-with-icon .cosmic-input {
+    @apply pl-10;
+  }
+  
+  /* Dropdown */
+  .cosmic-dropdown {
+    @apply relative inline-block;
+  }
+  
+  .cosmic-dropdown-menu {
+    @apply absolute z-50 mt-2 min-w-[200px] rounded-md bg-gray-800 border border-gray-700 shadow-lg backdrop-blur-md;
+  }
+  
+  .cosmic-dropdown-item {
+    @apply block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 transition-colors duration-150;
+  }
+}
+
+/* Utility Classes */
+@layer utilities {
+  /* Animations */
+  .cosmic-spin {
+    animation: cosmic-spin 20s linear infinite;
+  }
+  
+  @keyframes cosmic-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .cosmic-pulse {
+    animation: cosmic-pulse 3s ease-in-out infinite;
+  }
+  
+  @keyframes cosmic-pulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.6;
+      transform: scale(1.05);
+    }
+  }
+  
+  .cosmic-shimmer {
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: linear-gradient(90deg, 
+        rgba(255,255,255,0) 0%, 
+        rgba(255,255,255,0.05) 25%, 
+        rgba(255,255,255,0.1) 50%, 
+        rgba(255,255,255,0.05) 75%, 
+        rgba(255,255,255,0) 100%);
+      transform: translateX(-100%);
+      animation: shimmer 2.5s infinite;
+    }
+  }
+  
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  
+  /* Glass effects */
+  .cosmic-glass {
+    @apply backdrop-blur-md bg-opacity-20 border border-white/10;
+    background-color: rgba(var(--color-card-bg), 0.2);
+  }
+  
+  .cosmic-glass-dark {
+    @apply backdrop-blur-md bg-opacity-40 border border-white/5;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Transitions */
+  .cosmic-transition {
+    @apply transition-all duration-300 ease-in-out;
+  }
+  
+  /* Fade in animations */
+  .cosmic-fade-in {
+    animation: fade-in 0.8s ease-out forwards;
+    opacity: 0;
+  }
+  
+  .cosmic-stagger-children > * {
+    opacity: 0;
+    animation: fade-in 0.5s ease-out forwards;
+  }
+  
+  .cosmic-stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+  .cosmic-stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
+  .cosmic-stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
+  .cosmic-stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
+  .cosmic-stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
+  .cosmic-stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
+  
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Glow effects */
+  .cosmic-glow {
+    position: relative;
+    
+    &:hover::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 50% 50%, theme('colors.primary/30'), transparent 70%);
+      opacity: 0.5;
+      z-index: -1;
+      transition: opacity 0.3s ease;
+    }
+  }
+  
+  /* Gradients */
+  .cosmic-gradient-text {
+    @apply text-transparent bg-clip-text;
+    background-image: linear-gradient(90deg, theme('colors.cosmic.nebula'), theme('colors.cosmic.highlight'), theme('colors.cosmic.glow'));
+  }
+  
+  .cosmic-gradient-border {
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      padding: 1px;
+      border-radius: inherit;
+      background: linear-gradient(45deg, theme('colors.cosmic.nebula'), theme('colors.cosmic.highlight'), theme('colors.cosmic.glow'));
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+  }
+}
+
+/* Adjust Alpine.js x-cloak */
+[x-cloak] {
+  display: none !important;
+}

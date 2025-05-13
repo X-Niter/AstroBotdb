@@ -1,0 +1,357 @@
+/* AstroBot Documentation CSS - Unified with main site theme */
+
+@import url('tailwind-base.css');
+@import url('components/cosmic-cards.css');
+@import url('components/cosmic-code.css');
+@import url('components/cosmic-effects.css');
+@import url('components/cosmic-forms.css');
+@import url('clipping-fix.css');
+
+:root {
+    --doc-sidebar-width: 280px;
+    --doc-toc-width: 220px;
+    --doc-header-height: 64px;
+}
+
+/* Main layout - using consistent design patterns with main site */
+.doc-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: rgb(var(--color-app-bg));
+    overflow-x: hidden;
+}
+
+.doc-content-wrap {
+    display: flex;
+    flex: 1;
+    max-width: 100vw;
+    margin-top: var(--doc-header-height);
+}
+
+.doc-left-sidebar {
+    width: var(--doc-sidebar-width);
+    border-right: 1px solid rgba(78, 119, 255, 0.15);
+    padding: 1.75rem 1.25rem;
+    position: fixed;
+    top: var(--doc-header-height);
+    height: calc(100vh - var(--doc-header-height));
+    overflow-y: auto;
+    background-color: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 30;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Mobile sidebar toggle */
+@media (max-width: 768px) {
+    .doc-left-sidebar {
+        transform: translateX(-100%);
+        box-shadow: 5px 0 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .doc-left-sidebar.show-sidebar {
+        transform: translateX(0);
+    }
+}
+
+.doc-content {
+    flex: 1;
+    padding: 2rem;
+    margin-left: var(--doc-sidebar-width);
+    max-width: calc(100% - var(--doc-sidebar-width));
+    position: relative;
+}
+
+@media (max-width: 768px) {
+    .doc-content {
+        margin-left: 0;
+        max-width: 100%;
+        padding: 1.5rem;
+    }
+}
+
+.doc-right-sidebar {
+    width: var(--doc-toc-width);
+    border-left: 1px solid rgba(78, 119, 255, 0.15);
+    padding: 2rem 1rem;
+    position: sticky;
+    top: var(--doc-header-height);
+    height: calc(100vh - var(--doc-header-height));
+    overflow-y: auto;
+    background-color: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(10px);
+}
+
+/* Typography - Matching main site styling */
+.doc-content h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #fff, #a8b1ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 1.3;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(78, 119, 255, 0.2);
+}
+
+.doc-content h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-top: 2.5rem;
+    margin-bottom: 1.2rem;
+    color: white;
+    display: inline-block;
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.2), transparent);
+    padding: 8px 16px;
+    border-radius: 8px 0 0 8px;
+    transform: translateX(-16px);
+}
+
+.doc-content h3 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.doc-content h4 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-top: 1.8rem;
+    margin-bottom: 0.8rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.doc-content p {
+    margin-bottom: 1.2rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.doc-content ul, .doc-content ol {
+    margin-bottom: 1.2rem;
+    padding-left: 1.5rem;
+}
+
+.doc-content li {
+    margin-bottom: 0.5rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Navigation */
+.doc-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.doc-nav-title {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.doc-nav-item {
+    margin-bottom: 0.25rem;
+}
+
+.doc-nav-link {
+    display: block;
+    padding: 0.4rem 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.doc-nav-link:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.doc-nav-link.active {
+    color: white;
+    background: rgba(79, 70, 229, 0.2);
+    font-weight: 500;
+}
+
+.doc-subnav {
+    list-style: none;
+    padding-left: 1.2rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.doc-subnav-link {
+    display: block;
+    padding: 0.25rem 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+
+.doc-subnav-link:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.doc-subnav-link.active {
+    color: white;
+    background: rgba(79, 70, 229, 0.1);
+    font-weight: 500;
+}
+
+/* Table of Contents */
+.doc-toc {
+    position: sticky;
+    top: 2rem;
+}
+
+.doc-toc-title {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.doc-toc ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.doc-toc ul ul {
+    padding-left: 1.2rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.doc-toc li {
+    margin-bottom: 0.25rem;
+}
+
+.doc-toc a {
+    display: block;
+    padding: 0.25rem 0;
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-size: 0.85rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.doc-toc a:hover {
+    color: white;
+}
+
+/* Demo cards and examples */
+.feature-card {
+    background: rgba(15, 23, 42, 0.4);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(79, 70, 229, 0.2);
+    margin-bottom: 1rem;
+    color: #a8b1ff;
+}
+
+.feature-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: white;
+}
+
+.feature-description {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+}
+
+/* Animations */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.animate-on-scroll.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Color helpers */
+.text-cosmic-blue {
+    color: #60a5fa !important;
+}
+
+.text-cosmic-purple {
+    color: #a78bfa !important;
+}
+
+.text-cosmic-green {
+    color: #34d399 !important;
+}
+
+.text-cosmic-gold {
+    color: #fbbf24 !important;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .doc-left-sidebar, .doc-right-sidebar {
+        display: none;
+    }
+    
+    .doc-content {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .doc-content h1 {
+        font-size: 1.8rem;
+    }
+    
+    .doc-content h2 {
+        font-size: 1.5rem;
+    }
+    
+    .doc-content h3 {
+        font-size: 1.25rem;
+    }
+}

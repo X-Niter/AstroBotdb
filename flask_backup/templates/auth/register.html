@@ -1,0 +1,324 @@
+{% extends "layouts/clean.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block styles %}
+<style>
+    .register-container {
+        max-width: 500px;
+        margin: 3rem auto;
+        padding: 2.5rem;
+        border-radius: 16px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    /* Light mode styling */
+    .register-container {
+        background: #ffffff;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(230, 230, 230, 0.7);
+    }
+    
+    /* Dark mode styling */
+    .dark .register-container {
+        background: rgba(31, 41, 55, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(55, 65, 81, 0.5);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Space theme styling */
+    .theme-space .register-container {
+        border: 1px solid rgba(77, 118, 255, 0.4);
+        box-shadow: 0 10px 30px rgba(77, 118, 255, 0.15);
+    }
+    
+    /* Neon theme styling */
+    .theme-neon .register-container {
+        border: 1px solid rgba(0, 255, 255, 0.4);
+        box-shadow: 0 10px 30px rgba(0, 255, 255, 0.15);
+    }
+    
+    .register-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+    
+    .register-header img {
+        width: 90px;
+        margin-bottom: 1.5rem;
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+    }
+    
+    .register-header h2 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(90deg, #4f46e5, #6366f1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .dark .register-header h2 {
+        background: linear-gradient(90deg, #818cf8, #6366f1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .form-group {
+        margin-bottom: 1.25rem;
+        position: relative;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        padding-left: 2.5rem;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+    
+    .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6b7280;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .terms-check {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+    }
+    
+    .terms-check input {
+        margin-top: 0.25rem;
+        margin-right: 0.75rem;
+    }
+    
+    .terms-check label {
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+    
+    .terms-check a {
+        color: #4f46e5;
+        font-weight: 500;
+        transition: color 0.2s ease;
+    }
+    
+    .terms-check a:hover {
+        color: #4338ca;
+    }
+    
+    .dark .terms-check a {
+        color: #818cf8;
+    }
+    
+    .dark .terms-check a:hover {
+        color: #6366f1;
+    }
+    
+    .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 1.75rem 0;
+    }
+    
+    .divider::before, .divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid rgba(107, 114, 128, 0.3);
+    }
+    
+    .divider span {
+        padding: 0 1rem;
+        color: #6b7280;
+        font-size: 0.875rem;
+    }
+    
+    .social-login {
+        display: grid;
+        gap: 0.75rem;
+    }
+    
+    .social-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem;
+        border-radius: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-bottom: 0.75rem;
+    }
+    
+    .social-btn i {
+        margin-right: 0.75rem;
+        font-size: 1.25rem;
+    }
+    
+    .social-btn:hover {
+        transform: translateY(-2px);
+    }
+    
+    .discord-btn {
+        background-color: #5865F2;
+        color: white;
+    }
+    
+    .discord-btn:hover {
+        background-color: #4752c4;
+    }
+    
+    .twitch-btn {
+        background-color: #9146FF;
+        color: white;
+    }
+    
+    .twitch-btn:hover {
+        background-color: #7b2df8;
+    }
+    
+    .submit-btn {
+        width: 100%;
+        padding: 0.75rem;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #4f46e5, #6366f1);
+        color: white;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(99, 102, 241, 0.25);
+    }
+    
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(99, 102, 241, 0.35);
+    }
+    
+    .submit-btn:active {
+        transform: translateY(0);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <div class="register-header">
+        <img src="{{ url_for('static', filename='img/astrobot-logo.svg') }}" alt="AstroBot Logo">
+        <h2>Create an Account</h2>
+        <p class="text-muted">Join the AstroBot AI community</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('register') }}" class="animate-fade-in">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            <label for="username" class="form-label">Username</label>
+            <div class="relative">
+                <i class="bi bi-person-fill input-icon"></i>
+                {{ form.username(class="form-input", id="username", placeholder="Choose a username") }}
+            </div>
+            {% if form.username.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.username.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="email" class="form-label">Email</label>
+            <div class="relative">
+                <i class="bi bi-envelope-fill input-icon"></i>
+                {{ form.email(class="form-input", id="email", placeholder="Enter your email") }}
+            </div>
+            {% if form.email.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.email.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <div class="relative">
+                <i class="bi bi-lock-fill input-icon"></i>
+                {{ form.password(class="form-input", id="password", placeholder="Create a password") }}
+            </div>
+            {% if form.password.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.password.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="confirm_password" class="form-label">Confirm Password</label>
+            <div class="relative">
+                <i class="bi bi-lock-fill input-icon"></i>
+                {{ form.confirm_password(class="form-input", id="confirm_password", placeholder="Confirm your password") }}
+            </div>
+            {% if form.confirm_password.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.confirm_password.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="terms-check">
+            <input type="checkbox" id="termsCheck" required>
+            <label for="termsCheck">
+                I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+            </label>
+        </div>
+        
+        <button type="submit" class="submit-btn mb-2">Create Account</button>
+    </form>
+    
+    <div class="divider animation-delay-200">
+        <span>OR</span>
+    </div>
+    
+    <div class="social-login animation-delay-300">
+        <a href="#" class="social-btn discord-btn">
+            <i class="bi bi-discord"></i> Register with Discord
+        </a>
+        <a href="#" class="social-btn twitch-btn">
+            <i class="bi bi-twitch"></i> Register with Twitch
+        </a>
+    </div>
+    
+    <div class="text-center mt-5 animation-delay-400">
+        <p class="text-gray-600 dark:text-gray-400">Already have an account? 
+            <a href="{{ url_for('login') }}" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium">
+                Login
+            </a>
+        </p>
+    </div>
+</div>
+{% endblock %}

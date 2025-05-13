@@ -1,0 +1,103 @@
+{% extends "layouts/admin.html" %}
+
+{% block admin_title %}Create New Plugin{% endblock %}
+{% block admin_subtitle %}Add a custom plugin to extend bot functionality{% endblock %}
+
+{% block admin_content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-primary bg-gradient text-white d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="mb-0">
+                <i class="bi bi-plus-circle me-2"></i>Add Plugin
+            </h5>
+            <p class="text-white-50 mb-0 small">Create a new custom plugin from scratch</p>
+        </div>
+        <a href="{{ url_for('admin_plugins.plugin_list') }}" class="btn btn-light btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Back to Plugins
+        </a>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{{ url_for('admin_plugins.create_plugin') }}">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="name" class="form-label">Plugin Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                    <div class="form-text">A friendly name for your plugin</div>
+                </div>
+                <div class="col-md-6">
+                    <label for="key" class="form-label">Plugin Key <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="key" name="key" required pattern="[a-z0-9_\-\.]+">
+                    <div class="form-text">Unique identifier (lowercase, no spaces, use underscores or hyphens)</div>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                <div class="form-text">What does your plugin do?</div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="version" class="form-label">Version</label>
+                    <input type="text" class="form-control" id="version" name="version" value="1.0.0" pattern="[0-9]+\.[0-9]+\.[0-9]+">
+                    <div class="form-text">Semantic versioning (e.g., 1.0.0)</div>
+                </div>
+                <div class="col-md-4">
+                    <label for="author" class="form-label">Author</label>
+                    <input type="text" class="form-control" id="author" name="author">
+                    <div class="form-text">Who created this plugin?</div>
+                </div>
+                <div class="col-md-4">
+                    <label for="repository_url" class="form-label">Repository URL</label>
+                    <input type="url" class="form-control" id="repository_url" name="repository_url">
+                    <div class="form-text">GitHub or other repository URL</div>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="entry_point" class="form-label">Entry Point <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="entry_point" name="entry_point" required>
+                <div class="form-text">Python module path (e.g., plugins.my_plugin)</div>
+            </div>
+            
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="enabled" name="enabled" checked>
+                <label class="form-check-label" for="enabled">Enable plugin immediately after creation</label>
+            </div>
+            
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="{{ url_for('admin_plugins.plugin_list') }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Create Plugin</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock admin_content %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const nameInput = document.getElementById('name');
+        const keyInput = document.getElementById('key');
+        
+        // Auto-generate key from name
+        nameInput.addEventListener('input', function() {
+            // Only auto-generate if the key field hasn't been manually edited
+            if (!keyInput.dataset.userEdited) {
+                const name = nameInput.value;
+                const key = name.toLowerCase()
+                    .replace(/\s+/g, '_')       // Replace spaces with underscores
+                    .replace(/[^a-z0-9_\-\.]/g, ''); // Remove invalid characters
+                    
+                keyInput.value = key;
+            }
+        });
+        
+        // Flag key field as user edited
+        keyInput.addEventListener('input', function() {
+            keyInput.dataset.userEdited = 'true';
+        });
+    });
+</script>
+{% endblock scripts %}

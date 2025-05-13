@@ -1,0 +1,2098 @@
+{% extends 'layouts/admin.html' %}
+
+{% block admin_title %}Server Showcase{% endblock %}
+{% block admin_subtitle %}Manage featured servers and visibility settings{% endblock %}
+
+{% block styles %}
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+{% endblock %}
+
+{% block admin_content %}
+<div class="admin-section position-relative">
+    <!-- Space-themed decorative elements -->
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    
+    <!-- Star field background -->
+    <div class="star-field">
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+    </div>
+    
+    <div class="admin-section-header position-relative">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <h2 class="h4 mb-0 cosmic-heading">
+                <i class="bi bi-stars me-2"></i>
+                Server Directory Management
+            </h2>
+            <div class="button-group">
+                <button type="button" class="cosmic-btn btn-primary-cosmic btn-sm me-2" onclick="refreshServersData()">
+                    <span class="cosmic-btn-content">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </span>
+                    <span class="cosmic-btn-glow"></span>
+                </button>
+                <a href="{{ url_for('public_server_showcase') }}" target="_blank" class="cosmic-btn btn-outline-cosmic btn-sm">
+                    <span class="cosmic-btn-content">
+                        <i class="bi bi-box-arrow-up-right"></i> View Public Directory
+                    </span>
+                    <span class="cosmic-btn-glow"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="admin-card shadow-sm">
+        <div class="admin-card-header bg-dark">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="h5 mb-0 cosmic-heading">
+                    <i class="bi bi-hdd-network me-2"></i>
+                    Discord Servers Directory
+                </h3>
+                <span class="badge bg-primary">{{ servers|length if servers else 0 }} Servers</span>
+            </div>
+        </div>
+        <div class="admin-card-body">
+            {% if not servers %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle-fill me-2"></i>
+                No servers found in the system. Servers will appear here once the bot joins them.
+            </div>
+            {% else %}
+            <div class="table-responsive">
+                <table class="table table-hover table-dark admin-table border-secondary" id="serversTable">
+                    <thead>
+                        <tr class="text-primary">
+                            <th>Server</th>
+                            <th>Members</th>
+                            <th>Owner</th>
+                            <th>Premium</th>
+                            <th>Featured</th>
+                            <th>Visibility</th>
+                            <th>Bot Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="align-middle">
+                        {% for server in servers %}
+                        <tr class="align-middle">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if server.icon_url %}
+                                    <img src="{{ server.icon_url }}" alt="{{ server.name }} icon" 
+                                         class="server-icon rounded-circle me-3" style="width: 38px; height: 38px;">
+                                    {% else %}
+                                    <div class="server-icon-placeholder rounded-circle me-3 d-flex align-items-center 
+                                                justify-content-center text-white bg-primary" 
+                                         style="width: 38px; height: 38px;">
+                                        <i class="bi bi-stars"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div class="server-info">
+                                        <div class="server-name font-medium">{{ server.name }}</div>
+                                        <div class="server-id text-muted small">ID: {{ server.id }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-dark text-primary rounded-pill">
+                                    <i class="bi bi-people-fill me-1"></i>
+                                    {{ server.member_count }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if server.owner %}
+                                <div class="owner-info">
+                                    <div class="owner-name">{{ server.owner.username }}</div>
+                                    <div class="owner-id text-muted small">ID: {{ server.owner.id }}</div>
+                                </div>
+                                {% else %}
+                                <span class="text-muted">Unknown</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="form-check form-switch premium-toggle-wrapper">
+                                    <input class="form-check-input premium-toggle" type="checkbox" 
+                                           id="premium-{{ server.id }}" 
+                                           data-server-id="{{ server.id }}"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-title="{% if server.is_premium %}Premium server with additional features{% else %}Mark as premium to unlock additional features{% endif %}"
+                                           {% if server.is_premium %}checked{% endif %}>
+                                    <label class="form-check-label ms-2" for="premium-{{ server.id }}">
+                                        {% if server.is_premium %}
+                                        <span class="badge bg-primary-soft text-primary status-badge">
+                                            <i class="bi bi-stars me-1"></i> Premium
+                                        </span>
+                                        {% else %}
+                                        <span class="badge bg-dark text-muted status-badge">Standard</span>
+                                        {% endif %}
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-check form-switch featured-toggle-wrapper">
+                                    <input class="form-check-input featured-toggle" type="checkbox" 
+                                           id="featured-{{ server.id }}" 
+                                           data-server-id="{{ server.id }}"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-title="{% if server.is_featured %}Featured on server directory homepage{% else %}Feature this server on directory homepage{% endif %}"
+                                           {% if server.is_featured %}checked{% endif %}>
+                                    <label class="form-check-label ms-2" for="featured-{{ server.id }}">
+                                        {% if server.is_featured %}
+                                        <span class="badge bg-success-soft text-success status-badge">
+                                            <i class="bi bi-stars me-1"></i> Featured
+                                        </span>
+                                        {% else %}
+                                        <span class="badge bg-dark text-muted status-badge">Not Featured</span>
+                                        {% endif %}
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <select class="form-select form-select-sm visibility-select" 
+                                        data-server-id="{{ server.id }}"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-title="Control who can see this server in the directory">
+                                    <option value="public" {% if server.is_public %}selected{% endif %}>Public</option>
+                                    <option value="private" {% if not server.is_public %}selected{% endif %}>Private</option>
+                                </select>
+                            </td>
+                            <td>
+                                {% if server.bot_joined_at %}
+                                <div class="date-info d-flex align-items-center">
+                                    <i class="bi bi-calendar-check text-success me-2"></i>
+                                    <span>{{ server.bot_joined_at.strftime('%Y-%m-%d') }}</span>
+                                </div>
+                                {% else %}
+                                <span class="text-muted">Unknown</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button type="button" class="btn btn-sm btn-dark text-info view-server-btn" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#viewServerModal" 
+                                            data-server-id="{{ server.id }}"
+                                            data-bs-tooltip="View server details">
+                                        <i class="bi bi-stars"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-primary edit-server-btn"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editServerModal" 
+                                            data-server-id="{{ server.id }}"
+                                            data-bs-tooltip="Edit server showcase settings">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Quick Help Card -->
+    <div class="admin-card mt-4">
+        <div class="admin-card-header">
+            <h3 class="text-lg font-medium">
+                <i class="bi bi-stars text-primary me-2"></i>
+                Space Showcase Guide
+            </h3>
+        </div>
+        <div class="admin-card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="help-item mb-3">
+                        <h4 class="text-md font-medium mb-2">
+                            <i class="bi bi-stars text-primary me-2"></i>
+                            Premium Servers
+                        </h4>
+                        <p class="text-muted mb-2">Premium servers receive priority placement, enhanced listings, and customizable showcase features.</p>
+                        <div class="alert bg-primary-soft text-primary alert-sm">
+                            <i class="bi bi-stars me-1"></i> Premium servers can display custom banners, animated icons, and detailed descriptions.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="help-item mb-3">
+                        <h4 class="text-md font-medium mb-2">
+                            <i class="bi bi-stars text-warning me-2"></i>
+                            Featured Servers
+                        </h4>
+                        <p class="text-muted mb-2">Featured servers appear on the directory homepage in the spotlight carousel.</p>
+                        <div class="alert bg-warning-soft text-warning alert-sm">
+                            <i class="bi bi-stars me-1"></i> Feature carefully selected servers to showcase the best examples of your bot's capabilities.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="help-item mb-3">
+                        <h4 class="text-md font-medium mb-2">
+                            <i class="bi bi-stars text-success me-2"></i>
+                            Visibility Settings
+                        </h4>
+                        <p class="text-muted mb-2">Control whether servers appear in the public directory or remain private.</p>
+                        <div class="alert bg-success-soft text-success alert-sm">
+                            <i class="bi bi-stars me-1"></i> Private servers are only visible to admins and the server owner.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Server Modal -->
+<div class="modal fade" id="viewServerModal" tabindex="-1" aria-labelledby="viewServerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header space-themed-header">
+                <h5 class="modal-title cosmic-heading" id="viewServerModalLabel">
+                    <i class="bi bi-stars me-2"></i>
+                    Server Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body space-themed-modal-body">
+                <div id="serverDetailContent">
+                    <div class="text-center p-4">
+                        <div class="cosmic-loader">
+                            <div class="cosmic-loading-dot"></div>
+                            <div class="cosmic-loading-dot"></div>
+                            <div class="cosmic-loading-dot"></div>
+                        </div>
+                        <p class="mt-2 text-cosmic">
+                            <i class="bi bi-stars me-1"></i>
+                            Loading server details...
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer cosmic-modal-footer">
+                <button type="button" class="cosmic-btn btn-cancel" data-bs-dismiss="modal">
+                    <span class="cosmic-btn-content">
+                        <i class="bi bi-x-circle me-2"></i>
+                        Close
+                    </span>
+                    <span class="cosmic-btn-glow"></span>
+                </button>
+                <button type="button" class="cosmic-btn btn-primary-cosmic" id="editFromViewBtn">
+                    <span class="cosmic-btn-content">
+                        <i class="bi bi-stars me-2"></i>
+                        Edit Server
+                    </span>
+                    <span class="cosmic-btn-glow"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Server Modal -->
+<div class="modal fade" id="editServerModal" tabindex="-1" aria-labelledby="editServerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header space-themed-header">
+                <h5 class="modal-title cosmic-heading" id="editServerModalLabel">
+                    <i class="bi bi-stars me-2"></i>
+                    Edit Server
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body space-themed-modal-body">
+                <form id="editServerForm">
+                    <input type="hidden" id="editServerId" name="server_id">
+                    <div class="server-edit-preview mb-4 text-center">
+                        <div id="serverIconPreview" class="mx-auto mb-2 rounded-circle d-flex align-items-center justify-content-center" 
+                             style="width: 80px; height: 80px; overflow: hidden; background-color: rgba(var(--bs-primary-rgb), 0.1);">
+                            <!-- Icon will be inserted here by JS -->
+                        </div>
+                        <h5 id="serverNamePreview" class="mb-0"></h5>
+                    </div>
+                    <div class="mb-4">
+                        <label for="editServerName" class="form-label">
+                            <i class="bi bi-tag me-2"></i>
+                            Server Name
+                        </label>
+                        <input type="text" class="form-control" id="editServerName" name="name" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="editServerDescription" class="form-label">
+                            <i class="bi bi-card-text me-2"></i>
+                            Description
+                        </label>
+                        <textarea class="form-control" id="editServerDescription" name="description" rows="3"
+                                  placeholder="Describe this server for the public directory..."></textarea>
+                        <div class="form-text text-muted">
+                            This description will be shown on the public server directory.
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="editServerInvite" class="form-label">
+                            <i class="bi bi-link-45deg me-2"></i>
+                            Invite URL
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">https://discord.gg/</span>
+                            <input type="text" class="form-control" id="editServerInvite" name="invite_url" 
+                                   placeholder="abcDEF123">
+                        </div>
+                        <div class="form-text text-muted">
+                            Leave blank to hide the join button on the directory.
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="form-check form-switch d-flex align-items-center gap-2">
+                            <input class="form-check-input" type="checkbox" id="editServerShowConfig" name="show_config">
+                            <label class="form-check-label" for="editServerShowConfig">
+                                Show Configuration Publicly
+                            </label>
+                            <i class="bi bi-stars text-info ms-2" data-bs-toggle="tooltip" 
+                               title="When enabled, your bot configuration will be visible to other users in the server showcase."></i>
+                        </div>
+                    </div>
+                    <div class="privacy-notice alert space-alert position-relative overflow-hidden">
+                        <div class="space-alert-glow"></div>
+                        <i class="bi bi-shield-lock me-2"></i>
+                        <strong>Privacy Notice:</strong> Server information is only shown to authenticated users. 
+                        Set visibility to "Private" to hide your server from the public directory completely.
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="updateServerButton">
+                    <i class="bi bi-stars me-2"></i>
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block admin_scripts %}
+<script>
+// Refresh servers data
+function refreshServersData() {
+    // Show loading state
+    document.querySelector('.admin-card-body').innerHTML = '<div class="text-center p-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-primary-soft"><i class="bi bi-stars me-1"></i>Refreshing server data...</p></div>';
+    
+    // Reload the page
+    window.location.reload();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    // Handle premium toggle switches
+    const premiumToggles = document.querySelectorAll('.premium-toggle');
+    premiumToggles.forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            const serverId = this.dataset.serverId;
+            const isPremium = this.checked;
+            const statusBadge = this.parentElement.querySelector('.status-badge');
+            
+            // Update UI immediately
+            if (statusBadge) {
+                if (isPremium) {
+                    statusBadge.innerHTML = '<i class="bi bi-stars me-1"></i> Premium';
+                    statusBadge.className = 'badge bg-primary-soft text-primary status-badge';
+                } else {
+                    statusBadge.innerHTML = 'Standard';
+                    statusBadge.className = 'badge bg-dark text-muted status-badge';
+                }
+            }
+            
+            // Send API request to update premium status
+            fetch('/api/admin/toggle-server-premium', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ server_id: serverId, is_premium: isPremium })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Show success notification
+                    showNotification('success', data.message);
+                } else {
+                    // Show error notification
+                    showNotification('error', 'Error: ' + data.message);
+                    
+                    // Revert UI
+                    this.checked = !isPremium;
+                    if (statusBadge) {
+                        if (!isPremium) {
+                            statusBadge.innerHTML = '<i class="bi bi-stars me-1"></i> Premium';
+                            statusBadge.className = 'badge bg-primary-soft text-primary status-badge';
+                        } else {
+                            statusBadge.innerHTML = 'Standard';
+                            statusBadge.className = 'badge bg-dark text-muted status-badge';
+                        }
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('error', 'An error occurred while updating premium status');
+                
+                // Revert UI
+                this.checked = !isPremium;
+                if (statusBadge) {
+                    if (!isPremium) {
+                        statusBadge.innerHTML = '<i class="bi bi-stars me-1"></i> Premium';
+                        statusBadge.className = 'badge bg-primary-soft text-primary status-badge';
+                    } else {
+                        statusBadge.innerHTML = 'Standard';
+                        statusBadge.className = 'badge bg-dark text-muted status-badge';
+                    }
+                }
+            });
+        });
+    });
+    
+    // Handle featured toggle switches
+    const featuredToggles = document.querySelectorAll('.featured-toggle');
+    featuredToggles.forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            const serverId = this.dataset.serverId;
+            const isFeatured = this.checked;
+            const statusBadge = this.parentElement.querySelector('.status-badge');
+            
+            // Update UI immediately
+            if (statusBadge) {
+                if (isFeatured) {
+                    statusBadge.innerHTML = '<i class="bi bi-stars me-1"></i> Featured';
+                    statusBadge.className = 'badge bg-success-soft text-success status-badge';
+                } else {
+                    statusBadge.innerHTML = 'Not Featured';
+                    statusBadge.className = 'badge bg-dark text-muted status-badge';
+                }
+            }
+            
+            // Send API request to update featured status
+            fetch('/api/admin/toggle-server-featured', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ server_id: serverId, is_featured: isFeatured })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Show success notification
+                    showNotification('success', data.message);
+                } else {
+                    // Show error notification
+                    showNotification('error', 'Error: ' + data.message);
+                    
+                    // Revert UI
+                    this.checked = !isFeatured;
+                    if (statusBadge) {
+                        if (!isFeatured) {
+                            statusBadge.innerHTML = '<i class="bi bi-stars me-1"></i> Featured';
+                            statusBadge.className = 'badge bg-success-soft text-success status-badge';
+                        } else {
+                            statusBadge.innerHTML = 'Not Featured';
+                            statusBadge.className = 'badge bg-dark text-muted status-badge';
+                        }
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('error', 'An error occurred while updating featured status');
+                
+                // Revert UI
+                this.checked = !isFeatured;
+                if (statusBadge) {
+                    if (!isFeatured) {
+                        statusBadge.innerHTML = '<i class="bi bi-stars me-1"></i> Featured';
+                        statusBadge.className = 'badge bg-success-soft text-success status-badge';
+                    } else {
+                        statusBadge.innerHTML = 'Not Featured';
+                        statusBadge.className = 'badge bg-dark text-muted status-badge';
+                    }
+                }
+            });
+        });
+    });
+    
+    // Handle visibility select changes
+    const visibilitySelects = document.querySelectorAll('.visibility-select');
+    visibilitySelects.forEach(select => {
+        select.addEventListener('change', function() {
+            const serverId = this.dataset.serverId;
+            const isPublic = this.value === 'public';
+            const originalValue = this.value;
+            
+            // Show loading indicator
+            this.classList.add('loading');
+            this.disabled = true;
+            
+            // Send API request to update visibility
+            fetch('/api/admin/update-server-visibility', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ server_id: serverId, is_public: isPublic })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Remove loading state
+                this.classList.remove('loading');
+                this.disabled = false;
+                
+                if (data.status === 'success') {
+                    // Show success notification
+                    showNotification('success', data.message);
+                } else {
+                    // Show error notification
+                    showNotification('error', 'Error: ' + data.message);
+                    
+                    // Revert the select
+                    this.value = isPublic ? 'private' : 'public';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Remove loading state
+                this.classList.remove('loading');
+                this.disabled = false;
+                
+                showNotification('error', 'An error occurred while updating visibility');
+                
+                // Revert the select
+                this.value = originalValue;
+            });
+        });
+    });
+    
+    // Handle View Server button click
+    const viewButtons = document.querySelectorAll('.view-server-btn');
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const serverId = this.dataset.serverId;
+            
+            // Clear previous content and show loading spinner
+            const contentDiv = document.getElementById('serverDetailContent');
+            contentDiv.innerHTML = `
+                <div class="text-center p-4 position-relative">
+                    <div class="cosmic-loader">
+                        <div class="cosmic-loader-ring"></div>
+                        <div class="cosmic-loader-star"></div>
+                    </div>
+                    <p class="mt-4 text-primary-glow">Loading server details...</p>
+                </div>
+            `;
+            
+            // Fetch server details
+            fetch(`/api/admin/server-details/${serverId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Update modal with server details
+                    const server = data.server;
+                    let html = `
+                        <div class="row">
+                            <div class="col-md-4 text-center mb-3">
+                                <div class="position-relative">
+                                    <div class="server-icon-container cosmic-server-icon mb-3 mx-auto d-flex align-items-center justify-content-center">
+                                        ${server.icon_url ? 
+                                          `<img src="${server.icon_url}" alt="${server.name}" class="img-fluid">` : 
+                                          `<i class="fas fa-server fa-4x text-cosmic"></i>`
+                                        }
+                                    </div>
+                                    ${server.is_premium ? 
+                                      `<div class="premium-badge-container">
+                                          <span class="cosmic-premium-badge">
+                                              <i class="bi bi-stars"></i> Premium
+                                          </span>
+                                          <div class="cosmic-badge-glow"></div>
+                                      </div>` : ''
+                                    }
+                                </div>
+                                <h4>${server.name}</h4>
+                                <p class="text-muted">${server.member_count} members</p>
+                                ${server.invite_url ? 
+                                  `<a href="${server.invite_url}" target="_blank" class="cosmic-btn btn-join">
+                                      <span class="cosmic-btn-content"><i class="fas fa-sign-in-alt me-1"></i> Join Server</span>
+                                      <span class="cosmic-btn-glow"></span>
+                                  </a>` : ''
+                                }
+                            </div>
+                            <div class="col-md-8">
+                                <div class="cosmic-panel description-panel mb-4">
+                                    <div class="cosmic-panel-header">
+                                        <h5 class="cosmic-panel-title mb-0">
+                                            <i class="bi bi-file-text me-2"></i>
+                                            Description
+                                        </h5>
+                                        <div class="cosmic-panel-decoration"></div>
+                                    </div>
+                                    <div class="cosmic-panel-body">
+                                        <p class="mb-0">${server.description || 
+                                            '<span class="text-muted fst-italic">No description available.</span>'
+                                        }</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="cosmic-panel mb-4">
+                                            <div class="cosmic-panel-header">
+                                                <h5 class="cosmic-panel-title mb-0">
+                                                    <i class="bi bi-info-circle me-2"></i>
+                                                    Server Info
+                                                </h5>
+                                                <div class="cosmic-panel-decoration"></div>
+                                            </div>
+                                            <div class="cosmic-panel-body p-0">
+                                                <ul class="cosmic-list small">
+                                                    <li class="cosmic-list-item">
+                                                        <span class="cosmic-list-label">Server ID</span>
+                                                        <span class="cosmic-list-value text-monospace">${server.server_id}</span>
+                                                    </li>
+                                                    <li class="cosmic-list-item">
+                                                        <span class="cosmic-list-label">Owner</span>
+                                                        <span class="cosmic-list-value">${server.owner ? server.owner.username : 'Unknown'}</span>
+                                                    </li>
+                                                    <li class="cosmic-list-item">
+                                                        <span class="cosmic-list-label">Bot Joined</span>
+                                                        <span class="cosmic-list-value">${server.bot_joined_at || 'Unknown'}</span>
+                                                    </li>
+                                                    <li class="cosmic-list-item">
+                                                        <span class="cosmic-list-label">Visibility</span>
+                                                        <span class="cosmic-badge ${server.is_public ? 'badge-success' : 'badge-secondary'}">
+                                                            ${server.is_public ? 'Public' : 'Private'}
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="cosmic-panel mb-4">
+                                            <div class="cosmic-panel-header">
+                                                <h5 class="cosmic-panel-title mb-0">
+                                                    <i class="bi bi-star me-2"></i>
+                                                    Status
+                                                </h5>
+                                                <div class="cosmic-panel-decoration"></div>
+                                            </div>
+                                            <div class="cosmic-panel-body p-0">
+                                                <ul class="cosmic-list small">
+                                                    <li class="cosmic-list-item">
+                                                        <span class="cosmic-list-label">Featured</span>
+                                                        <span class="cosmic-badge ${server.is_featured ? 'badge-primary' : 'badge-secondary'}">
+                                                            ${server.is_featured ? 'Featured' : 'Not Featured'}
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="cosmic-panel mb-4">
+                                    <div class="cosmic-panel-header">
+                                        <h5 class="cosmic-panel-title mb-0">
+                                            <i class="bi bi-gear me-2"></i>
+                                            Configuration
+                                        </h5>
+                                        <div class="cosmic-panel-decoration"></div>
+                                    </div>
+                                    <div class="cosmic-panel-body">
+                                        ${server.configurations && server.configurations.length > 0 ? 
+                                          `<div class="config-items">
+                                              ${server.configurations.map(config => 
+                                                `<div class="cosmic-config-item">
+                                                    <div class="cosmic-config-header">
+                                                        <h6 class="mb-0">${config.name}</h6>
+                                                        <span class="cosmic-badge ${
+                                                            config.status === 'configured' ? 'badge-success' : 
+                                                            config.status === 'pending' ? 'badge-warning' : 'badge-danger'
+                                                        }">
+                                                            ${config.status}
+                                                        </span>
+                                                    </div>
+                                                    <div class="cosmic-config-body">
+                                                        <p class="mb-1"><span class="text-cosmic">Purpose:</span> ${config.server_purpose}</p>
+                                                    </div>
+                                                </div>`
+                                              ).join('')}
+                                          </div>` : 
+                                          `<p class="text-muted fst-italic">No configurations available.</p>`
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    contentDiv.innerHTML = html;
+                } else {
+                    // Show error message
+                    contentDiv.innerHTML = `<div class="alert alert-danger">${data.message || 'Failed to load server details'}</div>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                contentDiv.innerHTML = `<div class="alert alert-danger">An error occurred while loading server details</div>`;
+            });
+        });
+    });
+    
+    // Handle Edit Server button click
+    const editButtons = document.querySelectorAll('.edit-server-btn');
+    editButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const serverId = this.dataset.serverId;
+            
+            // Fetch server details for editing
+            fetch(`/api/admin/server-details/${serverId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Populate form with server details
+                    const server = data.server;
+                    document.getElementById('editServerId').value = server.id;
+                    document.getElementById('editServerName').value = server.name || '';
+                    document.getElementById('editServerDescription').value = server.description || '';
+                    document.getElementById('editServerInvite').value = server.invite_url || '';
+                    document.getElementById('editServerShowConfig').checked = server.show_config;
+                } else {
+                    // Show error message
+                    alert('Error: ' + (data.message || 'Failed to load server details'));
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editServerModal'));
+                    modal.hide();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while loading server details');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editServerModal'));
+                modal.hide();
+            });
+        });
+    });
+    
+    // Handle Update Server button click
+    document.getElementById('updateServerButton').addEventListener('click', function() {
+        const form = document.getElementById('editServerForm');
+        const formData = new FormData(form);
+        const serverId = formData.get('server_id');
+        
+        // Prepare data for API request
+        const data = {
+            server_id: serverId,
+            name: formData.get('name'),
+            description: formData.get('description'),
+            invite_url: formData.get('invite_url'),
+            show_config: formData.get('show_config') === 'on'
+        };
+        
+        // Send API request to update server
+        fetch('/api/admin/update-server', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Close the modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editServerModal'));
+                modal.hide();
+                
+                // Show success toast or alert
+                alert(data.message);
+                
+                // Reload the page to refresh the data
+                location.reload();
+            } else {
+                // Show error toast or alert
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating the server');
+        });
+    });
+    
+    // Initialize DataTable if available
+    try {
+        if (typeof $ !== 'undefined' && typeof $.fn.DataTable !== 'undefined') {
+            $('#serversTable').DataTable({
+                responsive: true,
+                order: [[4, 'desc'], [3, 'desc']], // Sort by featured and premium status
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search servers...",
+                    lengthMenu: "Show _MENU_ servers per page",
+                    info: "Showing _START_ to _END_ of _TOTAL_ servers",
+                    infoEmpty: "No servers available",
+                    infoFiltered: "(filtered from _MAX_ total servers)",
+                    emptyTable: "No servers available in the system"
+                }
+            });
+        } else {
+            console.log('DataTable not available, using standard table');
+        }
+    } catch (error) {
+        console.error('Error initializing DataTable:', error);
+    }
+    
+    // Add tooltip functionality to any elements with data-bs-toggle="tooltip"
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Helper function to show notifications
+    function showNotification(type, message) {
+        // Create notification container if it doesn't exist
+        let notifContainer = document.getElementById('notification-container');
+        if (!notifContainer) {
+            notifContainer = document.createElement('div');
+            notifContainer.id = 'notification-container';
+            notifContainer.className = 'notification-container';
+            document.body.appendChild(notifContainer);
+        }
+        
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        
+        // Set icon based on type
+        let icon = '';
+        switch (type) {
+            case 'success':
+                icon = '<i class="bi bi-check-circle-fill"></i>';
+                break;
+            case 'error':
+                icon = '<i class="bi bi-exclamation-circle-fill"></i>';
+                break;
+            case 'warning':
+                icon = '<i class="bi bi-exclamation-triangle-fill"></i>';
+                break;
+            case 'info':
+                icon = '<i class="bi bi-info-circle-fill"></i>';
+                break;
+        }
+        
+        // Set notification content
+        notification.innerHTML = `
+            <div class="notification-icon">${icon}</div>
+            <div class="notification-message">${message}</div>
+            <button class="notification-close"><i class="bi bi-x"></i></button>
+        `;
+        
+        // Add to container
+        notifContainer.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+        
+        // Set up auto-dismiss
+        const dismissTimeout = setTimeout(() => {
+            dismissNotification(notification);
+        }, 5000);
+        
+        // Setup click to dismiss
+        notification.querySelector('.notification-close').addEventListener('click', () => {
+            clearTimeout(dismissTimeout);
+            dismissNotification(notification);
+        });
+    }
+    
+    function dismissNotification(notification) {
+        notification.classList.remove('show');
+        notification.classList.add('hiding');
+        
+        // Remove from DOM after animation
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+                
+                // Remove container if empty
+                const container = document.getElementById('notification-container');
+                if (container && container.children.length === 0) {
+                    container.remove();
+                }
+            }
+        }, 300);
+    }
+});
+</script>
+
+<style>
+/* Server directory specific styling */
+.server-icon {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 0 4px rgba(79, 70, 229, 0.3);
+    transition: all 0.3s ease-in-out;
+    border: 2px solid rgba(79, 70, 229, 0.2);
+    position: relative;
+}
+
+.server-icon::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 7px;
+    height: 7px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: 0 0 7px 3px rgba(255, 255, 255, 0.4);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.server-icon:hover {
+    transform: scale(1.1) rotate(3deg);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), 0 0 8px rgba(79, 70, 229, 0.5);
+}
+
+.server-icon:hover::before {
+    opacity: 1;
+}
+
+.server-name {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.server-id {
+    font-size: 0.75rem;
+}
+
+.owner-info {
+    max-width: 150px;
+}
+
+.premium-toggle-wrapper,
+.featured-toggle-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.status-badge {
+    width: 100px;
+    text-align: center;
+}
+
+.visibility-select {
+    min-width: 100px;
+}
+
+.visibility-select.loading {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23007bff' d='M8 0a8 8 0 100 16A8 8 0 008 0zm0 2a6 6 0 110 12A6 6 0 018 2z' opacity='0.5'/%3E%3Cpath fill='%23007bff' d='M14 8a6 6 0 00-6-6' stroke-linecap='round' stroke-linejoin='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 8 8' to='360 8 8' dur='1s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 35px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Server details modal styling */
+.server-details {
+    padding: 0.5rem;
+}
+
+.server-info-section {
+    background-color: rgba(var(--bs-primary-rgb), 0.05);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--bs-primary);
+    border-bottom: 1px solid rgba(var(--bs-primary-rgb), 0.2);
+    padding-bottom: 0.5rem;
+}
+
+.server-details-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: flex-start;
+}
+
+.detail-label {
+    font-weight: 500;
+    min-width: 120px;
+    color: var(--bs-secondary);
+}
+
+.server-stats {
+    margin-top: 1rem;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--bs-primary);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--bs-secondary);
+    text-transform: uppercase;
+}
+
+/* Badge styling */
+.badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* Space themed modal styling */
+.space-themed-header {
+    background: linear-gradient(135deg, #1a1a3a 0%, #0d0d2b 100%);
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.space-themed-header::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle, rgba(79, 70, 229, 0.6) 0%, rgba(79, 70, 229, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.space-themed-modal-body {
+    background-color: #0f172a;
+    color: #e2e8f0;
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+}
+
+.space-themed-modal-body .form-control,
+.space-themed-modal-body .form-select {
+    background-color: rgba(30, 41, 59, 0.8);
+    border-color: rgba(79, 70, 229, 0.3);
+    color: #e2e8f0;
+}
+
+.space-themed-modal-body .form-control:focus,
+.space-themed-modal-body .form-select:focus {
+    border-color: rgba(79, 70, 229, 0.5);
+    box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.25);
+}
+
+.space-themed-modal-body .form-text {
+    color: rgba(226, 232, 240, 0.6);
+}
+
+.modal-content {
+    background-color: #0f172a;
+    border: 1px solid rgba(79, 70, 229, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 8px rgba(79, 70, 229, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        rgba(79, 70, 229, 0), 
+        rgba(79, 70, 229, 0.5), 
+        rgba(79, 70, 229, 0));
+    pointer-events: none;
+}
+
+/* Edit server form styling */
+.server-edit-preview {
+    padding: 1rem;
+    background-color: rgba(var(--bs-primary-rgb), 0.05);
+    border-radius: 0.5rem;
+}
+
+.privacy-notice {
+    font-size: 0.9rem;
+}
+
+/* Space alert styling */
+.space-alert {
+    background-color: rgba(20, 30, 70, 0.3);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: rgba(229, 231, 235, 0.9);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.space-alert::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        rgba(99, 102, 241, 0), 
+        rgba(99, 102, 241, 0.5), 
+        rgba(99, 102, 241, 0));
+    pointer-events: none;
+}
+
+.space-alert-glow {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle, rgba(147, 51, 234, 0.4) 0%, rgba(147, 51, 234, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* Alert SM variant */
+.alert-sm {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+}
+
+/* Notification system */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 350px;
+}
+
+.notification {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2), 0 0 8px rgba(79, 70, 229, 0.1);
+    transform: translateX(120%);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    background-color: #0f172a;
+    color: #e2e8f0;
+    border-left: 4px solid;
+    overflow: hidden;
+    position: relative;
+}
+
+.notification::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
+    pointer-events: none;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification.hiding {
+    transform: translateX(120%);
+    opacity: 0;
+}
+
+.notification-success {
+    border-left-color: var(--bs-primary);
+    background-color: rgba(79, 70, 229, 0.15);
+}
+
+.notification-success::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle, rgba(79, 70, 229, 0.3) 0%, rgba(79, 70, 229, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.notification-error {
+    border-left-color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.15);
+}
+
+.notification-error::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle, rgba(220, 53, 69, 0.3) 0%, rgba(220, 53, 69, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.notification-icon {
+    margin-right: 12px;
+    font-size: 1.25rem;
+    position: relative;
+}
+
+.notification-success .notification-icon {
+    color: rgba(79, 70, 229, 0.9);
+    text-shadow: 0 0 10px rgba(79, 70, 229, 0.5);
+}
+
+.notification-error .notification-icon {
+    color: rgba(220, 53, 69, 0.9);
+    text-shadow: 0 0 10px rgba(220, 53, 69, 0.5);
+}
+
+.notification-warning {
+    border-left-color: #ffc107;
+    background-color: rgba(255, 193, 7, 0.15);
+}
+
+.notification-warning::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle, rgba(255, 193, 7, 0.3) 0%, rgba(255, 193, 7, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.notification-warning .notification-icon {
+    color: rgba(255, 193, 7, 0.9);
+    text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+}
+
+.notification-info {
+    border-left-color: #17a2b8;
+    background-color: rgba(23, 162, 184, 0.15);
+}
+
+.notification-info::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle, rgba(23, 162, 184, 0.3) 0%, rgba(23, 162, 184, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.notification-info .notification-icon {
+    color: rgba(23, 162, 184, 0.9);
+    text-shadow: 0 0 10px rgba(23, 162, 184, 0.5);
+}
+
+/* Notification styles already defined above */
+
+/* Notification icon styles already defined above */
+
+.notification-message {
+    flex: 1;
+}
+
+/* Cosmic loader */
+.cosmic-loader {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+}
+
+.cosmic-loader-ring {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border: 3px solid rgba(79, 70, 229, 0.1);
+    border-radius: 50%;
+    border-top-color: rgba(79, 70, 229, 0.8);
+    animation: cosmic-spin 1.2s linear infinite;
+}
+
+.cosmic-loader-star {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    margin-top: -4px;
+    margin-left: -4px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    box-shadow: 0 0 10px 2px rgba(79, 70, 229, 0.5);
+    animation: cosmic-pulse 2s ease-in-out infinite;
+}
+
+.text-primary-glow {
+    color: rgba(79, 70, 229, 0.9);
+    text-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
+}
+
+@keyframes cosmic-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes cosmic-pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 1;
+    }
+}
+
+/* Cosmic server icon */
+.cosmic-server-icon {
+    width: 128px;
+    height: 128px;
+    overflow: hidden;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 8px rgba(79, 70, 229, 0.3);
+    border: 2px solid rgba(79, 70, 229, 0.2);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.cosmic-server-icon::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 15px;
+    height: 15px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.4);
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+}
+
+.cosmic-server-icon:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25), 0 0 12px rgba(79, 70, 229, 0.4);
+}
+
+.cosmic-server-icon:hover::before {
+    opacity: 0.6;
+}
+
+.text-cosmic {
+    color: rgba(147, 51, 234, 0.9);
+    text-shadow: 0 0 10px rgba(147, 51, 234, 0.5);
+}
+
+/* Premium badge */
+.premium-badge-container {
+    position: absolute;
+    top: -5px;
+    right: -15px;
+    z-index: 2;
+}
+
+.cosmic-premium-badge {
+    display: inline-block;
+    padding: 0.35em 0.75em;
+    font-size: 0.85em;
+    font-weight: 600;
+    background-color: rgba(79, 70, 229, 0.15);
+    color: rgba(79, 70, 229, 0.9);
+    border: 1px solid rgba(79, 70, 229, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 3;
+    text-shadow: 0 0 5px rgba(79, 70, 229, 0.3);
+}
+
+.cosmic-badge-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(79, 70, 229, 0.3) 0%, rgba(79, 70, 229, 0) 70%);
+    border-radius: 20px;
+    z-index: 2;
+    animation: pulse-glow 2s infinite ease-in-out;
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+/* Cosmic button */
+.cosmic-btn {
+    display: inline-block;
+    padding: 0.5rem 1.25rem;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.8) 0%, rgba(59, 52, 168, 0.9) 100%);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 0 2px rgba(79, 70, 229, 0.1);
+    z-index: 1;
+}
+
+.cosmic-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        rgba(255, 255, 255, 0), 
+        rgba(255, 255, 255, 0.8), 
+        rgba(255, 255, 255, 0));
+    z-index: 2;
+}
+
+.cosmic-btn-content {
+    position: relative;
+    z-index: 3;
+}
+
+.cosmic-btn-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(147, 51, 234, 0.5) 0%, rgba(79, 70, 229, 0) 70%);
+    opacity: 0;
+    transition: all 0.5s ease;
+    z-index: 1;
+}
+
+.cosmic-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(79, 70, 229, 0.15);
+    color: white;
+}
+
+.cosmic-btn:hover .cosmic-btn-glow {
+    opacity: 0.8;
+    animation: btn-glow-pulse 2s infinite;
+}
+
+.cosmic-btn:active {
+    transform: translateY(0px);
+}
+
+@keyframes btn-glow-pulse {
+    0%, 100% {
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+/* Button variants */
+.btn-join {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(79, 70, 229, 0.9) 100%);
+}
+
+.btn-primary-cosmic {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.9) 0%, rgba(59, 130, 246, 0.9) 100%);
+}
+
+.btn-primary-cosmic:hover {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(79, 70, 229, 0.9) 100%);
+}
+
+.btn-cancel {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.btn-cancel:hover {
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
+}
+
+.btn-outline-cosmic {
+    background: transparent;
+    color: rgba(79, 70, 229, 0.9);
+    border: 1px solid rgba(79, 70, 229, 0.5);
+}
+
+.btn-outline-cosmic:hover {
+    background: rgba(79, 70, 229, 0.1);
+    color: rgba(79, 70, 229, 1);
+    border-color: rgba(79, 70, 229, 0.7);
+}
+
+/* Button sizing */
+.cosmic-btn.btn-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.825rem;
+}
+
+/* Cosmic modal footer */
+.cosmic-modal-footer {
+    background: rgba(15, 23, 42, 0.8);
+    border-top: 1px solid rgba(79, 70, 229, 0.1);
+    padding: 1rem;
+    border-radius: 0 0 12px 12px;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+/* Cosmic panel component */
+.cosmic-panel {
+    background: rgba(15, 23, 42, 0.6);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(79, 70, 229, 0.2);
+    overflow: hidden;
+    position: relative;
+}
+
+.cosmic-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        rgba(79, 70, 229, 0),
+        rgba(79, 70, 229, 0.3),
+        rgba(79, 70, 229, 0));
+    z-index: 1;
+}
+
+.cosmic-panel-header {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(79, 70, 229, 0.1);
+    background: rgba(15, 23, 42, 0.7);
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cosmic-panel-title {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.cosmic-panel-title i {
+    color: rgba(147, 51, 234, 0.9);
+    margin-right: 0.5rem;
+}
+
+.cosmic-panel-decoration {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(79, 70, 229, 0) 0%, rgba(79, 70, 229, 0.05) 100%);
+    opacity: 0.3;
+    z-index: -1;
+}
+
+/* Enhanced modal styling */
+.space-themed-header {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8));
+    border-bottom: 1px solid rgba(79, 70, 229, 0.2);
+    position: relative;
+    overflow: hidden;
+    padding: 1rem;
+    border-radius: 12px 12px 0 0;
+}
+
+.space-themed-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        rgba(79, 70, 229, 0), 
+        rgba(79, 70, 229, 0.3),
+        rgba(147, 51, 234, 0.5),
+        rgba(79, 70, 229, 0.3),
+        rgba(79, 70, 229, 0));
+    z-index: 1;
+}
+
+.space-themed-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(79, 70, 229, 0) 0%, rgba(79, 70, 229, 0.05) 100%);
+    opacity: 0.3;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.space-themed-modal-body {
+    background: rgba(15, 23, 42, 0.7);
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.cosmic-panel-body {
+    padding: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Cosmic list */
+.cosmic-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.cosmic-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(79, 70, 229, 0.1);
+    transition: all 0.2s ease;
+}
+
+.cosmic-list-item:last-child {
+    border-bottom: none;
+}
+
+.cosmic-list-item:hover {
+    background: rgba(79, 70, 229, 0.05);
+}
+
+.cosmic-list-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+}
+
+.cosmic-list-value {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.text-monospace {
+    font-family: monospace;
+    font-size: 0.9em;
+    color: rgba(147, 51, 234, 0.9);
+}
+
+/* Cosmic badge */
+.cosmic-badge {
+    display: inline-block;
+    padding: 0.25em 0.75em;
+    font-size: 0.75em;
+    font-weight: 600;
+    border-radius: 20px;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+}
+
+.badge-primary {
+    background-color: rgba(79, 70, 229, 0.15);
+    color: rgba(79, 70, 229, 0.9);
+    border: 1px solid rgba(79, 70, 229, 0.3);
+}
+
+.badge-success {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: rgba(16, 185, 129, 0.9);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-secondary {
+    background-color: rgba(75, 85, 99, 0.15);
+    color: rgba(156, 163, 175, 0.9);
+    border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+.badge-warning {
+    background-color: rgba(234, 179, 8, 0.15);
+    color: rgba(234, 179, 8, 0.9);
+    border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.badge-danger {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: rgba(239, 68, 68, 0.9);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Configuration items */
+.config-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.cosmic-config-item {
+    background: rgba(15, 23, 42, 0.4);
+    border-radius: 8px;
+    border: 1px solid rgba(79, 70, 229, 0.1);
+    overflow: hidden;
+}
+
+.cosmic-config-header {
+    padding: 0.75rem 1rem;
+    background: rgba(15, 23, 42, 0.6);
+    border-bottom: 1px solid rgba(79, 70, 229, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cosmic-config-body {
+    padding: 0.75rem 1rem;
+}
+
+/* Server card hover animation */
+@keyframes serverCardHover {
+    0% {
+        box-shadow: 0 0 0 rgba(79, 70, 229, 0);
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(79, 70, 229, 0.3);
+    }
+}
+
+.server-card {
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.server-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        rgba(79, 70, 229, 0) 0%,
+        rgba(79, 70, 229, 0.05) 50%,
+        rgba(79, 70, 229, 0) 100%);
+    transition: all 0.5s ease-in-out;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.server-card:hover {
+    transform: translateY(-3px);
+    animation: serverCardHover 0.5s forwards;
+}
+
+.server-card:hover::before {
+    left: 100%;
+}
+
+/* Cosmic loader animation */
+.cosmic-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.cosmic-loading-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin: 0 5px;
+    background-color: rgba(79, 70, 229, 0.6);
+    animation: cosmic-dot-pulse 1.5s infinite ease-in-out;
+}
+
+.cosmic-loading-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.cosmic-loading-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes cosmic-dot-pulse {
+    0%, 100% {
+        transform: scale(0.8);
+        background-color: rgba(79, 70, 229, 0.6);
+    }
+    50% {
+        transform: scale(1.2);
+        background-color: rgba(147, 51, 234, 0.8);
+        box-shadow: 0 0 10px rgba(147, 51, 234, 0.4);
+    }
+}
+
+/* Shooting star animation */
+@keyframes shooting-star {
+    0% {
+        transform: translateX(0) translateY(0) rotate(-45deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    70% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(400px) translateY(400px) rotate(-45deg);
+        opacity: 0;
+    }
+}
+
+.shooting-star {
+    width: 150px;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        rgba(255, 255, 255, 0.9), 
+        rgba(147, 51, 234, 0.4), 
+        rgba(99, 102, 241, 0.2),
+        transparent);
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    border-radius: 100px;
+    filter: blur(1px);
+    animation: shooting-star 8s ease-in-out infinite;
+    z-index: 0;
+    pointer-events: none;
+    transform-origin: center;
+}
+
+.shooting-star::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 15px;
+    height: 4px;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+.shooting-star:nth-child(2) {
+    top: 40%;
+    left: 80%;
+    animation-delay: 4s;
+    width: 100px;
+    opacity: 0.6;
+}
+
+.shooting-star:nth-child(3) {
+    top: 60%;
+    left: 30%;
+    animation-delay: 6s;
+    width: 120px;
+    opacity: 0.5;
+}
+
+/* Star field animation */
+@keyframes twinkle {
+    0%, 100% {
+        opacity: 0.6;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+}
+
+.star-field {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+    animation: twinkle 5s infinite ease-in-out;
+}
+
+/* Generate random star positions and animation delays */
+.star:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
+.star:nth-child(2) { top: 15%; left: 50%; animation-delay: 0.5s; }
+.star:nth-child(3) { top: 25%; left: 80%; animation-delay: 1s; }
+.star:nth-child(4) { top: 35%; left: 10%; animation-delay: 1.5s; }
+.star:nth-child(5) { top: 45%; left: 30%; animation-delay: 2s; }
+.star:nth-child(6) { top: 50%; left: 60%; animation-delay: 2.5s; }
+.star:nth-child(7) { top: 65%; left: 15%; animation-delay: 3s; }
+.star:nth-child(8) { top: 70%; left: 40%; animation-delay: 3.5s; }
+.star:nth-child(9) { top: 75%; left: 70%; animation-delay: 4s; }
+.star:nth-child(10) { top: 85%; left: 90%; animation-delay: 4.5s; }
+
+/* Different star sizes */
+.star:nth-child(3n) {
+    width: 3px;
+    height: 3px;
+}
+
+.star:nth-child(5n) {
+    width: 1px;
+    height: 1px;
+    box-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+/* Cosmic heading glow */
+.cosmic-heading {
+    position: relative;
+    display: inline-block;
+}
+
+.cosmic-heading::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        rgba(79, 70, 229, 0), 
+        rgba(79, 70, 229, 0.5),
+        rgba(147, 51, 234, 0.7),
+        rgba(79, 70, 229, 0.5),
+        rgba(79, 70, 229, 0));
+    z-index: 1;
+}
+
+.cosmic-heading i {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 1), rgba(147, 51, 234, 1));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    filter: drop-shadow(0 0 2px rgba(79, 70, 229, 0.5));
+}
+
+.notification-close {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #6c757d;
+    font-size: 16px;
+    margin-left: 8px;
+}
+
+.notification-close:hover {
+    color: #343a40;
+}
+</style>
+{% endblock %}

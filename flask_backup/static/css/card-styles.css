@@ -1,0 +1,438 @@
+/* 
+ * Enhanced Card Styling for AstroBot
+ * Provides consistent, modern card designs with appropriate spacing and alignment 
+ */
+
+/* Base Card Styles */
+.card {
+  background-color: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(78, 119, 255, 0.2);
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 
+              0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 
+              0 10px 10px -5px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  background-color: rgba(30, 41, 59, 0.4);
+  border-bottom: 1px solid rgba(78, 119, 255, 0.2);
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-header .card-title {
+  margin-bottom: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.25rem;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-footer {
+  background-color: rgba(30, 41, 59, 0.4);
+  border-top: 1px solid rgba(78, 119, 255, 0.2);
+  padding: 1rem 1.25rem;
+}
+
+/* Specialized Card Types */
+
+/* Status Card */
+.status-card {
+  height: 100%;
+}
+
+.status-card .card-header {
+  padding-bottom: 0.75rem;
+}
+
+.status-card .icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  margin-right: 1rem;
+}
+
+.status-card .status-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.status-card .status-title h5 {
+  margin-bottom: 0;
+  font-weight: 600;
+}
+
+.status-card .status-indicator-text {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.status-card .status-detail {
+  margin-top: 1.5rem;
+}
+
+.status-card .status-detail-item {
+  margin-bottom: 1rem;
+}
+
+.status-card .status-detail-item .label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.status-card .status-detail-item .label .value {
+  font-weight: 600;
+}
+
+/* Service cards with brand colors */
+.discord-card .icon-wrapper {
+  background-color: rgba(88, 101, 242, 0.2);
+}
+
+.discord-card .status-indicator.online {
+  background-color: #58a6ff;
+  box-shadow: 0 0 10px #58a6ff;
+}
+
+.discord-card .progress-bar {
+  background-color: #5865f2;
+}
+
+.minecraft-card .icon-wrapper {
+  background-color: rgba(93, 193, 31, 0.2);
+}
+
+.minecraft-card .status-indicator.online {
+  background-color: #5dc11f;
+  box-shadow: 0 0 10px #5dc11f;
+}
+
+.minecraft-card .progress-bar {
+  background-color: #5dc11f;
+}
+
+.twitch-card .icon-wrapper {
+  background-color: rgba(145, 70, 255, 0.2);
+}
+
+.twitch-card .status-indicator.online {
+  background-color: #9146ff;
+  box-shadow: 0 0 10px #9146ff;
+}
+
+.twitch-card .progress-bar {
+  background-color: #9146ff;
+}
+
+/* Activity Card */
+.activity-card .timeline-item {
+  background-color: rgba(30, 41, 59, 0.4);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.activity-card .timeline-item:hover {
+  transform: translateY(-3px);
+}
+
+.activity-card .timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.activity-card .timeline-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  font-size: 1.25rem;
+}
+
+.activity-card .timeline-content {
+  flex: 1;
+}
+
+.activity-card .timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.activity-card .timeline-title {
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.activity-card .timeline-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.activity-card .timeline-time {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.activity-card .timeline-description {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+/* Stats Card */
+.stat-card {
+  padding: 1.5rem;
+  height: 100%;
+}
+
+.stat-card .stat-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  font-size: 1.5rem;
+}
+
+.stat-card .stat-content {
+  flex: 1;
+}
+
+.stat-card .stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.stat-card .stat-label {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+.stat-card .stat-trend {
+  font-size: 0.875rem;
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+}
+
+.stat-card .stat-trend.up {
+  color: #10b981;
+}
+
+.stat-card .stat-trend.down {
+  color: #ef4444;
+}
+
+.stat-card .stat-trend i {
+  margin-right: 0.25rem;
+}
+
+/* Hero Card */
+.hero-card {
+  background: linear-gradient(45deg, rgba(17, 24, 39, 0.8), rgba(30, 41, 59, 0.6));
+  border: none;
+  overflow: hidden;
+  position: relative;
+}
+
+.hero-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  bottom: -50%;
+  left: -50%;
+  background: radial-gradient(circle at 50% 50%, rgba(79, 70, 229, 0.1), transparent 70%);
+  z-index: 0;
+}
+
+.hero-card .card-body {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-card .hero-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, #4f46e5, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 1rem;
+}
+
+.hero-card .hero-subtitle {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 2rem;
+  max-width: 80%;
+}
+
+.hero-card .hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Feature Card */
+.feature-card {
+  border: 1px solid rgba(78, 119, 255, 0.2);
+  height: 100%;
+}
+
+.feature-card .feature-icon {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  display: inline-block;
+  padding: 1rem;
+  border-radius: 1rem;
+  background-color: rgba(79, 70, 229, 0.1);
+  color: #4f46e5;
+}
+
+.feature-card .feature-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.feature-card .feature-description {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Widget Card */
+.widget-card {
+  height: 100%;
+}
+
+.widget-card .widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.widget-card .widget-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.widget-card .widget-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.widget-card .widget-body {
+  min-height: 200px;
+}
+
+/* Progress Bars Enhanced */
+.progress {
+  height: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+}
+
+.progress-bar {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0) 0%, 
+    rgba(255, 255, 255, 0.3) 50%, 
+    rgba(255, 255, 255, 0) 100%);
+  animation: progressShine 2s infinite linear;
+}
+
+@keyframes progressShine {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Badge Styles */
+.badge-discord {
+  background-color: #5865f2;
+  color: white;
+}
+
+.badge-minecraft {
+  background-color: #5dc11f;
+  color: white;
+}
+
+.badge-twitch {
+  background-color: #9146ff;
+  color: white;
+}
+
+.badge-premium {
+  background: linear-gradient(45deg, #f59e0b, #ef4444);
+  color: white;
+}
+
+/* Card Animations */
+.card.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

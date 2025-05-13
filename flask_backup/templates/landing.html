@@ -1,0 +1,707 @@
+{% extends "base.html" %}
+
+{% block title %}AstroBot AI - Intelligent Discord Bot for Minecraft & Twitch Integration{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Shooting Stars Background -->
+<div class="relative overflow-hidden bg-gradient-cosmic py-10 lg:py-20">
+    <!-- Animated Stars Background -->
+    <div id="starsContainer" class="absolute inset-0 z-0"></div>
+    
+    <!-- Subtle Nebula Effects -->
+    <div class="absolute top-1/4 left-0 w-96 h-96 bg-purple-500/20 rounded-full filter blur-3xl animate-pulse-slow"></div>
+    <div class="absolute bottom-1/3 right-0 w-96 h-96 bg-blue-500/20 rounded-full filter blur-3xl animate-pulse-slow animation-delay-2000"></div>
+    
+    <div class="container mx-auto z-10 relative px-3" style="max-width: calc(100vw - 30px); overflow-x: hidden; box-sizing: border-box;">
+        <div class="row align-items-center g-4 mx-0">
+            <!-- Hero Text Content -->
+            <div class="col-lg-6 col-md-12">
+                <div class="animate__animated animate__fadeInUp px-md-3 px-lg-0">
+                    <h1 class="display-4 fw-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 overflow-hidden text-break">
+                        <span class="d-inline-block text-wrap" style="max-width: 100%;">The Next-Gen AI-Powered</span><br>
+                        <span class="d-inline-block text-wrap" style="max-width: 100%;">Discord Bot</span>
+                    </h1>
+                    <p class="lead mb-4 text-gray-200 text-wrap text-break" style="max-width: 100%; overflow-wrap: break-word; word-wrap: break-word;">
+                        Enhance your Discord community with cutting-edge AI capabilities, Minecraft server management, and Twitch-powered engagement systems.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 mb-5">
+                        <a href="https://discord.com/api/oauth2/authorize?client_id={{ discord_client_id|default('YOUR_CLIENT_ID') }}&permissions=8&scope=bot%20applications.commands" 
+                           class="btn btn-primary btn-lg animate__animated animate__pulse animate__infinite animate__slow">
+                            <i class="bi bi-discord me-2"></i> Add to Discord
+                        </a>
+                        {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-success btn-lg">
+                            <i class="bi bi-speedometer2 me-2"></i> Go to Dashboard
+                        </a>
+                        {% endif %}
+                        <a href="#features" class="btn btn-outline-light btn-lg">
+                            <i class="bi bi-info-circle me-2"></i> Learn More
+                        </a>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 text-gray-400">
+                        <i class="bi bi-shield-check text-success"></i>
+                        <span>Trusted by 500+ servers</span>
+                        <span class="mx-2">•</span>
+                        <i class="bi bi-people text-primary"></i>
+                        <span>Serving 250,000+ users</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hero Animation/Image -->
+            <div class="col-lg-6 col-md-12 text-center">
+                <div class="position-relative animate__animated animate__fadeInRight overflow-hidden">
+                    <!-- Glow Effect -->
+                    <div class="position-absolute top-50 start-50 translate-middle w-75 h-75 bg-blue-500/20 rounded-full filter blur-3xl animate-pulse-slow"></div>
+                    
+                    <!-- Bot SVG Animation -->
+                    <svg class="mx-auto" width="100%" height="auto" style="max-width: 400px; max-height: 400px;" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                        <!-- Orbit Paths -->
+                        <circle cx="200" cy="200" r="150" fill="none" stroke="#4f46e5" stroke-width="1" stroke-dasharray="5 5" class="orbit" />
+                        <circle cx="200" cy="200" r="120" fill="none" stroke="#8b5cf6" stroke-width="1" stroke-dasharray="5 5" class="orbit" style="animation-duration: 15s" />
+                        <circle cx="200" cy="200" r="90" fill="none" stroke="#ec4899" stroke-width="1" stroke-dasharray="5 5" class="orbit" style="animation-duration: 10s" />
+                        
+                        <!-- Planet/Node Elements -->
+                        <g class="orbit" style="animation-duration: 20s">
+                            <circle cx="350" cy="200" r="15" fill="#4f46e5" />
+                            <text x="350" y="200" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="10">Discord</text>
+                        </g>
+                        
+                        <g class="orbit" style="animation-duration: 15s; animation-delay: 5s">
+                            <circle cx="200" cy="80" r="15" fill="#8b5cf6" />
+                            <text x="200" y="80" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="10">AI</text>
+                        </g>
+                        
+                        <g class="orbit" style="animation-duration: 10s; animation-delay: 2s">
+                            <circle cx="110" cy="200" r="15" fill="#ec4899" />
+                            <text x="110" y="200" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="10">Twitch</text>
+                        </g>
+                        
+                        <g class="orbit" style="animation-duration: 25s">
+                            <circle cx="250" cy="320" r="15" fill="#10b981" />
+                            <text x="250" y="320" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="10">Minecraft</text>
+                        </g>
+                        
+                        <!-- Central Bot Element -->
+                        <g>
+                            <!-- Glow effect -->
+                            <circle cx="200" cy="200" r="40" fill="#3b82f6" opacity="0.2" class="animate-pulse-slow" />
+                            
+                            <!-- Bot head -->
+                            <rect x="170" y="170" width="60" height="60" rx="15" fill="#2e3c5a" />
+                            
+                            <!-- Bot eyes -->
+                            <circle cx="185" cy="190" r="8" fill="#60a5fa" class="robot-eye" />
+                            <circle cx="215" cy="190" r="8" fill="#60a5fa" class="robot-eye" />
+                            
+                            <!-- Bot antenna -->
+                            <circle cx="200" cy="155" r="5" fill="#60a5fa" class="robot-antenna" />
+                            <line x1="200" y1="160" x2="200" y2="170" stroke="#60a5fa" stroke-width="3" />
+                            
+                            <!-- Bot mouth -->
+                            <rect x="185" y="210" width="30" height="5" rx="2" fill="#c7d2fe" />
+                            
+                            <!-- Pulse rings -->
+                            <circle cx="200" cy="200" r="50" fill="none" stroke="#60a5fa" stroke-width="1" opacity="0.6" class="animate-pulse-slow" />
+                            <circle cx="200" cy="200" r="60" fill="none" stroke="#60a5fa" stroke-width="1" opacity="0.4" class="animate-pulse-slow animation-delay-500" />
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Key Features Section -->
+<section id="features" class="py-10 bg-gray-900/70">
+    <div class="container mx-auto">
+        <div class="text-center mb-10">
+            <h2 class="fw-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-3">Ultimate Bot Features</h2>
+            <p class="lead text-gray-300 mx-auto" style="max-width: 800px;">AstroBot AI combines advanced technologies to create a powerful, self-improving Discord bot with rich capabilities.</p>
+        </div>
+        
+        <div class="row g-4 mb-5">
+            <!-- AI Features -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 bg-gray-800/70 shadow-lg hover:scale-105 transition-transform duration-300">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3 p-2 rounded bg-purple-500/20">
+                                <i class="bi bi-robot text-purple-400" style="font-size: 1.75rem;"></i>
+                            </div>
+                            <h5 class="card-title mb-0">AI-Powered Assistance</h5>
+                        </div>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2 d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>Claude 3.5 & GPT-4o Integration</span>
+                            </li>
+                            <li class="mb-2 d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>Self-improving responses</span>
+                            </li>
+                            <li class="mb-2 d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>Context-aware conversations</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>ElevenLabs voice generation</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Minecraft Features -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 bg-gray-800/70 shadow-lg hover:scale-105 transition-transform duration-300">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3 p-2 rounded bg-green-500/20">
+                                <i class="bi bi-box-fill text-green-400" style="font-size: 1.75rem;"></i>
+                            </div>
+                            <h5 class="card-title mb-0">Minecraft Integration</h5>
+                        </div>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2 d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>Server monitoring & management</span>
+                            </li>
+                            <li class="mb-2 d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>Mod compatibility analysis</span>
+                            </li>
+                            <li class="mb-2 d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>Whitelist & player management</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>Automatic crash recovery</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Twitch Features -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 bg-gray-800/70 shadow-lg hover:scale-105 transition-transform duration-300">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3 p-2 rounded" style="background-color: rgba(145, 70, 255, 0.2);">
+                                <i class="bi bi-twitch" style="font-size: 1.75rem; color: #9146ff;"></i>
+                            </div>
+                            <h5 class="card-title mb-0">StreamSync™</h5>
+                        </div>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2 d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>Twitch-Discord integration</span>
+                            </li>
+                            <li class="mb-2 d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>Live stream notifications</span>
+                            </li>
+                            <li class="mb-2 d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>Community points ecosystem</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>Viewer rewards & leaderboards</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Community Features -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 bg-gray-800/70 shadow-lg hover:scale-105 transition-transform duration-300">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3 p-2 rounded bg-blue-500/20">
+                                <i class="bi bi-people-fill text-blue-400" style="font-size: 1.75rem;"></i>
+                            </div>
+                            <h5 class="card-title mb-0">Community Tools</h5>
+                        </div>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2 d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>Advanced moderation system</span>
+                            </li>
+                            <li class="mb-2 d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>Welcome & onboarding flows</span>
+                            </li>
+                            <li class="mb-2 d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>Interactive polls & forms</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>Custom role management</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Feature Showcase Boxes -->
+        <div class="row g-4">
+            <!-- AI Assistant Box -->
+            <div class="col-md-4">
+                <div class="card border-0 feature-card overflow-hidden">
+                    <div class="card-body p-0">
+                        <div class="p-4">
+                            <h4 class="text-primary mb-3">AI Assistant</h4>
+                            <div class="chat-example bg-gray-800/70 p-3 rounded-3 mb-3">
+                                <div class="d-flex mb-2">
+                                    <div class="flex-shrink-0 chat-avatar me-2 bg-dark rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                        <i class="bi bi-person-fill text-light"></i>
+                                    </div>
+                                    <div class="bg-gray-700/70 rounded px-3 py-2">
+                                        <p class="mb-0 small"><strong>User:</strong> How do I install the Fabric mod loader?</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0 chat-avatar me-2 bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                        <i class="bi bi-robot text-light"></i>
+                                    </div>
+                                    <div class="bg-gray-700/70 rounded px-3 py-2">
+                                        <p class="mb-0 small"><strong>AstroBot:</strong> I'll guide you through installing Fabric:
+                                        <ol class="mb-0 ps-3 small">
+                                            <li>Download the installer from fabricmc.net</li>
+                                            <li>Run the JAR file with Java</li>
+                                            <li>Select your Minecraft version</li>
+                                            <li>Click Install</li>
+                                        </ol>
+                                        Need help with specific mods after installation?</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-400 mb-0 small">Ask complex questions about Minecraft modding, server setup, or game mechanics. AstroBot leverages cutting-edge AI to provide detailed, helpful responses.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Server Dashboard -->
+            <div class="col-md-4">
+                <div class="card border-0 feature-card overflow-hidden">
+                    <div class="card-body p-0">
+                        <div class="p-4">
+                            <h4 class="text-success mb-3">Server Dashboard</h4>
+                            <div class="server-example bg-gray-800/70 p-3 rounded-3 mb-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="badge bg-success d-flex align-items-center">
+                                        <span class="status-dot me-1"></span> Online
+                                    </span>
+                                    <span class="badge bg-secondary">20/50 Players</span>
+                                </div>
+                                <div class="progress mb-2" style="height: 8px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 75%"></div>
+                                </div>
+                                <div class="d-flex justify-content-between small text-gray-400 mb-2">
+                                    <span>CPU: 75%</span>
+                                    <span>RAM: 4.2GB/8GB</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <button class="btn btn-sm btn-outline-light" disabled>
+                                        <i class="bi bi-arrow-clockwise"></i>
+                                    </button>
+                                    <span class="badge bg-primary">1.19.2</span>
+                                    <button class="btn btn-sm btn-outline-light" disabled>
+                                        <i class="bi bi-terminal"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="text-gray-400 mb-0 small">Monitor your Minecraft servers in real-time. View performance metrics, manage players, and execute commands directly from Discord or web dashboard.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Twitch Integration -->
+            <div class="col-md-4">
+                <div class="card border-0 feature-card overflow-hidden">
+                    <div class="card-body p-0">
+                        <div class="p-4">
+                            <h4 style="color: #9146ff;" class="mb-3">Twitch Integration</h4>
+                            <div class="twitch-example bg-gray-800/70 p-3 rounded-3 mb-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="badge" style="background-color: #9146ff;">
+                                        <i class="bi bi-broadcast me-1"></i> Live
+                                    </span>
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-people-fill me-1"></i> 237
+                                    </span>
+                                </div>
+                                <div class="mb-2 small text-gray-200">
+                                    <strong>PixelCrafter</strong> is streaming <strong>Minecraft Hardcore Challenge</strong>
+                                </div>
+                                <div class="d-flex justify-content-between small text-gray-400 mb-2">
+                                    <span>2h 13m</span>
+                                    <span>!commands !points</span>
+                                </div>
+                                <div class="stream-action d-grid">
+                                    <button class="btn btn-sm" style="background-color: #9146ff; color: white;" disabled>
+                                        <i class="bi bi-twitch me-1"></i> Watch Stream
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="text-gray-400 mb-0 small">Seamlessly connect your Twitch and Discord communities. AstroBot announces your streams, manages viewer rewards, and syncs subscriber perks.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-10 bg-gray-900">
+    <div class="container mx-auto">
+        <div class="text-center mb-10">
+            <h2 class="fw-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-3">How It Works</h2>
+            <p class="lead text-gray-300 mx-auto" style="max-width: 800px;">Setting up AstroBot AI is simple. Follow these steps to enhance your Discord server.</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Step 1 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card bg-transparent border-0 text-center">
+                    <div class="card-body">
+                        <div class="step-icon mx-auto mb-4 bg-blue-500/20 text-blue-400 rounded-circle d-flex align-items-center justify-content-center animate-pulse-opacity" style="width: 80px; height: 80px;">
+                            <i class="bi bi-plus-circle-fill" style="font-size: 2rem;"></i>
+                        </div>
+                        <h4 class="text-light mb-3">1. Add to Discord</h4>
+                        <p class="text-gray-400 mb-0">Click the "Add to Discord" button and authorize AstroBot for your server.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 2 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card bg-transparent border-0 text-center">
+                    <div class="card-body">
+                        <div class="step-icon mx-auto mb-4 bg-purple-500/20 text-purple-400 rounded-circle d-flex align-items-center justify-content-center animate-pulse-opacity animation-delay-300" style="width: 80px; height: 80px;">
+                            <i class="bi bi-gear-fill" style="font-size: 2rem;"></i>
+                        </div>
+                        <h4 class="text-light mb-3">2. Configure</h4>
+                        <p class="text-gray-400 mb-0">Use the AI setup wizard to customize features for your community's needs.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 3 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card bg-transparent border-0 text-center">
+                    <div class="card-body">
+                        <div class="step-icon mx-auto mb-4 bg-green-500/20 text-green-400 rounded-circle d-flex align-items-center justify-content-center animate-pulse-opacity animation-delay-500" style="width: 80px; height: 80px;">
+                            <i class="bi bi-link-45deg" style="font-size: 2rem;"></i>
+                        </div>
+                        <h4 class="text-light mb-3">3. Connect</h4>
+                        <p class="text-gray-400 mb-0">Link your Minecraft servers and Twitch accounts for full integration.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 4 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card bg-transparent border-0 text-center">
+                    <div class="card-body">
+                        <div class="step-icon mx-auto mb-4 bg-blue-500/20 text-blue-400 rounded-circle d-flex align-items-center justify-content-center animate-pulse-opacity animation-delay-700" style="width: 80px; height: 80px;">
+                            <i class="bi bi-rocket-takeoff-fill" style="font-size: 2rem;"></i>
+                        </div>
+                        <h4 class="text-light mb-3">4. Engage</h4>
+                        <p class="text-gray-400 mb-0">Enjoy enhanced community interaction with AI assistance and integrations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Premium Features -->
+<section class="py-10 bg-gradient-cosmic position-relative overflow-hidden">
+    <!-- Nebula Backgrounds -->
+    <div class="position-absolute top-0 left-0 w-full h-full">
+        <div class="position-absolute top-20 -left-20 w-72 h-72 bg-purple-600/20 rounded-full filter blur-3xl"></div>
+        <div class="position-absolute bottom-20 -right-20 w-72 h-72 bg-blue-600/20 rounded-full filter blur-3xl"></div>
+    </div>
+    
+    <div class="container mx-auto position-relative z-10">
+        <div class="text-center mb-10">
+            <span class="badge bg-primary bg-gradient-to-r from-blue-500 to-purple-500 mb-3 px-3 py-2 rounded-pill">PREMIUM FEATURES</span>
+            <h2 class="fw-bold text-white mb-3">Unlock Advanced Capabilities</h2>
+            <p class="lead text-gray-300 mx-auto" style="max-width: 800px;">Upgrade to premium for exclusive features and enhanced functionality.</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Premium Feature 1 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card bg-gray-800/50 border-0 h-100 hover:scale-105 transition-transform duration-300 shadow-lg">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-palette-fill text-pink-400 me-3" style="font-size: 1.75rem;"></i>
+                            <h5 class="card-title mb-0">Bot Customization</h5>
+                        </div>
+                        <p class="text-gray-300 mb-0">Personalize your bot's name, profile picture, and status. Create a seamless brand experience for your community.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Premium Feature 2 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card bg-gray-800/50 border-0 h-100 hover:scale-105 transition-transform duration-300 shadow-lg">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-cpu-fill text-blue-400 me-3" style="font-size: 1.75rem;"></i>
+                            <h5 class="card-title mb-0">Advanced AI Models</h5>
+                        </div>
+                        <p class="text-gray-300 mb-0">Access to the latest AI models with enhanced capabilities and faster response times for your server.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Premium Feature 3 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card bg-gray-800/50 border-0 h-100 hover:scale-105 transition-transform duration-300 shadow-lg">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-graph-up-arrow text-green-400 me-3" style="font-size: 1.75rem;"></i>
+                            <h5 class="card-title mb-0">Advanced Analytics</h5>
+                        </div>
+                        <p class="text-gray-300 mb-0">Detailed insights into community engagement, command usage, and server activity with custom reports.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Premium Feature 4 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card bg-gray-800/50 border-0 h-100 hover:scale-105 transition-transform duration-300 shadow-lg">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-volume-up-fill text-purple-400 me-3" style="font-size: 1.75rem;"></i>
+                            <h5 class="card-title mb-0">Voice Generation</h5>
+                        </div>
+                        <p class="text-gray-300 mb-0">ElevenLabs integration for high-quality voice messages, announcements, and storytelling in your server.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Premium Feature 5 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card bg-gray-800/50 border-0 h-100 hover:scale-105 transition-transform duration-300 shadow-lg">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-code-square text-yellow-400 me-3" style="font-size: 1.75rem;"></i>
+                            <h5 class="card-title mb-0">Custom Commands</h5>
+                        </div>
+                        <p class="text-gray-300 mb-0">Create and deploy custom commands tailored to your community's unique needs and interests.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Premium Feature 6 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card bg-gray-800/50 border-0 h-100 hover:scale-105 transition-transform duration-300 shadow-lg">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-shield-check text-red-400 me-3" style="font-size: 1.75rem;"></i>
+                            <h5 class="card-title mb-0">Priority Support</h5>
+                        </div>
+                        <p class="text-gray-300 mb-0">Dedicated support team with faster response times and personalized assistance for your server.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-10">
+            <a href="{{ url_for('premium_plans') }}" class="btn btn-primary btn-lg px-5">
+                <i class="bi bi-star-fill me-2"></i> View Premium Plans
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-10 bg-gray-900/70">
+    <div class="container mx-auto">
+        <div class="text-center mb-10">
+            <h2 class="fw-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-3">Success Stories</h2>
+            <p class="lead text-gray-300 mx-auto" style="max-width: 800px;">See what server owners are saying about AstroBot AI.</p>
+        </div>
+        
+        <div class="swiper testimonials-swiper">
+            <div class="swiper-wrapper">
+                <!-- Testimonial 1 -->
+                <div class="swiper-slide">
+                    <div class="card border-0 bg-gray-800/70 shadow-lg h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex mb-4">
+                                <div class="testimonial-avatar me-3">
+                                    <img src="https://via.placeholder.com/50" alt="Avatar" class="rounded-circle" width="50" height="50">
+                                </div>
+                                <div>
+                                    <h5 class="mb-1">MinecraftMaster</h5>
+                                    <p class="text-primary mb-0">Server Owner, 5K+ members</p>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                            </div>
+                            <p class="text-gray-300 mb-0">"AstroBot AI has completely transformed how we manage our Minecraft community. The AI-powered support handles over 80% of player questions, and the server monitoring has prevented several crashes. Worth every penny of the premium subscription!"</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="swiper-slide">
+                    <div class="card border-0 bg-gray-800/70 shadow-lg h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex mb-4">
+                                <div class="testimonial-avatar me-3">
+                                    <img src="https://via.placeholder.com/50" alt="Avatar" class="rounded-circle" width="50" height="50">
+                                </div>
+                                <div>
+                                    <h5 class="mb-1">TwitchStreamerPro</h5>
+                                    <p class="text-primary mb-0">Content Creator</p>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                            </div>
+                            <p class="text-gray-300 mb-0">"The StreamSync feature is a game-changer! My Discord server engagement has increased by 150% since adding AstroBot. The points system keeps viewers engaged even when I'm offline, and the automatic stream announcements bring in new viewers consistently."</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="swiper-slide">
+                    <div class="card border-0 bg-gray-800/70 shadow-lg h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex mb-4">
+                                <div class="testimonial-avatar me-3">
+                                    <img src="https://via.placeholder.com/50" alt="Avatar" class="rounded-circle" width="50" height="50">
+                                </div>
+                                <div>
+                                    <h5 class="mb-1">ModpackCreator</h5>
+                                    <p class="text-primary mb-0">Modding Community</p>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-half text-warning"></i>
+                            </div>
+                            <p class="text-gray-300 mb-0">"The AI-powered mod compatibility checking and troubleshooting has reduced our support workload by at least 70%. New users get immediate help with installation issues, and the automated crash analysis helps our team focus on creating content rather than solving the same problems repeatedly."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-pagination mt-4"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-10 bg-gradient-to-r from-blue-600 to-purple-600 position-relative overflow-hidden">
+    <!-- Animated Particles -->
+    <div id="particles-container" class="position-absolute inset-0"></div>
+    
+    <div class="container mx-auto text-center position-relative z-10">
+        <h2 class="display-5 fw-bold text-white mb-4 animate__animated animate__fadeInUp">Ready to Transform Your Discord Server?</h2>
+        <p class="lead text-white opacity-90 mb-5 mx-auto animate__animated animate__fadeInUp animate__delay-1s" style="max-width: 700px;">
+            Join thousands of thriving communities powered by AstroBot AI's advanced features.
+        </p>
+        <div class="d-flex flex-wrap justify-content-center gap-3 animate__animated animate__fadeInUp animate__delay-2s">
+            <a href="https://discord.com/api/oauth2/authorize?client_id={{ discord_client_id|default('YOUR_CLIENT_ID') }}&permissions=8&scope=bot%20applications.commands" 
+               class="btn btn-light btn-lg animate__animated animate__pulse animate__infinite animate__slow">
+                <i class="bi bi-discord me-2"></i> Add to Discord
+            </a>
+            <a href="{{ url_for('register') }}" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-person-plus me-2"></i> Create Account
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- JavaScript for Stars Animation -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Create animated star field
+    const starsContainer = document.getElementById('starsContainer');
+    if (starsContainer) {
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            
+            // Random position
+            const x = Math.random() * 100;
+            const y = Math.random() * 100;
+            
+            // Random size
+            const size = Math.random() * 2 + 1;
+            
+            // Random opacity
+            const opacity = Math.random() * 0.5 + 0.3;
+            
+            // Random twinkle duration
+            const duration = Math.random() * 5 + 3;
+            
+            star.style.left = `${x}%`;
+            star.style.top = `${y}%`;
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.setProperty('--initial-opacity', opacity);
+            star.style.setProperty('--twinkle-duration', `${duration}s`);
+            
+            starsContainer.appendChild(star);
+        }
+    }
+    
+    // Initialize Swiper
+    new Swiper('.testimonials-swiper', {
+        slidesPerView: 1,
+        spaceBetween: 20,
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        breakpoints: {
+            640: {
+                slidesPerView: 1,
+                spaceBetween: 20,
+            },
+            768: {
+                slidesPerView: 2,
+                spaceBetween: 30,
+            },
+            1024: {
+                slidesPerView: 3,
+                spaceBetween: 30,
+            },
+        },
+        autoplay: {
+            delay: 5000,
+            disableOnInteraction: false,
+        },
+    });
+});
+</script>
+{% endblock %}

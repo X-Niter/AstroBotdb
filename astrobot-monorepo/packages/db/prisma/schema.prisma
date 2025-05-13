@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  discordId      String    @unique
+  username       String
+  discriminator  String
+  email          String?
+  avatarUrl      String?
+  joinedAt       DateTime  @default(now())
+  premium        Boolean   @default(false)
+  premiumExpires DateTime?
+  role           Role      @default(USER)
+  servers        UserServer[]
+  sessions       Session[]
+  updatedAt      DateTime  @updatedAt
+  
+  @@index([discordId])
+}
+
+model Guild {
+  id              String        @id
+  name            String
+  icon            String?
+  ownerId         String
+  joinedAt        DateTime      @default(now())
+  memberCount     Int           @default(0)
+  premium         Boolean       @default(false)
+  premiumExpires  DateTime?
+  prefix          String        @default("!")
+  welcomeEnabled  Boolean       @default(false)
+  welcomeChannel  String?
+  welcomeMessage  String?
+  modLogEnabled   Boolean       @default(false)
+  modLogChannel   String?
+  autoModEnabled  Boolean       @default(false)
+  autoModSettings Json?
+  minecraftServer MinecraftServer?
+  users           UserServer[]
+  twitchChannel   TwitchChannel?
+  updatedAt       DateTime      @updatedAt
+  
+  @@index([ownerId])
+}
+
+model UserServer {
+  userId    String
+  guildId   String
+  isPrimary Boolean  @default(false)
+  joinedAt  DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guild     Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@id([userId, guildId])
+}
+
+model MinecraftServer {
+  id       String   @id @default(cuid())
+  guildId  String   @unique
+  name     String
+  host     String
+  port     Int      @default(25565)
+  rconPort Int?
+  rconPass String?
+  status   Boolean  @default(false)
+  lastSeen DateTime @default(now())
+  guild    Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+}
+
+model TwitchChannel {
+  id        String    @id @default(cuid())
+  guildId   String    @unique
+  channelId String
+  username  String
+  connected Boolean   @default(true)
+  guild     Guild     @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  USER
+  PREMIUM
+  MODERATOR
+  ADMIN
+  OWNER
+}

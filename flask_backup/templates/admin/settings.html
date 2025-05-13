@@ -1,0 +1,389 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}Admin - System Settings{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2 mb-0">System Settings</h1>
+        <div>
+            <button id="btn-refresh-cache" class="btn btn-outline-primary me-2">
+                <i class="fas fa-sync-alt me-1"></i> Refresh Cache
+            </button>
+            <button id="btn-restart-services" class="btn btn-outline-warning">
+                <i class="fas fa-server me-1"></i> Restart Services
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- System Info Card -->
+        <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">System Information</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span>Python Version</span>
+                            <span class="badge bg-primary">{{ python_version }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span>Flask Version</span>
+                            <span class="badge bg-primary">{{ flask_version }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span>Database</span>
+                            <span class="badge bg-success">PostgreSQL</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span>MongoDB</span>
+                            {% if mongodb_available %}
+                            <span class="badge bg-success">Available</span>
+                            {% else %}
+                            <span class="badge bg-danger">Unavailable</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Form Card -->
+        <div class="col-xl-9 col-lg-6 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Configuration Settings</h5>
+                    <div>
+                        <button id="btn-reset-settings" class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-undo me-1"></i> Reset to Defaults
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form id="settings-form">
+                        <!-- Bot Settings -->
+                        <h6 class="fw-bold mb-3"><i class="fas fa-robot me-2"></i>Bot Configuration</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="status_update_interval" class="form-label">Status Update Interval (seconds)</label>
+                                <input type="number" class="form-control" id="status_update_interval" name="status_update_interval" 
+                                       value="{{ config.get('status_update_interval', 60) }}" min="30">
+                                <div class="form-text">How often the bot updates its status message</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="command_prefix" class="form-label">Default Command Prefix</label>
+                                <input type="text" class="form-control" id="command_prefix" name="command_prefix" 
+                                       value="{{ config.get('command_prefix', '!') }}" maxlength="5">
+                                <div class="form-text">Default prefix for bot commands</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="log_level" class="form-label">Bot Log Level</label>
+                                <select class="form-select" id="log_level" name="log_level">
+                                    <option value="DEBUG" {% if config.get('log_level') == 'DEBUG' %}selected{% endif %}>Debug</option>
+                                    <option value="INFO" {% if config.get('log_level') == 'INFO' %}selected{% endif %}>Info</option>
+                                    <option value="WARNING" {% if config.get('log_level') == 'WARNING' %}selected{% endif %}>Warning</option>
+                                    <option value="ERROR" {% if config.get('log_level') == 'ERROR' %}selected{% endif %}>Error</option>
+                                </select>
+                                <div class="form-text">Logging verbosity level</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="max_message_cache" class="form-label">Max Message Cache</label>
+                                <input type="number" class="form-control" id="max_message_cache" name="max_message_cache" 
+                                       value="{{ config.get('max_message_cache', 1000) }}" min="100" max="10000">
+                                <div class="form-text">Number of messages to keep in memory cache</div>
+                            </div>
+                        </div>
+
+                        <!-- AI Configuration -->
+                        <h6 class="fw-bold mb-3"><i class="fas fa-brain me-2"></i>AI Configuration</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="default_ai_model" class="form-label">Default AI Model</label>
+                                <select class="form-select" id="default_ai_model" name="default_ai_model">
+                                    <option value="gpt-4o" {% if config.get('default_ai_model') == 'gpt-4o' %}selected{% endif %}>GPT-4o</option>
+                                    <option value="claude-3-5-sonnet" {% if config.get('default_ai_model') == 'claude-3-5-sonnet' %}selected{% endif %}>Claude 3.5 Sonnet</option>
+                                    <option value="gpt-3.5-turbo" {% if config.get('default_ai_model') == 'gpt-3.5-turbo' %}selected{% endif %}>GPT-3.5 Turbo</option>
+                                </select>
+                                <div class="form-text">Default AI model for general use</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="ai_response_timeout" class="form-label">AI Response Timeout (seconds)</label>
+                                <input type="number" class="form-control" id="ai_response_timeout" name="ai_response_timeout" 
+                                       value="{{ config.get('ai_response_timeout', 30) }}" min="10" max="120">
+                                <div class="form-text">Timeout for AI API responses</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="max_tokens" class="form-label">Max Response Tokens</label>
+                                <input type="number" class="form-control" id="max_tokens" name="max_tokens" 
+                                       value="{{ config.get('max_tokens', 2048) }}" min="256" max="4096">
+                                <div class="form-text">Maximum tokens for AI responses</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="default_temperature" class="form-label">Default Temperature</label>
+                                <input type="number" class="form-control" id="default_temperature" name="default_temperature" 
+                                       value="{{ config.get('default_temperature', 0.7) }}" min="0" max="2" step="0.1">
+                                <div class="form-text">Default creativity level (0.0-2.0)</div>
+                            </div>
+                        </div>
+
+                        <!-- Security Settings -->
+                        <h6 class="fw-bold mb-3"><i class="fas fa-shield-alt me-2"></i>Security Settings</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="rate_limit_attempts" class="form-label">Rate Limit Attempts</label>
+                                <input type="number" class="form-control" id="rate_limit_attempts" name="rate_limit_attempts" 
+                                       value="{{ config.get('rate_limit_attempts', 5) }}" min="1" max="20">
+                                <div class="form-text">Login attempts before temporary ban</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="rate_limit_timeout" class="form-label">Rate Limit Timeout (minutes)</label>
+                                <input type="number" class="form-control" id="rate_limit_timeout" name="rate_limit_timeout" 
+                                       value="{{ config.get('rate_limit_timeout', 15) }}" min="5" max="60">
+                                <div class="form-text">Time until rate limit reset</div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="enable_2fa" name="enable_2fa" 
+                                          {% if config.get('enable_2fa', False) %}checked{% endif %}>
+                                    <label class="form-check-label" for="enable_2fa">Require 2FA for Admin Access</label>
+                                </div>
+                                <div class="form-text">Enforce two-factor authentication for all admin users</div>
+                            </div>
+                        </div>
+
+                        <!-- Email Settings -->
+                        <h6 class="fw-bold mb-3"><i class="fas fa-envelope me-2"></i>Email Configuration</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="smtp_server" class="form-label">SMTP Server</label>
+                                <input type="text" class="form-control" id="smtp_server" name="smtp_server" 
+                                       value="{{ config.get('smtp_server', '') }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="smtp_port" class="form-label">SMTP Port</label>
+                                <input type="number" class="form-control" id="smtp_port" name="smtp_port" 
+                                       value="{{ config.get('smtp_port', 587) }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="smtp_username" class="form-label">SMTP Username</label>
+                                <input type="text" class="form-control" id="smtp_username" name="smtp_username" 
+                                       value="{{ config.get('smtp_username', '') }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="smtp_password" class="form-label">SMTP Password</label>
+                                <input type="password" class="form-control" id="smtp_password" name="smtp_password" 
+                                       placeholder="••••••••">
+                                <div class="form-text">Leave empty to keep existing password</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email_from" class="form-label">From Email</label>
+                                <input type="email" class="form-control" id="email_from" name="email_from" 
+                                       value="{{ config.get('email_from', 'noreply@astrobot.ai') }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email_name" class="form-label">From Name</label>
+                                <input type="text" class="form-control" id="email_name" name="email_name" 
+                                       value="{{ config.get('email_name', 'AstroBot AI') }}">
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Settings
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Settings form submission
+        const settingsForm = document.getElementById('settings-form');
+        settingsForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(settingsForm);
+            const submitBtn = settingsForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+            
+            fetch('/api/admin/update-settings', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Save Settings';
+                
+                if (data.status === 'success') {
+                    showToast('Success', data.message, 'success');
+                } else {
+                    showToast('Error', data.message, 'error');
+                }
+            })
+            .catch(error => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Save Settings';
+                showToast('Error', 'An error occurred while saving settings', 'error');
+                console.error('Error:', error);
+            });
+        });
+        
+        // Reset settings to defaults
+        document.getElementById('btn-reset-settings').addEventListener('click', function() {
+            if (confirm('Are you sure you want to reset all settings to their default values? This cannot be undone.')) {
+                this.disabled = true;
+                this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Resetting...';
+                
+                fetch('/api/admin/reset-settings', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-undo me-1"></i> Reset to Defaults';
+                    
+                    if (data.status === 'success') {
+                        showToast('Success', data.message, 'success');
+                        // Reload the page to show default values
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        showToast('Error', data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-undo me-1"></i> Reset to Defaults';
+                    showToast('Error', 'An error occurred while resetting settings', 'error');
+                    console.error('Error:', error);
+                });
+            }
+        });
+        
+        // Refresh cache
+        document.getElementById('btn-refresh-cache').addEventListener('click', function() {
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Refreshing...';
+            
+            fetch('/api/admin/refresh-cache', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-sync-alt me-1"></i> Refresh Cache';
+                
+                if (data.status === 'success') {
+                    showToast('Success', data.message, 'success');
+                } else {
+                    showToast('Error', data.message, 'error');
+                }
+            })
+            .catch(error => {
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-sync-alt me-1"></i> Refresh Cache';
+                showToast('Error', 'An error occurred while refreshing cache', 'error');
+                console.error('Error:', error);
+            });
+        });
+        
+        // Restart services
+        document.getElementById('btn-restart-services').addEventListener('click', function() {
+            if (confirm('Are you sure you want to restart all application services? This may cause temporary disruption.')) {
+                this.disabled = true;
+                this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Restarting...';
+                
+                fetch('/api/admin/restart-services', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-server me-1"></i> Restart Services';
+                    
+                    if (data.status === 'success') {
+                        showToast('Success', data.message, 'success');
+                    } else {
+                        showToast('Error', data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-server me-1"></i> Restart Services';
+                    showToast('Error', 'An error occurred while restarting services', 'error');
+                    console.error('Error:', error);
+                });
+            }
+        });
+        
+        // Helper function to show toast notifications
+        function showToast(title, message, type = 'info') {
+            // Check if we have a toast container, if not create one
+            let toastContainer = document.querySelector('.toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                document.body.appendChild(toastContainer);
+            }
+            
+            // Create the toast element
+            const toastId = 'toast-' + Date.now();
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center border-0 ${type === 'error' ? 'bg-danger' : type === 'success' ? 'bg-success' : 'bg-primary'} text-white`;
+            toast.id = toastId;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            
+            // Toast content
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <strong>${title}</strong>: ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+            
+            // Add the toast to the container
+            toastContainer.appendChild(toast);
+            
+            // Initialize and show the toast
+            const bsToast = new bootstrap.Toast(toast, {
+                animation: true,
+                autohide: true,
+                delay: 5000
+            });
+            bsToast.show();
+            
+            // Remove the toast from DOM after it's hidden
+            toast.addEventListener('hidden.bs.toast', function () {
+                toast.remove();
+            });
+        }
+    });
+</script>
+{% endblock %}

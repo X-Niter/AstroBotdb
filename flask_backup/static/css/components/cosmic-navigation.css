@@ -1,0 +1,1015 @@
+/* Cosmic Navigation Components */
+
+/* Main navigation container */
+.cosmic-navbar {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.85) 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(78, 119, 255, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  transition: all 0.3s ease;
+  width: 100%; /* Ensure full width */
+  left: 0; /* Prevent left side clipping */
+  right: 0; /* Ensure full width */
+  box-sizing: border-box; /* Include padding in width calculation */
+  padding: 0 15px; /* Consistent padding with containers */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Add subtle shadow for depth */
+}
+
+.cosmic-navbar-scrolled {
+  background: rgba(13, 18, 30, 0.95);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.cosmic-navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+}
+
+/* Logo */
+.cosmic-navbar-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+  font-weight: 700;
+  font-size: 1.5rem;
+  position: relative;
+}
+
+.cosmic-navbar-logo:after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(78, 119, 255, 0.7), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cosmic-navbar-logo:hover:after {
+  opacity: 1;
+}
+
+.cosmic-navbar-logo img {
+  height: 2.5rem;
+  margin-right: 0.75rem;
+}
+
+/* Mobile menu toggle */
+.cosmic-navbar-toggle {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 2rem;
+  height: 1.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 60;
+}
+
+.cosmic-navbar-toggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+.cosmic-navbar-toggle.open span:nth-child(1) {
+  transform: translateY(10px) rotate(45deg);
+}
+
+.cosmic-navbar-toggle.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.cosmic-navbar-toggle.open span:nth-child(3) {
+  transform: translateY(-10px) rotate(-45deg);
+}
+
+/* Navigation items container */
+.cosmic-navbar-items {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Primary navigation */
+.cosmic-navbar-nav {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0.75rem;
+}
+
+/* Mobile navigation */
+@media (max-width: 1023px) {
+  .cosmic-navbar-container {
+    padding: 0.5rem;
+  }
+  
+  .cosmic-navbar-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 85%; /* Reduce width on very small screens */
+    max-width: 18rem; /* But cap at 18rem for larger screens */
+    background: rgba(15, 23, 42, 0.98);
+    padding: 5rem 1.5rem 1.5rem;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    z-index: 55;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-left: 1px solid rgba(78, 119, 255, 0.15);
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.25); /* Shadow for depth */
+  }
+  
+  .cosmic-navbar-menu.open {
+    transform: translateX(0);
+  }
+  
+  .cosmic-navbar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  .cosmic-navbar-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .cosmic-navbar-nav {
+    flex-direction: column;
+    width: 100%;
+    gap: 0;
+  }
+  
+  /* Fix nested dropdowns */
+  .cosmic-navbar-dropdown {
+    position: relative;
+  }
+  
+  .cosmic-navbar-dropdown-content {
+    position: static;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    margin-top: 0.5rem;
+    border-left: 1px solid rgba(78, 119, 255, 0.3);
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+  }
+  
+  .cosmic-navbar-dropdown.open .cosmic-navbar-dropdown-content {
+    max-height: 500px;
+    opacity: 1;
+  }
+  
+  /* Improve touch targets */
+  .cosmic-navbar-link,
+  .cosmic-navbar-dropdown-item {
+    padding: 0.875rem 1rem;
+  }
+  
+  /* Ensure mobile menu has proper height on all devices */
+  @supports (-webkit-touch-callout: none) {
+    /* iOS specific fix */
+    .cosmic-navbar-menu {
+      height: -webkit-fill-available;
+    }
+  }
+}
+
+/* Navigation links */
+.cosmic-navbar-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.cosmic-navbar-link:hover {
+  color: white;
+  background-color: rgba(78, 119, 255, 0.1);
+}
+
+.cosmic-navbar-link.active {
+  color: white;
+  background-color: rgba(78, 119, 255, 0.15);
+}
+
+.cosmic-navbar-link.active:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+}
+
+.cosmic-navbar-link i {
+  margin-right: 0.75rem;
+  font-size: 1.125rem;
+  color: rgba(78, 119, 255, 0.9);
+  transition: all 0.2s ease;
+}
+
+.cosmic-navbar-link:hover i {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 1023px) {
+  .cosmic-navbar-link {
+    padding: 1rem 0.75rem;
+    border-radius: 0;
+    border-bottom: 1px solid rgba(78, 119, 255, 0.1);
+  }
+  
+  .cosmic-navbar-link.active:before {
+    width: 4px;
+  }
+}
+
+/* Dropdown menus */
+.cosmic-navbar-dropdown {
+  position: relative;
+}
+
+.cosmic-navbar-dropdown-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  cursor: pointer;
+}
+
+.cosmic-navbar-dropdown-toggle i.dropdown-icon {
+  margin: 0 0 0 0.5rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  transition: transform 0.2s ease;
+}
+
+.cosmic-navbar-dropdown.open .cosmic-navbar-dropdown-toggle i.dropdown-icon {
+  transform: rotate(180deg);
+}
+
+.cosmic-navbar-dropdown-content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 16rem;
+  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(78, 119, 255, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.cosmic-navbar-dropdown:hover .cosmic-navbar-dropdown-content,
+.cosmic-navbar-dropdown.open .cosmic-navbar-dropdown-content {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.cosmic-navbar-dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.cosmic-navbar-dropdown-item:hover {
+  color: white;
+  background-color: rgba(78, 119, 255, 0.1);
+}
+
+.cosmic-navbar-dropdown-item.active {
+  color: white;
+  background-color: rgba(78, 119, 255, 0.15);
+}
+
+.cosmic-navbar-dropdown-item i {
+  margin-right: 0.75rem;
+  font-size: 1.125rem;
+  color: rgba(78, 119, 255, 0.9);
+  transition: all 0.2s ease;
+}
+
+.cosmic-navbar-dropdown-item:hover i {
+  transform: translateY(-2px);
+}
+
+.cosmic-navbar-dropdown-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(78, 119, 255, 0.1), transparent);
+  margin: 0.5rem 0;
+}
+
+/* Mega menu */
+.cosmic-navbar-megamenu {
+  position: static;
+}
+
+.cosmic-navbar-megamenu-content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(78, 119, 255, 0.15);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.cosmic-navbar-megamenu:hover .cosmic-navbar-megamenu-content,
+.cosmic-navbar-megamenu.open .cosmic-navbar-megamenu-content {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.cosmic-navbar-megamenu-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.cosmic-navbar-megamenu-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.cosmic-navbar-megamenu-title i {
+  margin-right: 0.75rem;
+  color: rgba(78, 119, 255, 0.9);
+}
+
+.cosmic-navbar-megamenu-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cosmic-navbar-megamenu-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.cosmic-navbar-megamenu-item:hover {
+  color: white;
+  background-color: rgba(78, 119, 255, 0.1);
+}
+
+.cosmic-navbar-megamenu-item.active {
+  color: white;
+  background-color: rgba(78, 119, 255, 0.15);
+}
+
+.cosmic-navbar-megamenu-item i {
+  margin-right: 0.75rem;
+  font-size: 1rem;
+  color: rgba(78, 119, 255, 0.9);
+  transition: all 0.2s ease;
+}
+
+.cosmic-navbar-megamenu-item:hover i {
+  transform: translateY(-2px);
+}
+
+/* User menu */
+.cosmic-navbar-user {
+  position: relative;
+}
+
+.cosmic-navbar-user-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cosmic-navbar-user-toggle:hover {
+  background-color: rgba(78, 119, 255, 0.1);
+}
+
+.cosmic-navbar-user-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(78, 119, 255, 0.3);
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.cosmic-navbar-user-info {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .cosmic-navbar-user-info {
+    display: block;
+  }
+}
+
+.cosmic-navbar-user-name {
+  font-weight: 600;
+  color: white;
+  margin-bottom: 0.25rem;
+}
+
+.cosmic-navbar-user-role {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.cosmic-navbar-user-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 15rem;
+  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(78, 119, 255, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.cosmic-navbar-user:hover .cosmic-navbar-user-menu,
+.cosmic-navbar-user.open .cosmic-navbar-user-menu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.cosmic-navbar-user-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid rgba(78, 119, 255, 0.15);
+  margin-bottom: 0.5rem;
+}
+
+.cosmic-navbar-user-status {
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.cosmic-navbar-user-status-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.cosmic-navbar-user-status-dot.online {
+  background-color: #10b981;
+}
+
+.cosmic-navbar-user-status-dot.busy {
+  background-color: #ef4444;
+}
+
+.cosmic-navbar-user-status-dot.away {
+  background-color: #f59e0b;
+}
+
+.cosmic-navbar-user-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.cosmic-navbar-user-item:hover {
+  color: white;
+  background-color: rgba(78, 119, 255, 0.1);
+}
+
+.cosmic-navbar-user-item i {
+  margin-right: 0.75rem;
+  font-size: 1.125rem;
+  color: rgba(78, 119, 255, 0.9);
+  transition: all 0.2s ease;
+}
+
+.cosmic-navbar-user-item:hover i {
+  transform: translateY(-2px);
+}
+
+/* Buttons */
+.cosmic-navbar-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.cosmic-navbar-button i {
+  margin-right: 0.5rem;
+}
+
+.cosmic-navbar-button-primary {
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  color: white;
+  border: none;
+}
+
+.cosmic-navbar-button-primary:hover {
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.cosmic-navbar-button-primary:before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  z-index: -1;
+}
+
+.cosmic-navbar-button-primary:hover:before {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.cosmic-navbar-button-secondary {
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(78, 119, 255, 0.4);
+}
+
+.cosmic-navbar-button-secondary:hover {
+  color: white;
+  border-color: rgba(78, 119, 255, 0.8);
+  background-color: rgba(78, 119, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Notification badge */
+.cosmic-navbar-badge {
+  position: relative;
+}
+
+.cosmic-navbar-badge-counter {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Search form */
+.cosmic-navbar-search {
+  position: relative;
+  margin-right: 1rem;
+}
+
+.cosmic-navbar-search-form {
+  display: flex;
+  align-items: center;
+}
+
+.cosmic-navbar-search-input {
+  background-color: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(78, 119, 255, 0.2);
+  border-radius: 0.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 0.5rem 1rem 0.5rem 2.5rem;
+  width: 15rem;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.cosmic-navbar-search-input:focus {
+  outline: none;
+  border-color: rgba(78, 119, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(78, 119, 255, 0.25);
+  width: 20rem;
+}
+
+.cosmic-navbar-search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(78, 119, 255, 0.7);
+  pointer-events: none;
+}
+
+/* Mobile adjustments */
+@media (max-width: 639px) {
+  .cosmic-navbar-search {
+    display: none;
+  }
+  
+  .cosmic-navbar-items-secondary {
+    display: none;
+  }
+  
+  .cosmic-navbar-container {
+    padding: 0.5rem 1rem;
+  }
+  
+  .cosmic-navbar-logo img {
+    height: 2rem;
+  }
+}
+
+/* Sidebar navigation (for dashboard layouts) */
+.cosmic-sidebar {
+  width: 16rem;
+  background: rgba(15, 23, 42, 0.98);
+  border-right: 1px solid rgba(78, 119, 255, 0.15);
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  /* Fix for sidebar clipping issue */
+  transform: translateX(0); /* Ensure it's not pushed off-screen */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+}
+
+/* Content adjustments for when sidebar is present */
+body.has-sidebar .main-content {
+  margin-left: 16rem;
+  width: calc(100% - 16rem);
+  transition: all 0.3s ease;
+}
+
+.cosmic-sidebar.collapsed {
+  width: 5rem;
+}
+
+body.has-sidebar .main-content.sidebar-collapsed {
+  margin-left: 5rem;
+  width: calc(100% - 5rem);
+}
+
+.cosmic-sidebar-logo {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(78, 119, 255, 0.15);
+}
+
+.cosmic-sidebar.collapsed .cosmic-sidebar-logo span {
+  display: none;
+}
+
+.cosmic-sidebar-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1.5rem 0;
+}
+
+.cosmic-sidebar-section {
+  margin-bottom: 2rem;
+}
+
+.cosmic-sidebar-heading {
+  padding: 0 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.cosmic-sidebar.collapsed .cosmic-sidebar-heading {
+  display: none;
+}
+
+.cosmic-sidebar-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cosmic-sidebar-nav-item {
+  margin-bottom: 0.25rem;
+}
+
+.cosmic-sidebar-nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.cosmic-sidebar-nav-link:hover {
+  color: white;
+  background-color: rgba(78, 119, 255, 0.1);
+}
+
+.cosmic-sidebar-nav-link.active {
+  color: white;
+  background-color: rgba(78, 119, 255, 0.15);
+}
+
+.cosmic-sidebar-nav-link.active:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+}
+
+.cosmic-sidebar-nav-link i {
+  margin-right: 0.75rem;
+  font-size: 1.125rem;
+  color: rgba(78, 119, 255, 0.9);
+  transition: all 0.2s ease;
+}
+
+.cosmic-sidebar.collapsed .cosmic-sidebar-nav-link {
+  padding: 0.75rem;
+  justify-content: center;
+}
+
+.cosmic-sidebar.collapsed .cosmic-sidebar-nav-link span {
+  display: none;
+}
+
+.cosmic-sidebar.collapsed .cosmic-sidebar-nav-link i {
+  margin-right: 0;
+  font-size: 1.25rem;
+}
+
+.cosmic-sidebar-footer {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(78, 119, 255, 0.15);
+  display: flex;
+  align-items: center;
+}
+
+.cosmic-sidebar.collapsed .cosmic-sidebar-footer {
+  justify-content: center;
+}
+
+.cosmic-sidebar.collapsed .cosmic-sidebar-footer-text {
+  display: none;
+}
+
+.cosmic-sidebar-toggle {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.cosmic-sidebar-toggle:hover {
+  color: white;
+  background-color: rgba(78, 119, 255, 0.1);
+}
+
+/* Content area for sidebar layouts */
+.cosmic-content {
+  margin-left: 16rem;
+  transition: margin-left 0.3s ease;
+  min-height: 100vh;
+}
+
+.cosmic-content.expanded {
+  margin-left: 5rem;
+}
+
+/* Breadcrumb navigation */
+.cosmic-breadcrumb {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.cosmic-breadcrumb-item {
+  display: flex;
+  align-items: center;
+}
+
+.cosmic-breadcrumb-link {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.cosmic-breadcrumb-link:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.cosmic-breadcrumb-link.active {
+  color: rgba(78, 119, 255, 0.9);
+  font-weight: 500;
+}
+
+.cosmic-breadcrumb-separator {
+  margin: 0 0.5rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Tab navigation */
+.cosmic-tabs {
+  display: flex;
+  overflow-x: auto;
+  border-bottom: 1px solid rgba(78, 119, 255, 0.15);
+}
+
+.cosmic-tab {
+  padding: 0.75rem 1.25rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  white-space: nowrap;
+}
+
+.cosmic-tab:hover {
+  color: white;
+}
+
+.cosmic-tab.active {
+  color: white;
+}
+
+.cosmic-tab.active:after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, #3b82f6, #8b5cf6);
+}
+
+.cosmic-tab i {
+  margin-right: 0.5rem;
+}
+
+/* Pill navigation */
+.cosmic-pills {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.cosmic-pill {
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(78, 119, 255, 0.2);
+  background-color: transparent;
+}
+
+.cosmic-pill:hover {
+  color: white;
+  border-color: rgba(78, 119, 255, 0.4);
+  background-color: rgba(78, 119, 255, 0.05);
+}
+
+.cosmic-pill.active {
+  color: white;
+  border-color: rgba(78, 119, 255, 0.8);
+  background-color: rgba(78, 119, 255, 0.15);
+}
+
+.cosmic-pill i {
+  margin-right: 0.5rem;
+}

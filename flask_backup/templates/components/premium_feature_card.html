@@ -1,0 +1,54 @@
+{% macro premium_feature_card(title, description, price=None, features=[], is_highlighted=False, cta_text="Upgrade Now", cta_url="#", is_owned=False, soon=False) %}
+<div class="premium-card {% if is_highlighted %}premium-card-highlighted{% endif %} {% if is_owned %}premium-card-owned{% endif %} {% if soon %}premium-card-coming-soon{% endif %}">
+  {% if is_highlighted %}
+  <div class="premium-card-badge">Popular</div>
+  {% endif %}
+  
+  {% if is_owned %}
+  <div class="premium-card-owned-badge">Owned</div>
+  {% endif %}
+  
+  {% if soon %}
+  <div class="premium-card-soon-badge">Coming Soon</div>
+  {% endif %}
+  
+  <div class="premium-card-content">
+    <div class="premium-card-header">
+      <h3 class="premium-card-title">{{ title }}</h3>
+      
+      {% if price %}
+      <div class="premium-card-price">
+        <span class="currency">$</span>{{ price }}<span class="period">/mo</span>
+      </div>
+      {% endif %}
+    </div>
+    
+    <p class="premium-card-description">{{ description }}</p>
+    
+    {% if features %}
+    <ul class="premium-feature-list">
+      {% for feature in features %}
+      <li class="premium-feature-item">
+        <span class="premium-feature-icon">✦</span>
+        <span class="premium-feature-text">{{ feature }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    
+    {% if not is_owned and not soon %}
+    <a href="{{ cta_url }}" class="premium-cta-button">
+      {{ cta_text }}
+    </a>
+    {% elif is_owned %}
+    <button class="premium-cta-button premium-cta-owned" disabled>
+      Activated
+    </button>
+    {% elif soon %}
+    <button class="premium-cta-button premium-cta-soon" disabled>
+      Coming Soon
+    </button>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}

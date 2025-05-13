@@ -1,0 +1,281 @@
+/* Cosmic Code Styling for AstroBot Documentation */
+
+.code-block {
+    position: relative;
+    overflow: hidden;
+}
+
+.cosmic-code {
+    font-family: 'Fira Code', 'Source Code Pro', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 1rem;
+    background: rgba(10, 15, 30, 0.8);
+    border-radius: 8px;
+    color: #E2E8F0;
+    overflow-x: auto;
+    position: relative;
+    z-index: 2;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    background: rgba(20, 30, 50, 0.8);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 3;
+}
+
+.copy-btn:hover {
+    background: rgba(79, 70, 229, 0.3);
+    color: white;
+}
+
+.cosmic-table {
+    --bs-table-bg: transparent;
+    --bs-table-color: #E2E8F0;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+}
+
+.cosmic-table th {
+    background: rgba(20, 30, 50, 0.5);
+    color: white;
+    font-weight: 600;
+    padding: 12px 16px;
+    text-align: left;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cosmic-table th:first-child {
+    border-top-left-radius: 8px;
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cosmic-table th:last-child {
+    border-top-right-radius: 8px;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cosmic-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(10, 15, 30, 0.3);
+}
+
+.cosmic-table td:first-child {
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cosmic-table td:last-child {
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cosmic-table tr:last-child td:first-child {
+    border-bottom-left-radius: 8px;
+}
+
+.cosmic-table tr:last-child td:last-child {
+    border-bottom-right-radius: 8px;
+}
+
+.cosmic-table tr:hover td {
+    background: rgba(20, 30, 50, 0.5);
+}
+
+.command-syntax {
+    width: 30%;
+}
+
+.command-example {
+    width: 35%;
+    font-size: 13px;
+}
+
+.cosmic-inline-code {
+    font-family: 'Fira Code', 'Source Code Pro', monospace;
+    background: rgba(20, 30, 50, 0.6);
+    color: rgba(255, 255, 255, 0.9);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    white-space: nowrap;
+}
+
+/* Syntax highlighting */
+.language-json {
+    color: #E2E8F0;
+}
+
+.language-json .token.property {
+    color: #A78BFA;
+}
+
+.language-json .token.string {
+    color: #34D399;
+}
+
+.language-json .token.number {
+    color: #F87171;
+}
+
+.language-json .token.boolean {
+    color: #60A5FA;
+}
+
+.language-json .token.null {
+    color: #F87171;
+}
+
+.language-json .token.punctuation {
+    color: #9CA3AF;
+}
+
+.language-bash {
+    color: #E2E8F0;
+}
+
+.language-bash .token.comment {
+    color: #6B7280;
+}
+
+.language-bash .token.string {
+    color: #34D399;
+}
+
+.language-bash .token.function {
+    color: #60A5FA;
+}
+
+.language-bash .token.keyword {
+    color: #A78BFA;
+}
+
+.language-bash .token.operator {
+    color: #F87171;
+}
+
+/* Button styles */
+.cosmic-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1.25rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.cosmic-btn-primary {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.9), rgba(124, 58, 237, 0.9));
+    color: white;
+    border: none;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.cosmic-btn-primary:hover {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 1), rgba(139, 92, 246, 1));
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+    color: white;
+    text-decoration: none;
+}
+
+.cosmic-btn-secondary {
+    background: rgba(30, 41, 59, 0.7);
+    color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cosmic-btn-secondary:hover {
+    background: rgba(30, 41, 59, 0.9);
+    color: white;
+    text-decoration: none;
+}
+
+.cosmic-btn-outline {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.cosmic-btn-outline:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.cosmic-btn-sm {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+}
+
+.cosmic-link {
+    color: rgba(79, 70, 229, 0.9);
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.cosmic-link:hover {
+    color: rgba(124, 58, 237, 1);
+    text-decoration: none;
+}
+
+/* Responsive navigation */
+.doc-content-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.doc-nav-prev, .doc-nav-next {
+    max-width: 48%;
+}
+
+.doc-nav-direction {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 0.25rem;
+}
+
+.doc-nav-title {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* JavaScript copy function */
+function copyCode(button) {
+    const pre = button.previousElementSibling;
+    const code = pre.querySelector('code');
+    
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(code.textContent.trim())
+            .then(() => {
+                // Change button icon temporarily
+                const originalIcon = button.innerHTML;
+                button.innerHTML = '<i class="bi bi-check"></i>';
+                
+                setTimeout(() => {
+                    button.innerHTML = originalIcon;
+                }, 2000);
+            })
+            .catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+    }
+}

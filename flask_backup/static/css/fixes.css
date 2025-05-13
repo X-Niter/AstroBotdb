@@ -1,0 +1,219 @@
+/* Fixes for UI issues */
+:root {
+  --primary-color: #4d76ff;
+  --secondary-color: #1a1a2e;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+  --light-color: #f8f9fa;
+  --dark-color: #343a40;
+  --gray-800: #343a40;
+  --gray-700: #495057;
+  --gray-600: #6c757d;
+  --gray-500: #adb5bd;
+  --gray-400: #ced4da;
+  --gray-300: #dee2e6;
+  --gray-200: #e9ecef;
+  --gray-100: #f8f9fa;
+}
+
+/* Dark mode background */
+body {
+  background-color: #0f172a;
+  color: #f8f9fa;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Fix spacing between elements */
+.container, .container-fluid {
+  padding: 1.5rem;
+}
+
+/* Glassmorphism card styles */
+.card {
+  background-color: rgba(30, 41, 59, 0.6) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 0.75rem !important;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.card-header {
+  background-color: rgba(30, 41, 59, 0.4) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem 0.75rem 0 0 !important;
+}
+
+.card-footer {
+  background-color: rgba(30, 41, 59, 0.4) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding: 1rem 1.5rem;
+  border-radius: 0 0 0.75rem 0.75rem !important;
+}
+
+/* Improve buttons styling */
+.btn {
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: #3a63e0;
+  border-color: #3a63e0;
+}
+
+.btn-outline-primary {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-outline-light {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+/* Background and foreground colors */
+.bg-dark {
+  background-color: #1e293b !important;
+}
+
+.bg-darker {
+  background-color: #0f172a !important;
+}
+
+/* Progress bars */
+.progress {
+  height: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.progress-bar {
+  border-radius: 0.25rem;
+}
+
+/* Status indicators */
+.status-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.status-online {
+  background-color: #10b981;
+  box-shadow: 0 0 10px #10b981;
+}
+
+.status-offline {
+  background-color: #ef4444;
+  box-shadow: 0 0 10px #ef4444;
+}
+
+.status-warning {
+  background-color: #f59e0b;
+  box-shadow: 0 0 10px #f59e0b;
+}
+
+/* Activity timeline */
+.timeline-item {
+  padding: 1rem;
+  background-color: rgba(30, 41, 59, 0.4);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 1rem;
+}
+
+.timeline-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-right: 1rem;
+}
+
+.badge-discord {
+  background-color: #5865f2;
+  color: white;
+}
+
+.badge-minecraft {
+  background-color: #5dc11f;
+  color: white;
+}
+
+.badge-twitch {
+  background-color: #9146ff;
+  color: white;
+}
+
+/* Nav Pills and Tabs */
+.nav-pills .nav-link {
+  border-radius: 0.5rem;
+  color: var(--gray-400);
+  transition: all 0.3s ease;
+}
+
+.nav-pills .nav-link:hover {
+  color: white;
+  background-color: rgba(75, 85, 99, 0.3);
+}
+
+.nav-pills .nav-link.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Stats cards */
+.stat-card {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.stat-icon {
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  margin-right: 1rem;
+}
+
+.stat-info h4 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.stat-info p {
+  font-size: 0.875rem;
+  color: var(--gray-400);
+  margin-bottom: 0;
+}

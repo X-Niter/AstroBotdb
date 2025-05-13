@@ -1,0 +1,255 @@
+/**
+ * AstroBot AI - Text Optimization Styles
+ * 
+ * This file contains specialized styles for optimizing text rendering,
+ * focusing on gradient text, proper line heights, and spacing for readability
+ */
+
+/* ===== Font Optimization ===== */
+html {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+}
+
+body {
+  line-height: 1.6;
+  font-kerning: normal;
+}
+
+/* Ensure base font size is responsive and accessible */
+html {
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+/* ===== Heading Optimization ===== */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  line-height: 1.2;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  max-width: 100%;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.75rem;
+}
+
+h4 {
+  font-size: 1.5rem;
+}
+
+h5 {
+  font-size: 1.25rem;
+}
+
+h6 {
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.25rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+}
+
+/* ===== Gradient Text Fixes ===== */
+/* Critical fixes for gradient text rendering issues */
+.text-transparent {
+  /* Core properties for all browsers */
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  
+  /* Fix for cutting off at edges */
+  display: inline-block !important;
+  padding-right: 0.25em !important;
+  padding-left: 0.05em !important;
+  
+  /* Prevent line breaking issues */
+  max-width: 100% !important; 
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  
+  /* Fix for Firefox rendering */
+  position: relative !important;
+  z-index: 1 !important;
+  
+  /* Fix for gradient positioning */
+  background-position: left !important;
+  background-size: 100% 100% !important;
+  
+  /* Fix for Safari */
+  text-align: left !important; 
+}
+
+/* Special fix for multi-line gradient text */
+.gradient-text-multiline,
+h1.text-transparent,
+h2.text-transparent,
+h3.text-transparent {
+  width: fit-content !important;
+  max-width: 100% !important;
+  line-height: 1.3 !important;
+  margin-left: 0 !important;
+  padding-left: 0.1em !important;
+  padding-right: 0.35em !important;
+}
+
+/* ===== Text Content Optimization ===== */
+p, li, blockquote, label {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+/* Prevent long words from breaking layout */
+.prevent-overflow {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+/* ===== Special Text Elements ===== */
+/* Code blocks */
+code, pre {
+  font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+  font-size: 0.9em;
+  tab-size: 2;
+  hyphens: none;
+  white-space: pre-wrap;
+  word-break: normal;
+  word-wrap: normal;
+  overflow-x: auto;
+  text-rendering: optimizeLegibility;
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 4px solid rgba(139, 92, 246, 0.5);
+  padding: 0.5em 0 0.5em 1em;
+  margin: 1em 0;
+  font-style: italic;
+  position: relative;
+  overflow: hidden;
+}
+
+blockquote::before {
+  content: '❝';
+  position: absolute;
+  opacity: 0.1;
+  font-size: 5em;
+  top: -0.5em;
+  left: -0.2em;
+  z-index: -1;
+}
+
+/* ===== Lists ===== */
+ul, ol {
+  padding-left: 1.25em;
+  margin: 0.5em 0 1em;
+}
+
+li {
+  margin-bottom: 0.25em;
+}
+
+/* ===== Form Text ===== */
+label {
+  display: block;
+  margin-bottom: 0.5em;
+  font-weight: 500;
+}
+
+::placeholder {
+  opacity: 0.6;
+}
+
+/* ===== Space-Themed Text Elements ===== */
+/* Animated typing cursor for interactive elements */
+.typing-cursor::after {
+  content: '|';
+  display: inline-block;
+  opacity: 1;
+  animation: blink 1s infinite;
+  margin-left: 0.1em;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Text shadows for emphasis */
+.text-glow {
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+.text-cosmic-glow {
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.6), 0 0 20px rgba(59, 130, 246, 0.4);
+}
+
+/* ===== Font Loading Optimization ===== */
+/* Apply system fonts immediately while custom fonts load */
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  transition: opacity 0.2s ease;
+}
+
+/* Font loading fallback styles */
+.fonts-loaded body {
+  font-family: 'Poppins', 'Roboto', system-ui, sans-serif;
+}
+
+.fonts-loaded h1,
+.fonts-loaded h2,
+.fonts-loaded h3,
+.fonts-loaded h4,
+.fonts-loaded h5,
+.fonts-loaded h6 {
+  font-family: 'Space Grotesk', 'Poppins', system-ui, sans-serif;
+}
+
+/* ===== Button Text ===== */
+button, .btn {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}

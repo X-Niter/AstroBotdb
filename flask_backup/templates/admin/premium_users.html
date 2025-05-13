@@ -1,0 +1,850 @@
+{% extends 'layouts/admin.html' %}
+
+{% block admin_title %}Premium Users{% endblock %}
+{% block admin_subtitle %}Manage premium users and their features{% endblock %}
+
+{% block admin_content %}
+<div class="admin-section">
+    <div class="admin-section-header">
+        <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold">User Management</h2>
+            <div class="flex gap-2">
+                <a href="{{ url_for('admin.admin_premium_features') }}" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-stars"></i> Manage Features
+                </a>
+                <button type="button" class="btn btn-primary btn-sm" onclick="refreshUserData()">
+                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="admin-card">
+        {% if not users %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            No users found in the system.
+        </div>
+        {% else %}
+        <div class="table-responsive">
+            <table class="table table-hover admin-table" id="premiumUsersTable">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Registered</th>
+                        <th>Status</th>
+                        <th>Premium Since</th>
+                        <th>Features</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr class="{% if user.is_admin or user.is_owner %}admin-user-row{% endif %}">
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar me-2">
+                                    <i class="bi bi-person-circle"></i>
+                                </div>
+                                <div>
+                                    <div class="user-name">{{ user.username }}</div>
+                                    {% if user.is_admin %}
+                                    <span class="badge bg-indigo-600 small">Admin</span>
+                                    {% endif %}
+                                    {% if user.is_owner %}
+                                    <span class="badge bg-purple-600 small">Owner</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            <div class="form-check form-switch premium-toggle-wrapper">
+                                <input class="form-check-input premium-toggle" type="checkbox" 
+                                       id="premium-{{ user.id }}" 
+                                       data-user-id="{{ user.id }}"
+                                       {% if user.is_premium %}checked{% endif %}
+                                       {% if user.is_admin or user.is_owner %}disabled{% endif %}>
+                                <label class="form-check-label" for="premium-{{ user.id }}">
+                                    {% if user.is_premium or user.is_admin or user.is_owner %}
+                                    <span class="badge bg-success">Premium</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Standard</span>
+                                    {% endif %}
+                                </label>
+                                {% if user.is_admin or user.is_owner %}
+                                <div class="small text-muted mt-1">Auto-enabled</div>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            {% if user.premium_since %}
+                            <span class="premium-date">{{ user.premium_since.strftime('%Y-%m-%d') }}</span>
+                            {% else %}
+                            {% if user.is_admin or user.is_owner %}
+                            <span class="premium-date">Since registration</span>
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.premium_features %}
+                            <div class="feature-badges">
+                                {% for feature in user.premium_features %}
+                                <span class="badge rounded-pill feature-badge" 
+                                      data-bs-toggle="tooltip" 
+                                      title="{% if feature.expires_at %}Expires: {{ feature.expires_at.strftime('%Y-%m-%d') }}{% else %}Never expires{% endif %}">
+                                    {{ feature.feature.name }}
+                                    {% if feature.expires_at %}
+                                    <i class="bi bi-clock-history small ms-1"></i>
+                                    {% endif %}
+                                </span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {% if user.is_admin or user.is_owner %}
+                            <span class="text-success">All features enabled</span>
+                            {% else %}
+                            <span class="text-muted">No premium features</span>
+                            {% endif %}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                {% if not user.is_admin and not user.is_owner %}
+                                <button type="button" class="btn btn-sm btn-primary add-feature-btn" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#addFeatureModal" 
+                                        data-user-id="{{ user.id }}" 
+                                        data-username="{{ user.username }}">
+                                    <i class="bi bi-plus-lg"></i> Add Feature
+                                </button>
+                                {% else %}
+                                <button type="button" class="btn btn-sm btn-outline-secondary" disabled>
+                                    <i class="bi bi-check-circle"></i> All Access
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Add Feature Modal -->
+<div class="modal fade" id="addFeatureModal" tabindex="-1" aria-labelledby="addFeatureModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addFeatureModalLabel">
+                    <i class="bi bi-gem me-2 text-indigo-500"></i>
+                    Add Premium Feature
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addFeatureForm">
+                    <input type="hidden" id="userIdInput" name="user_id">
+                    
+                    <div class="user-info-container mb-4">
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar me-3">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                            <div>
+                                <div class="form-label text-muted mb-1">Assign feature to:</div>
+                                <div class="user-name-display fw-bold fs-5" id="usernameDisplayText"></div>
+                                <input type="hidden" class="form-control" id="usernameDisplay" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="featureSelect" class="form-label">
+                            <i class="bi bi-stars me-2"></i>
+                            Select Premium Feature
+                        </label>
+                        <select class="form-select feature-select" id="featureSelect" name="feature_id" required>
+                            <option value="" disabled selected>Choose a premium feature</option>
+                            {% for feature in features %}
+                            <option value="{{ feature.id }}" data-description="{{ feature.description }}">
+                                {{ feature.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="feature-description mt-2 text-muted fst-italic" id="featureDescription">
+                            Select a feature to see its description.
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="expiresInput" class="form-label">
+                            <i class="bi bi-calendar-event me-2"></i>
+                            Feature Expiration
+                        </label>
+                        <div class="expiration-options mb-3">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="expiration_type" 
+                                       id="expirationNever" value="never" checked>
+                                <label class="form-check-label" for="expirationNever">Never expires</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="expiration_type" 
+                                       id="expirationCustom" value="custom">
+                                <label class="form-check-label" for="expirationCustom">Custom period</label>
+                            </div>
+                        </div>
+                        <div class="input-group" id="expirationInputGroup" style="display: none;">
+                            <input type="number" class="form-control" id="expiresInput" name="expires_days" 
+                                   placeholder="Number of days" min="1">
+                            <span class="input-group-text">days</span>
+                        </div>
+                        <div class="expiration-preview mt-2 text-success" id="expirationPreview">
+                            Feature will never expire
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-lg me-1"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="saveFeatureButton">
+                    <i class="bi bi-check-lg me-1"></i> Add Feature
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    /* Admin section styling */
+    .admin-section {
+        margin-bottom: 2rem;
+    }
+    
+    .admin-section-header {
+        margin-bottom: 1.5rem;
+    }
+    
+    .admin-card {
+        background-color: rgba(17, 24, 39, 0.4);
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    /* Table styling */
+    .admin-table {
+        margin-bottom: 0;
+    }
+    
+    .admin-table thead th {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 1rem;
+    }
+    
+    .admin-table tbody td {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 1rem;
+        vertical-align: middle;
+    }
+    
+    .admin-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .admin-table tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.03);
+    }
+    
+    /* Premium user styling */
+    .admin-user-row {
+        background-color: rgba(79, 70, 229, 0.08) !important;
+    }
+    
+    .admin-user-row:hover {
+        background-color: rgba(79, 70, 229, 0.12) !important;
+    }
+    
+    .user-avatar {
+        width: 36px;
+        height: 36px;
+        background-color: rgba(79, 70, 229, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: rgba(79, 70, 229, 1);
+    }
+    
+    .user-name {
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+    
+    .premium-toggle-wrapper {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .premium-date {
+        color: rgba(129, 140, 248, 0.9);
+        font-weight: 500;
+    }
+    
+    /* Feature badges */
+    .feature-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .feature-badge {
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: 0.35rem 0.75rem;
+        background-color: rgba(79, 70, 229, 0.15);
+        color: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(79, 70, 229, 0.3);
+        border-radius: 20px;
+        transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .feature-badge::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        height: 5px;
+        width: 5px;
+        background-color: rgba(255, 255, 255, 0.7);
+        border-radius: 50%;
+        box-shadow: 0 0 5px 2px rgba(255, 255, 255, 0.3);
+    }
+    
+    .feature-badge:hover {
+        background-color: rgba(79, 70, 229, 0.25);
+        transform: translateY(-1px) scale(1.02);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 0 4px rgba(79, 70, 229, 0.4);
+    }
+    
+    /* Action buttons */
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    /* Space theme enhancements */
+    html.dark.space .admin-card {
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(79, 70, 229, 0.1);
+    }
+    
+    html.dark.space .admin-user-row {
+        background-color: rgba(79, 70, 229, 0.1) !important;
+    }
+    
+    html.dark.space .admin-user-row:hover {
+        background-color: rgba(79, 70, 229, 0.15) !important;
+    }
+    
+    html.dark.space .feature-badge {
+        box-shadow: 0 0 8px rgba(79, 70, 229, 0.3);
+    }
+    
+    /* Modal styling */
+    .modal-content {
+        background-color: rgba(17, 24, 39, 0.95);
+        border: 1px solid rgba(79, 70, 229, 0.2);
+        border-radius: 0.75rem;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 8px rgba(79, 70, 229, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .modal-content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, 
+            rgba(79, 70, 229, 0), 
+            rgba(79, 70, 229, 0.5), 
+            rgba(79, 70, 229, 0));
+        pointer-events: none;
+    }
+    
+    .modal-header {
+        border-bottom: 1px solid rgba(79, 70, 229, 0.1);
+        padding: 1.25rem 1.5rem;
+        background: linear-gradient(135deg, #1a1a3a 0%, #0d0d2b 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .modal-header::before {
+        content: '';
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        width: 40px;
+        height: 40px;
+        background: radial-gradient(circle, rgba(79, 70, 229, 0.6) 0%, rgba(79, 70, 229, 0) 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    
+    .modal-body {
+        background-color: #0f172a;
+        color: #e2e8f0;
+    }
+    
+    .modal-footer {
+        border-top: 1px solid rgba(79, 70, 229, 0.1);
+        padding: 1.25rem 1.5rem;
+        background-color: rgba(15, 23, 42, 0.7);
+    }
+    
+    .modal-title {
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
+    }
+    
+    .modal-body .form-control,
+    .modal-body .form-select {
+        background-color: rgba(30, 41, 59, 0.8);
+        border-color: rgba(79, 70, 229, 0.3);
+        color: #e2e8f0;
+    }
+
+    .modal-body .form-control:focus,
+    .modal-body .form-select:focus {
+        border-color: rgba(79, 70, 229, 0.5);
+        box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.25);
+    }
+
+    .modal-body .form-text {
+        color: rgba(226, 232, 240, 0.6);
+    }
+    
+    /* Badge colors */
+    .bg-indigo-600 {
+        background-color: rgba(79, 70, 229, 0.9) !important;
+    }
+    
+    .bg-purple-600 {
+        background-color: rgba(124, 58, 237, 0.9) !important;
+    }
+    
+    /* DataTables customization */
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_processing,
+    .dataTables_wrapper .dataTables_paginate {
+        color: rgba(255, 255, 255, 0.8) !important;
+        margin-bottom: 1rem;
+    }
+    
+    .dataTables_wrapper .dataTables_filter input,
+    .dataTables_wrapper .dataTables_length select {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+        border-radius: 0.375rem;
+        padding: 0.375rem 0.75rem;
+    }
+    
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        border-radius: 0.375rem !important;
+        color: rgba(255, 255, 255, 0.7) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: rgba(79, 70, 229, 0.2) !important;
+        border-color: rgba(79, 70, 229, 0.3) !important;
+        color: white !important;
+    }
+    
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: rgba(79, 70, 229, 0.1) !important;
+        color: white !important;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .feature-badges {
+            max-width: 200px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .admin-table thead th,
+        .admin-table tbody td {
+            padding: 0.75rem;
+        }
+        
+        .feature-badges {
+            max-width: 150px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function refreshUserData() {
+    // Show loading indicator
+    const tableContainer = document.querySelector('.table-responsive');
+    tableContainer.innerHTML = '<div class="d-flex justify-content-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+    
+    // Reload the page after a short delay
+    setTimeout(() => {
+        location.reload();
+    }, 500);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Handle premium toggle switches
+    const premiumToggles = document.querySelectorAll('.premium-toggle');
+    premiumToggles.forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            const userId = this.dataset.userId;
+            const isPremium = this.checked;
+            
+            // Update the badge
+            const label = this.nextElementSibling;
+            const badge = label.querySelector('.badge');
+            
+            if (isPremium) {
+                badge.className = 'badge bg-success';
+                badge.textContent = 'Premium';
+            } else {
+                badge.className = 'badge bg-secondary';
+                badge.textContent = 'Standard';
+            }
+            
+            // Send API request to update premium status
+            fetch('/api/admin/toggle-premium', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_id: userId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Show success notification
+                    const notification = document.createElement('div');
+                    notification.className = 'alert alert-success alert-dismissible fade show';
+                    notification.innerHTML = `
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        ${data.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    `;
+                    
+                    // Insert at the top of the content
+                    const content = document.querySelector('.admin-section');
+                    content.insertBefore(notification, content.firstChild);
+                    
+                    // Auto dismiss after 3 seconds
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                        setTimeout(() => notification.remove(), 300);
+                    }, 3000);
+                    
+                    // Reload the page after a delay
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    // Show error notification
+                    const notification = document.createElement('div');
+                    notification.className = 'alert alert-danger alert-dismissible fade show';
+                    notification.innerHTML = `
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Error: ${data.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    `;
+                    
+                    // Insert at the top of the content
+                    const content = document.querySelector('.admin-section');
+                    content.insertBefore(notification, content.firstChild);
+                    
+                    // Revert the toggle
+                    this.checked = !isPremium;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                
+                // Show error notification
+                const notification = document.createElement('div');
+                notification.className = 'alert alert-danger alert-dismissible fade show';
+                notification.innerHTML = `
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    An error occurred while updating premium status
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                
+                // Insert at the top of the content
+                const content = document.querySelector('.admin-section');
+                content.insertBefore(notification, content.firstChild);
+                
+                // Revert the toggle
+                this.checked = !isPremium;
+            });
+        });
+    });
+    
+    // Feature select handling
+    document.getElementById('featureSelect').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const description = selectedOption.dataset.description || 'No description available';
+        document.getElementById('featureDescription').textContent = description;
+    });
+    
+    // Expiration type handling
+    document.querySelectorAll('input[name="expiration_type"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const expirationInputGroup = document.getElementById('expirationInputGroup');
+            const expirationPreview = document.getElementById('expirationPreview');
+            
+            if (this.value === 'never') {
+                expirationInputGroup.style.display = 'none';
+                document.getElementById('expiresInput').value = '';
+                expirationPreview.textContent = 'Feature will never expire';
+                expirationPreview.className = 'expiration-preview mt-2 text-success';
+            } else if (this.value === 'custom') {
+                expirationInputGroup.style.display = 'flex';
+                updateExpirationPreview();
+            }
+        });
+    });
+    
+    // Update expiration preview when days change
+    document.getElementById('expiresInput').addEventListener('input', updateExpirationPreview);
+    
+    function updateExpirationPreview() {
+        const days = document.getElementById('expiresInput').value;
+        const expirationPreview = document.getElementById('expirationPreview');
+        
+        if (!days || isNaN(days) || days < 1) {
+            expirationPreview.textContent = 'Please enter a valid number of days';
+            expirationPreview.className = 'expiration-preview mt-2 text-danger';
+            return;
+        }
+        
+        // Calculate future date
+        const expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + parseInt(days));
+        
+        // Format date
+        const formattedDate = expirationDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+        
+        expirationPreview.textContent = `Feature will expire on ${formattedDate}`;
+        expirationPreview.className = 'expiration-preview mt-2 text-info';
+    }
+    
+    // Handle Add Feature button click
+    const addFeatureButtons = document.querySelectorAll('.add-feature-btn');
+    addFeatureButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.dataset.userId;
+            const username = this.dataset.username;
+            
+            // Reset form
+            document.getElementById('addFeatureForm').reset();
+            document.getElementById('featureDescription').textContent = 'Select a feature to see its description.';
+            document.getElementById('expirationInputGroup').style.display = 'none';
+            document.getElementById('expirationPreview').textContent = 'Feature will never expire';
+            document.getElementById('expirationPreview').className = 'expiration-preview mt-2 text-success';
+            
+            // Populate the modal with user data
+            document.getElementById('userIdInput').value = userId;
+            document.getElementById('usernameDisplay').value = username;
+            document.getElementById('usernameDisplayText').textContent = username;
+            
+            // Remove any previous alerts
+            const previousAlerts = document.querySelectorAll('.modal-body .alert');
+            previousAlerts.forEach(alert => alert.remove());
+        });
+    });
+    
+    // Handle Save Feature button click
+    document.getElementById('saveFeatureButton').addEventListener('click', function() {
+        const form = document.getElementById('addFeatureForm');
+        const formData = new FormData(form);
+        const userId = formData.get('user_id');
+        const featureId = formData.get('feature_id');
+        const expirationType = document.querySelector('input[name="expiration_type"]:checked').value;
+        const expiresDays = expirationType === 'custom' ? formData.get('expires_days') : null;
+        
+        // Validate form data
+        if (!featureId) {
+            // Show validation error
+            const featureSelect = document.getElementById('featureSelect');
+            featureSelect.classList.add('is-invalid');
+            
+            // Add error message
+            let errorMessage = document.getElementById('featureSelectError');
+            if (!errorMessage) {
+                errorMessage = document.createElement('div');
+                errorMessage.id = 'featureSelectError';
+                errorMessage.className = 'invalid-feedback';
+                errorMessage.textContent = 'Please select a feature';
+                featureSelect.parentNode.appendChild(errorMessage);
+            }
+            
+            return;
+        }
+        
+        // Remove any validation errors
+        const featureSelect = document.getElementById('featureSelect');
+        featureSelect.classList.remove('is-invalid');
+        
+        // Show loading state
+        const saveButton = document.getElementById('saveFeatureButton');
+        const originalText = saveButton.innerHTML;
+        saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+        saveButton.disabled = true;
+        
+        // Send API request to assign feature
+        fetch('/api/admin/assign-feature', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                feature_id: featureId,
+                expires_days: expiresDays
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Reset button state
+            saveButton.innerHTML = originalText;
+            saveButton.disabled = false;
+            
+            if (data.status === 'success') {
+                // Close the modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addFeatureModal'));
+                modal.hide();
+                
+                // Show success notification
+                const notification = document.createElement('div');
+                notification.className = 'alert alert-success alert-dismissible fade show';
+                notification.innerHTML = `
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    ${data.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                
+                // Insert at the top of the content
+                const content = document.querySelector('.admin-section');
+                content.insertBefore(notification, content.firstChild);
+                
+                // Reload the page after a delay
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                // Show error notification in the modal
+                let errorAlert = document.querySelector('.modal-body .alert');
+                if (errorAlert) {
+                    errorAlert.remove();
+                }
+                
+                errorAlert = document.createElement('div');
+                errorAlert.className = 'alert alert-danger alert-dismissible fade show mt-3';
+                errorAlert.innerHTML = `
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Error: ${data.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                
+                document.querySelector('.modal-body').appendChild(errorAlert);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            
+            // Reset button state
+            saveButton.innerHTML = originalText;
+            saveButton.disabled = false;
+            
+            // Show error notification in the modal
+            let errorAlert = document.querySelector('.modal-body .alert');
+            if (errorAlert) {
+                errorAlert.remove();
+            }
+            
+            errorAlert = document.createElement('div');
+            errorAlert.className = 'alert alert-danger alert-dismissible fade show mt-3';
+            errorAlert.innerHTML = `
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                An error occurred while assigning the feature
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            document.querySelector('.modal-body').appendChild(errorAlert);
+        });
+    });
+    
+    // Initialize DataTable if available
+    if (typeof $.fn.DataTable !== 'undefined') {
+        $('#premiumUsersTable').DataTable({
+            responsive: true,
+            order: [[3, 'desc']],  // Sort by premium status
+            language: {
+                search: "<i class='bi bi-search me-2'></i>Search:",
+                lengthMenu: "<i class='bi bi-list-ul me-2'></i>Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ users",
+                paginate: {
+                    first: "<i class='bi bi-chevron-double-left'></i>",
+                    last: "<i class='bi bi-chevron-double-right'></i>",
+                    next: "<i class='bi bi-chevron-right'></i>",
+                    previous: "<i class='bi bi-chevron-left'></i>"
+                }
+            },
+            dom: '<"d-flex flex-wrap align-items-center justify-content-between mb-3"lf>rt<"d-flex flex-wrap align-items-center justify-content-between mt-3"ip>'
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,3 @@
+#!/bin/bash
+# This script forces the new Replit configuration
+cp .replit-new .replit

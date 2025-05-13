@@ -1,0 +1,22 @@
+[Unit]
+Description=AstroBot AI Health Check Service
+After=network.target astrobot.service
+Wants=astrobot.service
+
+[Service]
+Type=oneshot
+User={{user}}
+Group={{user}}
+WorkingDirectory={{app_dir}}
+ExecStart={{python_path}} bot_health.py
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=astrobot-health
+Environment="ENVIRONMENT=production"
+Environment="PYTHONUNBUFFERED=1"
+
+# Security options
+PrivateTmp=true
+ProtectHome=read-only
+ProtectSystem=full
+NoNewPrivileges=true

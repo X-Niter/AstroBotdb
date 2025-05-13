@@ -1,0 +1,12 @@
+[Unit]
+Description=Run AstroBot AI Health Check periodically
+Requires=astrobot-health.service
+
+[Timer]
+Unit=astrobot-health.service
+OnBootSec=5min
+OnUnitActiveSec=15min
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target

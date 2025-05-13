@@ -1,0 +1,93 @@
+{% extends 'layouts/clean.html' %}
+
+{% block title %}Server Showcase{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="text-center mb-10">
+        <h1 class="text-3xl font-bold mb-2">Server Showcase</h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400">
+            Check out these amazing communities using AstroBot AI
+        </p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for server in featured_servers %}
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-transform hover:transform hover:scale-105">
+            <div class="h-40 bg-gradient-to-r from-indigo-500 to-purple-600 relative">
+                {% if server.icon_url %}
+                <img src="{{ server.icon_url }}" alt="{{ server.name }}" class="w-full h-full object-cover">
+                {% endif %}
+                <div class="absolute bottom-0 right-0 p-2">
+                    <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full">{{ server.member_count }} members</span>
+                </div>
+            </div>
+            
+            <div class="p-4">
+                <h3 class="text-xl font-semibold mb-2 flex items-center">
+                    {{ server.name }}
+                    {% if server.is_premium %}
+                    <span class="ml-2 px-2 py-0.5 bg-yellow-200 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200 rounded-full text-xs">Premium</span>
+                    {% endif %}
+                </h3>
+                
+                <p class="text-gray-600 dark:text-gray-400 line-clamp-3 mb-4">
+                    {{ server.description or "A community server using AstroBot AI" }}
+                </p>
+                
+                <div class="flex items-center justify-between">
+                    {% if server.invite_url %}
+                    <a href="{{ server.invite_url }}" target="_blank" rel="noopener" 
+                       class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md text-sm font-medium transition-colors">
+                        Join Server
+                    </a>
+                    {% endif %}
+                    
+                    {% if current_user.is_authenticated and (current_user.is_admin or server.owner_id == current_user.id) %}
+                    <a href="{{ url_for('bot_customization', server_id=server.server_id) }}" 
+                       class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 text-sm">
+                        Customize Bot
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-span-full text-center py-10">
+            <div class="text-gray-500 dark:text-gray-400 mb-4">
+                <i class="fas fa-rocket fa-3x mb-4"></i>
+                <h3 class="text-xl font-medium">No featured servers yet</h3>
+                <p class="mt-2">Be the first to showcase your server here!</p>
+            </div>
+            
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('server_index') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md">
+                <i class="fas fa-plus mr-2"></i> Add Your Server
+            </a>
+            {% else %}
+            <a href="{{ url_for('login') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md">
+                <i class="fas fa-sign-in-alt mr-2"></i> Login to Add Your Server
+            </a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if current_user.is_authenticated and current_user.servers %}
+    <div class="mt-12 text-center">
+        <h2 class="text-2xl font-bold mb-4">Want to showcase your server?</h2>
+        <p class="text-lg text-gray-600 dark:text-gray-400 mb-6">Premium users can feature their servers here</p>
+        
+        {% if current_user.is_premium %}
+        <a href="{{ url_for('server_index') }}" class="inline-flex items-center px-5 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-md font-medium">
+            <i class="fas fa-star mr-2"></i> Feature Your Server
+        </a>
+        {% else %}
+        <a href="{{ url_for('premium_plans') }}" class="inline-flex items-center px-5 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-md font-medium">
+            <i class="fas fa-crown mr-2"></i> Upgrade to Premium
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

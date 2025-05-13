@@ -1,0 +1,916 @@
+/* Hologram Effects Module - Enhanced photorealistic visual effects for the hologram projection */
+
+/* Advanced hologram base effect with multi-layered, physically-accurate visual components */
+.hologram-effect {
+  position: relative;
+  overflow: hidden;
+  mix-blend-mode: screen;
+  will-change: transform, filter, opacity;
+  /* Enhanced multi-layer text shadow for depth perception and realism */
+  text-shadow: 
+    0 0 1px rgba(255, 255, 255, 0.8),
+    0 0 2px currentColor, 
+    0 0 4px rgba(150, 200, 255, 0.6),
+    0 0 8px rgba(100, 150, 255, 0.3);
+  transition: all 0.2s ease;
+  /* Apply aberration to mimic optical distortion */
+  filter: drop-shadow(0.5px 0.5px 0 rgba(255, 0, 0, 0.3)) 
+          drop-shadow(-0.5px -0.5px 0 rgba(0, 255, 255, 0.3));
+}
+
+.hologram-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* Enhanced multi-layer scanlines with varying intensities */
+  background: 
+    /* Primary scanlines */
+    linear-gradient(
+      to bottom,
+      transparent,
+      transparent 50%,
+      rgba(120, 160, 255, 0.12) 50%,
+      rgba(120, 160, 255, 0.12)
+    ),
+    /* Secondary finer scanlines */
+    linear-gradient(
+      to bottom,
+      transparent,
+      transparent 75%,
+      rgba(180, 220, 255, 0.07) 75%,
+      rgba(180, 220, 255, 0.07)
+    ),
+    /* Tertiary ultra-fine noise pattern */
+    linear-gradient(
+      to bottom,
+      rgba(200, 230, 255, 0.01),
+      rgba(200, 230, 255, 0.02) 33%,
+      rgba(200, 230, 255, 0.01) 66%,
+      rgba(200, 230, 255, 0.02)
+    );
+  background-size: 100% 4px, 100% 2px, 100% 8px;
+  z-index: 3;
+  animation: scanlineScroll 3s linear infinite;
+  opacity: 0.2;
+  pointer-events: none;
+  /* Apply slight distortion */
+  transform: skewY(0.05deg) scaleY(1.003);
+}
+
+.hologram-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* Enhanced PBR-like digital noise with higher detail and realism */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.15;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  /* Apply subtle animation with variable scale and rotation for more organic feel */
+  animation: enhancedDigitalNoise 12s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+  z-index: 2;
+  /* Subtle blend with base color */
+  box-shadow: inset 0 0 15px rgba(120, 200, 255, 0.1);
+}
+
+/* Emotional state variations of hologram effect */
+.hologram-alert {
+  animation: hologramFlicker 5s infinite, alertHologramFlash 0.8s infinite;
+  filter: brightness(1.2) saturate(1.1) hue-rotate(-5deg);
+}
+
+.hologram-alert::before {
+  /* Advanced multi-layer scanlines for alert state */
+  background: 
+    /* Primary alert scanlines - faster and more intense */
+    linear-gradient(
+      to bottom,
+      transparent,
+      transparent 50%,
+      rgba(255, 100, 100, 0.18) 50%,
+      rgba(255, 100, 100, 0.18)
+    ),
+    /* Secondary finer alert scanlines */
+    linear-gradient(
+      to bottom,
+      transparent,
+      transparent 75%,
+      rgba(255, 150, 150, 0.1) 75%,
+      rgba(255, 150, 150, 0.1)
+    ),
+    /* Alert noise pattern */
+    linear-gradient(
+      45deg,
+      rgba(255, 100, 100, 0.02),
+      rgba(255, 150, 150, 0.03) 50%,
+      rgba(255, 100, 100, 0.02)
+    );
+  background-size: 100% 3px, 100% 1.5px, 100% 100%;
+  animation: alertScanlineScroll 1.5s linear infinite;
+  opacity: 0.35;
+  /* Apply alert-specific distortion */
+  transform: skewY(0.1deg) scaleY(1.005);
+}
+
+.hologram-happy {
+  animation: hologramFlicker 8s infinite, happyHologramPulse 3s infinite;
+  filter: brightness(1.15) saturate(1.05) hue-rotate(5deg);
+}
+
+.hologram-happy::before {
+  /* Advanced multi-layer scanlines for happy state - softer and more fluid */
+  background: 
+    /* Primary happy scanlines - smooth and soft */
+    linear-gradient(
+      to bottom,
+      transparent,
+      transparent 50%,
+      rgba(120, 255, 180, 0.15) 50%,
+      rgba(120, 255, 180, 0.15)
+    ),
+    /* Secondary finer happy scanlines */
+    linear-gradient(
+      to bottom,
+      transparent,
+      transparent 75%,
+      rgba(150, 255, 200, 0.08) 75%,
+      rgba(150, 255, 200, 0.08)
+    ),
+    /* Happy state noise pattern - warmer and softer */
+    linear-gradient(
+      -45deg,
+      rgba(120, 255, 180, 0.01),
+      rgba(150, 255, 200, 0.02) 50%,
+      rgba(120, 255, 180, 0.01)
+    );
+  background-size: 100% 3px, 100% 1.5px, 100% 100%;
+  animation: happyScanlineScroll 3s ease-in-out infinite;
+  opacity: 0.25;
+  /* Apply happy-specific subtle expansion */
+  transform: skewY(0.05deg) scaleY(1.003);
+}
+
+.hologram-thinking {
+  animation: hologramFlicker 10s infinite, thinkingHologramPulse 4s infinite;
+  filter: brightness(1.05) saturate(1.0) hue-rotate(15deg);
+}
+
+.hologram-thinking::before {
+  /* Advanced multi-layer scanlines for thinking state - structured and rhythmic */
+  background: 
+    /* Primary thinking scanlines - structured pattern */
+    linear-gradient(
+      to bottom,
+      transparent,
+      transparent 50%,
+      rgba(100, 220, 255, 0.12) 50%,
+      rgba(100, 220, 255, 0.12)
+    ),
+    /* Secondary finer thinking scanlines - data-like */
+    linear-gradient(
+      to bottom,
+      transparent,
+      transparent 80%,
+      rgba(120, 230, 255, 0.08) 80%,
+      rgba(120, 230, 255, 0.08)
+    ),
+    /* Thinking state data-flow pattern */
+    linear-gradient(
+      90deg,
+      rgba(100, 220, 255, 0.01),
+      rgba(120, 230, 255, 0.02) 33%,
+      rgba(100, 220, 255, 0.01) 66%,
+      rgba(120, 230, 255, 0.02)
+    );
+  background-size: 100% 3px, 100% 10px, 100% 100%;
+  animation: thinkingScanlineScroll 4s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  opacity: 0.22;
+  /* Apply thinking-specific subtle phase shift */
+  transform: skewY(0.03deg) scaleY(1.002);
+}
+
+.hologram-sad {
+  animation: hologramFlicker 12s infinite, sadHologramFluctuation 6s infinite;
+  filter: brightness(0.9) saturate(0.85) hue-rotate(-10deg);
+}
+
+.hologram-sad::before {
+  /* Advanced multi-layer scanlines for sad state - slower and more faded */
+  background: 
+    /* Primary sad scanlines - wider spacing and faded */
+    linear-gradient(
+      to bottom,
+      transparent,
+      transparent 50%,
+      rgba(100, 150, 255, 0.08) 50%,
+      rgba(100, 150, 255, 0.08)
+    ),
+    /* Secondary finer sad scanlines - subtle */
+    linear-gradient(
+      to bottom,
+      transparent,
+      transparent 80%,
+      rgba(120, 170, 255, 0.05) 80%,
+      rgba(120, 170, 255, 0.05)
+    ),
+    /* Sad state waveform pattern - slow oscillation */
+    linear-gradient(
+      180deg,
+      rgba(100, 150, 255, 0.01),
+      rgba(120, 170, 255, 0.015) 50%,
+      rgba(100, 150, 255, 0.01)
+    );
+  background-size: 100% 6px, 100% 12px, 100% 100%;
+  animation: sadScanlineScroll 6s ease-in-out infinite;
+  opacity: 0.18;
+  /* Apply sad-specific subtle compression */
+  transform: skewY(-0.03deg) scaleY(0.998);
+}
+
+.hologram-confused {
+  animation: hologramFlicker 6s infinite alternate, confusedHologramDistortion 5s infinite;
+  filter: brightness(1.05) saturate(1.1) hue-rotate(-5deg);
+}
+
+.hologram-confused::before {
+  /* Advanced multi-layer scanlines for confused state - erratic and asymmetric */
+  background: 
+    /* Primary confused scanlines - irregular pattern */
+    linear-gradient(
+      to bottom,
+      transparent,
+      transparent 50%,
+      rgba(255, 180, 100, 0.15) 50%,
+      rgba(255, 180, 100, 0.15)
+    ),
+    /* Secondary finer confused scanlines - glitchy */
+    linear-gradient(
+      to bottom,
+      transparent 70%,
+      rgba(255, 200, 120, 0.1) 70%,
+      rgba(255, 200, 120, 0.1) 72%,
+      transparent 72%,
+      transparent 88%,
+      rgba(255, 200, 120, 0.1) 88%,
+      rgba(255, 200, 120, 0.1) 90%,
+      transparent 90%
+    ),
+    /* Confused state noise pattern - chaotic */
+    linear-gradient(
+      30deg,
+      rgba(255, 180, 100, 0.02),
+      rgba(255, 200, 120, 0.03) 20%,
+      rgba(255, 180, 100, 0.01) 40%,
+      rgba(255, 200, 120, 0.03) 60%,
+      rgba(255, 180, 100, 0.02) 80%,
+      rgba(255, 200, 120, 0.03)
+    );
+  background-size: 100% 5px, 100% 20px, 100% 100%;
+  animation: confusedScanlineScroll 3s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
+  opacity: 0.28;
+  /* Apply confused-specific distortion */
+  transform: skewY(0.15deg) skewX(0.05deg) scaleY(1.004);
+}
+
+.hologram-neutral {
+  animation: hologramFlicker 10s infinite;
+}
+
+/* Advanced character-level animations with physically-based micro-movements */
+.alertChar {
+  display: inline-block;
+  position: relative;
+  animation: alertCharacter 0.4s ease-in-out infinite alternate;
+  animation-delay: calc(var(--char-index) * 0.03s);
+  /* Subtle RGB shift for added holographic effect */
+  text-shadow: 
+    0.5px 0 1px rgba(255, 0, 0, 0.7),
+    -0.5px 0 1px rgba(0, 255, 255, 0.7);
+  will-change: transform, text-shadow, opacity;
+}
+
+.happyChar {
+  display: inline-block;
+  position: relative;
+  animation: happyCharacter 1.5s ease-in-out infinite;
+  animation-delay: calc(var(--char-index) * 0.05s);
+  /* Subtle glow effect */
+  text-shadow: 0 0 3px rgba(100, 255, 200, 0.5);
+  will-change: transform, text-shadow, opacity;
+}
+
+.thinkingChar {
+  display: inline-block;
+  position: relative;
+  animation: thinkingCharacter 3s ease-in-out infinite;
+  animation-delay: calc(var(--char-index) * 0.1s);
+  /* Subtle pulse effect */
+  text-shadow: 0 0 2px rgba(100, 200, 255, 0.5);
+  will-change: transform, text-shadow, opacity;
+}
+
+.sadChar {
+  display: inline-block;
+  position: relative;
+  animation: sadCharacter 4s ease-in-out infinite;
+  animation-delay: calc(var(--char-index) * 0.15s);
+  /* Subtle dimming effect */
+  text-shadow: 0 0 2px rgba(100, 150, 255, 0.4);
+  will-change: transform, text-shadow, opacity;
+}
+
+.confusedChar {
+  display: inline-block;
+  position: relative;
+  animation: confusedCharacter 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: calc(var(--char-index) * 0.07s);
+  /* Subtle color variation for confusion */
+  text-shadow: 
+    0.7px 0.7px 2px rgba(255, 200, 100, 0.5),
+    -0.3px -0.3px 2px rgba(100, 200, 255, 0.5);
+  will-change: transform, text-shadow, opacity;
+}
+
+.flutterChar {
+  display: inline-block;
+  position: relative;
+  animation: flutterCharacter 8s ease-in-out infinite;
+  animation-delay: calc(var(--char-index) * 0.1s);
+  /* Enhanced multi-layer flutter effect */
+  text-shadow: 
+    0 0 1px rgba(255, 255, 255, 0.8),
+    0 0 2px rgba(150, 200, 255, 0.6),
+    0 0 4px rgba(100, 150, 255, 0.3);
+  will-change: transform, text-shadow, opacity;
+}
+
+/* Advanced character animations keyframes with physically accurate movement patterns */
+@keyframes alertCharacter {
+  0% { transform: translateY(0) scale(1); opacity: 1; text-shadow: 0.5px 0 1px rgba(255, 0, 0, 0.7), -0.5px 0 1px rgba(0, 255, 255, 0.7); }
+  15% { transform: translateY(-1.5px) scale(1.03); opacity: 1; text-shadow: 1px 0 2px rgba(255, 0, 0, 0.8), -1px 0 2px rgba(0, 255, 255, 0.8); }
+  25% { transform: translateY(-2px) scale(1.05); opacity: 1; text-shadow: 1.2px 0 2.5px rgba(255, 0, 0, 0.9), -1.2px 0 2.5px rgba(0, 255, 255, 0.9); }
+  40% { transform: translateY(-1px) scale(1.02); opacity: 0.95; text-shadow: 0.8px 0 2px rgba(255, 0, 0, 0.8), -0.8px 0 2px rgba(0, 255, 255, 0.8); }
+  50% { transform: translateY(0) scale(1); opacity: 0.9; text-shadow: 0.5px 0 1px rgba(255, 0, 0, 0.7), -0.5px 0 1px rgba(0, 255, 255, 0.7); }
+  65% { transform: translateY(0.8px) scale(0.98); opacity: 0.95; text-shadow: 0.7px 0 1.5px rgba(255, 0, 0, 0.75), -0.7px 0 1.5px rgba(0, 255, 255, 0.75); }
+  75% { transform: translateY(1px) scale(0.97); opacity: 1; text-shadow: 0.9px 0 2px rgba(255, 0, 0, 0.8), -0.9px 0 2px rgba(0, 255, 255, 0.8); }
+  90% { transform: translateY(0.5px) scale(0.99); opacity: 0.95; text-shadow: 0.7px 0 1.5px rgba(255, 0, 0, 0.75), -0.7px 0 1.5px rgba(0, 255, 255, 0.75); }
+  100% { transform: translateY(0) scale(1); opacity: 1; text-shadow: 0.5px 0 1px rgba(255, 0, 0, 0.7), -0.5px 0 1px rgba(0, 255, 255, 0.7); }
+}
+
+@keyframes happyCharacter {
+  0% { transform: translateY(0) scale(1); text-shadow: 0 0 3px rgba(100, 255, 200, 0.5); }
+  20% { transform: translateY(-0.7px) scale(1.01); text-shadow: 0 0 3.5px rgba(100, 255, 200, 0.6); }
+  25% { transform: translateY(-1px) scale(1.02); text-shadow: 0 0 4px rgba(100, 255, 200, 0.7); }
+  40% { transform: translateY(-0.5px) scale(1.01); text-shadow: 0 0 3.5px rgba(100, 255, 200, 0.6); }
+  50% { transform: translateY(0) scale(1); text-shadow: 0 0 3px rgba(100, 255, 200, 0.5); }
+  70% { transform: translateY(0.7px) scale(0.99); text-shadow: 0 0 2.5px rgba(100, 255, 200, 0.45); }
+  75% { transform: translateY(1px) scale(0.98); text-shadow: 0 0 2px rgba(100, 255, 200, 0.4); }
+  90% { transform: translateY(0.5px) scale(0.99); text-shadow: 0 0 2.5px rgba(100, 255, 200, 0.45); }
+  100% { transform: translateY(0) scale(1); text-shadow: 0 0 3px rgba(100, 255, 200, 0.5); }
+}
+
+@keyframes thinkingCharacter {
+  0% { transform: translateY(0) rotateZ(0deg); opacity: 0.9; text-shadow: 0 0 2px rgba(100, 200, 255, 0.5); }
+  25% { transform: translateY(-0.5px) rotateZ(0.2deg); opacity: 0.95; text-shadow: 0 0 2.5px rgba(100, 200, 255, 0.6); }
+  50% { transform: translateY(-1px) rotateZ(0deg); opacity: 1; text-shadow: 0 0 3px rgba(100, 200, 255, 0.7); }
+  75% { transform: translateY(-0.5px) rotateZ(-0.2deg); opacity: 0.95; text-shadow: 0 0 2.5px rgba(100, 200, 255, 0.6); }
+  100% { transform: translateY(0) rotateZ(0deg); opacity: 0.9; text-shadow: 0 0 2px rgba(100, 200, 255, 0.5); }
+}
+
+@keyframes sadCharacter {
+  0% { transform: translateY(0) skewY(0deg); opacity: 0.8; text-shadow: 0 0 2px rgba(100, 150, 255, 0.4); }
+  25% { transform: translateY(0.5px) skewY(0.3deg); opacity: 0.75; text-shadow: 0 0 1.8px rgba(100, 150, 255, 0.35); }
+  50% { transform: translateY(1px) skewY(0.5deg); opacity: 0.7; text-shadow: 0 0 1.5px rgba(100, 150, 255, 0.3); }
+  75% { transform: translateY(0.5px) skewY(0.3deg); opacity: 0.75; text-shadow: 0 0 1.8px rgba(100, 150, 255, 0.35); }
+  100% { transform: translateY(0) skewY(0deg); opacity: 0.8; text-shadow: 0 0 2px rgba(100, 150, 255, 0.4); }
+}
+
+@keyframes confusedCharacter {
+  0% { transform: translateX(0) rotate(0deg); text-shadow: 0.7px 0.7px 2px rgba(255, 200, 100, 0.5), -0.3px -0.3px 2px rgba(100, 200, 255, 0.5); }
+  15% { transform: translateX(-0.7px) rotate(-0.7deg); text-shadow: 0.5px 0.5px 1.8px rgba(255, 200, 100, 0.45), -0.5px -0.5px 1.8px rgba(100, 200, 255, 0.45); }
+  25% { transform: translateX(-1px) rotate(-1deg); text-shadow: 0.3px 0.3px 1.5px rgba(255, 200, 100, 0.4), -0.7px -0.7px 1.5px rgba(100, 200, 255, 0.4); }
+  40% { transform: translateX(-0.5px) rotate(-0.5deg); text-shadow: 0.5px 0.5px 1.8px rgba(255, 200, 100, 0.45), -0.5px -0.5px 1.8px rgba(100, 200, 255, 0.45); }
+  50% { transform: translateX(0) rotate(0deg); text-shadow: 0.7px 0.7px 2px rgba(255, 200, 100, 0.5), -0.3px -0.3px 2px rgba(100, 200, 255, 0.5); }
+  65% { transform: translateX(0.7px) rotate(0.7deg); text-shadow: 0.9px 0.9px 2.2px rgba(255, 200, 100, 0.55), -0.1px -0.1px 2.2px rgba(100, 200, 255, 0.55); }
+  75% { transform: translateX(1px) rotate(1deg); text-shadow: 1.1px 1.1px 2.5px rgba(255, 200, 100, 0.6), 0px 0px 2.5px rgba(100, 200, 255, 0.6); }
+  90% { transform: translateX(0.5px) rotate(0.5deg); text-shadow: 0.9px 0.9px 2.2px rgba(255, 200, 100, 0.55), -0.1px -0.1px 2.2px rgba(100, 200, 255, 0.55); }
+  100% { transform: translateX(0) rotate(0deg); text-shadow: 0.7px 0.7px 2px rgba(255, 200, 100, 0.5), -0.3px -0.3px 2px rgba(100, 200, 255, 0.5); }
+}
+
+@keyframes flutterCharacter {
+  0% { 
+    transform: translateY(0) scale(1); 
+    opacity: 0.9; 
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.8), 0 0 2px rgba(150, 200, 255, 0.6), 0 0 4px rgba(100, 150, 255, 0.3);
+  }
+  10% { 
+    transform: translateY(-0.2px) scale(1.005); 
+    opacity: 0.92; 
+    text-shadow: 0 0 1.2px rgba(255, 255, 255, 0.85), 0 0 2.2px rgba(150, 200, 255, 0.65), 0 0 4.2px rgba(100, 150, 255, 0.35);
+  }
+  25% { 
+    transform: translateY(-0.5px) scale(1.01); 
+    opacity: 1; 
+    text-shadow: 0 0 1.5px rgba(255, 255, 255, 0.9), 0 0 2.5px rgba(150, 200, 255, 0.7), 0 0 4.5px rgba(100, 150, 255, 0.4);
+  }
+  40% { 
+    transform: translateY(-0.2px) scale(1.005); 
+    opacity: 0.95; 
+    text-shadow: 0 0 1.2px rgba(255, 255, 255, 0.85), 0 0 2.2px rgba(150, 200, 255, 0.65), 0 0 4.2px rgba(100, 150, 255, 0.35);
+  }
+  50% { 
+    transform: translateY(0) scale(1); 
+    opacity: 0.9; 
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.8), 0 0 2px rgba(150, 200, 255, 0.6), 0 0 4px rgba(100, 150, 255, 0.3);
+  }
+  60% { 
+    transform: translateY(0.2px) scale(0.995); 
+    opacity: 0.92; 
+    text-shadow: 0 0 0.8px rgba(255, 255, 255, 0.75), 0 0 1.8px rgba(150, 200, 255, 0.55), 0 0 3.8px rgba(100, 150, 255, 0.25);
+  }
+  75% { 
+    transform: translateY(0.5px) scale(0.99); 
+    opacity: 0.95; 
+    text-shadow: 0 0 0.5px rgba(255, 255, 255, 0.7), 0 0 1.5px rgba(150, 200, 255, 0.5), 0 0 3.5px rgba(100, 150, 255, 0.2);
+  }
+  90% { 
+    transform: translateY(0.2px) scale(0.995); 
+    opacity: 0.92; 
+    text-shadow: 0 0 0.8px rgba(255, 255, 255, 0.75), 0 0 1.8px rgba(150, 200, 255, 0.55), 0 0 3.8px rgba(100, 150, 255, 0.25);
+  }
+  100% { 
+    transform: translateY(0) scale(1); 
+    opacity: 0.9; 
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.8), 0 0 2px rgba(150, 200, 255, 0.6), 0 0 4px rgba(100, 150, 255, 0.3);
+  }
+}
+
+/* Enhanced physically-accurate hologram flicker animation with dynamic distortion effects */
+@keyframes hologramFlicker {
+  0% { 
+    opacity: 0.9; 
+    filter: brightness(1) contrast(1) blur(0px);
+    transform: scale(1) skew(0deg, 0deg);
+  }
+  3% { 
+    opacity: 0.85; 
+    filter: brightness(0.95) contrast(1.05) blur(0.2px);
+    transform: scale(1.002) skew(0.1deg, 0deg);
+  }
+  5% { 
+    opacity: 0.8; 
+    filter: brightness(0.9) contrast(1.1) blur(0.3px);
+    transform: scale(1.005) skew(0.2deg, 0.1deg);
+  }
+  7% { 
+    opacity: 0.85; 
+    filter: brightness(0.95) contrast(1.05) blur(0.2px);
+    transform: scale(1.003) skew(0.1deg, 0deg);
+  }
+  10% { 
+    opacity: 0.9; 
+    filter: brightness(1) contrast(1) blur(0px);
+    transform: scale(1) skew(0deg, 0deg);
+  }
+  15% { 
+    opacity: 0.85; 
+    filter: brightness(0.95) contrast(1.05) blur(0.1px);
+    transform: scale(0.998) skew(-0.1deg, 0deg);
+  }
+  25% { 
+    opacity: 0.9; 
+    filter: brightness(1) contrast(1) blur(0px);
+    transform: scale(1) skew(0deg, 0deg);
+  }
+  30% { 
+    opacity: 0.8; 
+    filter: brightness(0.9) contrast(1.1) blur(0.3px);
+    transform: scale(0.997) skew(-0.2deg, -0.1deg);
+  }
+  35% { 
+    opacity: 0.88; 
+    filter: brightness(0.95) contrast(1.05) blur(0.2px);
+    transform: scale(0.999) skew(-0.1deg, 0deg);
+  }
+  40% { 
+    opacity: 0.85; 
+    filter: brightness(0.92) contrast(1.08) blur(0.2px);
+    transform: scale(0.998) skew(-0.15deg, -0.05deg);
+  }
+  50% { 
+    opacity: 0.9; 
+    filter: brightness(1) contrast(1) blur(0px);
+    transform: scale(1) skew(0deg, 0deg);
+  }
+  51% { 
+    opacity: 0.7; 
+    filter: brightness(0.85) contrast(1.15) blur(0.4px);
+    transform: scale(1.008) skew(0.3deg, 0.2deg);
+  }  /* Enhanced quick flicker */
+  52% { 
+    opacity: 0.9; 
+    filter: brightness(1) contrast(1) blur(0px);
+    transform: scale(1) skew(0deg, 0deg);
+  }
+  62% { 
+    opacity: 0.83; 
+    filter: brightness(0.93) contrast(1.07) blur(0.2px);
+    transform: scale(0.996) skew(-0.15deg, -0.05deg);
+  }
+  75% { 
+    opacity: 0.8; 
+    filter: brightness(0.9) contrast(1.1) blur(0.3px);
+    transform: scale(0.997) skew(-0.2deg, -0.1deg);
+  }
+  80% { 
+    opacity: 0.88; 
+    filter: brightness(0.95) contrast(1.05) blur(0.2px);
+    transform: scale(0.999) skew(-0.1deg, 0deg);
+  }
+  85% { 
+    opacity: 0.85; 
+    filter: brightness(0.92) contrast(1.08) blur(0.2px);
+    transform: scale(0.998) skew(-0.15deg, -0.05deg);
+  }
+  90% { 
+    opacity: 0.9; 
+    filter: brightness(1) contrast(1) blur(0px);
+    transform: scale(1) skew(0deg, 0deg);
+  }
+  95% { 
+    opacity: 0.85; 
+    filter: brightness(0.93) contrast(1.07) blur(0.2px);
+    transform: scale(0.998) skew(-0.1deg, -0.05deg);
+  }
+  100% { 
+    opacity: 0.9; 
+    filter: brightness(1) contrast(1) blur(0px);
+    transform: scale(1) skew(0deg, 0deg);
+  }
+}
+
+/* Advanced emotion-specific animations with physically-accurate holographic distortion effects */
+@keyframes alertHologramFlash {
+  0% { 
+    filter: brightness(1.1) contrast(1.1) hue-rotate(-5deg) saturate(1.15); 
+    transform: scale(1) skew(0deg, 0deg);
+    box-shadow: 0 0 5px rgba(255, 100, 100, 0.2), 0 0 10px rgba(255, 150, 150, 0.1);
+  }
+  25% { 
+    filter: brightness(1.2) contrast(1.2) hue-rotate(-7deg) saturate(1.2); 
+    transform: scale(1.01) skew(0.2deg, 0.1deg);
+    box-shadow: 0 0 8px rgba(255, 100, 100, 0.3), 0 0 15px rgba(255, 150, 150, 0.15);
+  }
+  50% { 
+    filter: brightness(1.3) contrast(1.3) hue-rotate(-10deg) saturate(1.3); 
+    transform: scale(1.02) skew(0.4deg, 0.2deg);
+    box-shadow: 0 0 10px rgba(255, 100, 100, 0.4), 0 0 20px rgba(255, 150, 150, 0.2);
+  }
+  75% { 
+    filter: brightness(1.2) contrast(1.2) hue-rotate(-7deg) saturate(1.2); 
+    transform: scale(1.01) skew(0.2deg, 0.1deg);
+    box-shadow: 0 0 8px rgba(255, 100, 100, 0.3), 0 0 15px rgba(255, 150, 150, 0.15);
+  }
+  100% { 
+    filter: brightness(1.1) contrast(1.1) hue-rotate(-5deg) saturate(1.15); 
+    transform: scale(1) skew(0deg, 0deg);
+    box-shadow: 0 0 5px rgba(255, 100, 100, 0.2), 0 0 10px rgba(255, 150, 150, 0.1);
+  }
+}
+
+@keyframes happyHologramPulse {
+  0% { 
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1) hue-rotate(5deg) saturate(1.05); 
+    box-shadow: 0 0 5px rgba(100, 255, 150, 0.2), 0 0 10px rgba(150, 255, 200, 0.1);
+  }
+  25% { 
+    transform: scale(1.015) rotate(0.1deg); 
+    filter: brightness(1.05) hue-rotate(8deg) saturate(1.1); 
+    box-shadow: 0 0 8px rgba(100, 255, 150, 0.25), 0 0 15px rgba(150, 255, 200, 0.15);
+  }
+  50% { 
+    transform: scale(1.03) rotate(0.2deg); 
+    filter: brightness(1.1) hue-rotate(10deg) saturate(1.15); 
+    box-shadow: 0 0 10px rgba(100, 255, 150, 0.3), 0 0 20px rgba(150, 255, 200, 0.2);
+  }
+  75% { 
+    transform: scale(1.015) rotate(0.1deg); 
+    filter: brightness(1.05) hue-rotate(8deg) saturate(1.1); 
+    box-shadow: 0 0 8px rgba(100, 255, 150, 0.25), 0 0 15px rgba(150, 255, 200, 0.15);
+  }
+  100% { 
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1) hue-rotate(5deg) saturate(1.05); 
+    box-shadow: 0 0 5px rgba(100, 255, 150, 0.2), 0 0 10px rgba(150, 255, 200, 0.1);
+  }
+}
+
+@keyframes thinkingHologramPulse {
+  0% { 
+    filter: brightness(1) contrast(1) hue-rotate(15deg) saturate(1); 
+    transform: scale(1) skew(0deg, 0deg);
+    box-shadow: 0 0 5px rgba(100, 200, 255, 0.2), 0 0 10px rgba(150, 220, 255, 0.1);
+  }
+  25% { 
+    filter: brightness(1.05) contrast(1.1) hue-rotate(18deg) saturate(1.05); 
+    transform: scale(1.01) skew(0.1deg, 0.05deg);
+    box-shadow: 0 0 8px rgba(100, 200, 255, 0.25), 0 0 15px rgba(150, 220, 255, 0.15);
+  }
+  50% { 
+    filter: brightness(1) contrast(1) hue-rotate(15deg) saturate(1); 
+    transform: scale(1) skew(0deg, 0deg);
+    box-shadow: 0 0 5px rgba(100, 200, 255, 0.2), 0 0 10px rgba(150, 220, 255, 0.1);
+  }
+  75% { 
+    filter: brightness(0.95) contrast(0.9) hue-rotate(13deg) saturate(0.95); 
+    transform: scale(0.99) skew(-0.1deg, -0.05deg);
+    box-shadow: 0 0 3px rgba(100, 200, 255, 0.15), 0 0 7px rgba(150, 220, 255, 0.08);
+  }
+  100% { 
+    filter: brightness(1) contrast(1) hue-rotate(15deg) saturate(1); 
+    transform: scale(1) skew(0deg, 0deg);
+    box-shadow: 0 0 5px rgba(100, 200, 255, 0.2), 0 0 10px rgba(150, 220, 255, 0.1);
+  }
+}
+
+@keyframes sadHologramFluctuation {
+  0% { 
+    filter: brightness(0.9) saturate(0.95) hue-rotate(-10deg) blur(0.2px); 
+    transform: scale(0.98) skew(0deg, -0.1deg); 
+    box-shadow: 0 0 3px rgba(100, 150, 255, 0.15), 0 0 7px rgba(120, 170, 255, 0.08);
+  }
+  25% { 
+    filter: brightness(0.85) saturate(0.925) hue-rotate(-12deg) blur(0.3px); 
+    transform: scale(0.975) skew(0deg, -0.2deg); 
+    box-shadow: 0 0 2px rgba(100, 150, 255, 0.12), 0 0 5px rgba(120, 170, 255, 0.06);
+  }
+  50% { 
+    filter: brightness(0.8) saturate(0.9) hue-rotate(-15deg) blur(0.4px); 
+    transform: scale(0.97) skew(0deg, -0.3deg); 
+    box-shadow: 0 0 1px rgba(100, 150, 255, 0.1), 0 0 3px rgba(120, 170, 255, 0.05);
+  }
+  75% { 
+    filter: brightness(0.85) saturate(0.925) hue-rotate(-12deg) blur(0.3px); 
+    transform: scale(0.975) skew(0deg, -0.2deg); 
+    box-shadow: 0 0 2px rgba(100, 150, 255, 0.12), 0 0 5px rgba(120, 170, 255, 0.06);
+  }
+  100% { 
+    filter: brightness(0.9) saturate(0.95) hue-rotate(-10deg) blur(0.2px); 
+    transform: scale(0.98) skew(0deg, -0.1deg); 
+    box-shadow: 0 0 3px rgba(100, 150, 255, 0.15), 0 0 7px rgba(120, 170, 255, 0.08);
+  }
+}
+
+@keyframes confusedHologramDistortion {
+  0% { 
+    transform: scale(1) skew(0deg, 0deg) rotate(0deg); 
+    filter: brightness(1) hue-rotate(-5deg) saturate(1.1) blur(0px); 
+    box-shadow: 0 0 5px rgba(255, 180, 100, 0.2), 0 0 10px rgba(255, 200, 120, 0.1);
+  }
+  20% { 
+    transform: scale(1.02) skew(1deg, 0.5deg) rotate(0.5deg); 
+    filter: brightness(1.1) hue-rotate(-8deg) saturate(1.2) blur(0.3px); 
+    box-shadow: 0 0 8px rgba(255, 180, 100, 0.25), 0 0 15px rgba(255, 200, 120, 0.15);
+  }
+  40% { 
+    transform: scale(0.99) skew(-0.5deg, 0deg) rotate(-0.3deg); 
+    filter: brightness(0.95) hue-rotate(-3deg) saturate(1.05) blur(0.1px); 
+    box-shadow: 0 0 4px rgba(255, 180, 100, 0.18), 0 0 8px rgba(255, 200, 120, 0.09);
+  }
+  60% { 
+    transform: scale(1.01) skew(0.2deg, -0.8deg) rotate(0.2deg); 
+    filter: brightness(1.05) hue-rotate(-7deg) saturate(1.15) blur(0.2px); 
+    box-shadow: 0 0 7px rgba(255, 180, 100, 0.22), 0 0 12px rgba(255, 200, 120, 0.12);
+  }
+  80% { 
+    transform: scale(0.98) skew(-1deg, 0.3deg) rotate(-0.5deg); 
+    filter: brightness(0.9) hue-rotate(-2deg) saturate(1) blur(0.4px); 
+    box-shadow: 0 0 3px rgba(255, 180, 100, 0.15), 0 0 6px rgba(255, 200, 120, 0.08);
+  }
+  100% { 
+    transform: scale(1) skew(0deg, 0deg) rotate(0deg); 
+    filter: brightness(1) hue-rotate(-5deg) saturate(1.1) blur(0px); 
+    box-shadow: 0 0 5px rgba(255, 180, 100, 0.2), 0 0 10px rgba(255, 200, 120, 0.1);
+  }
+}
+
+/* Scanline animations */
+@keyframes scanlineScroll {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100%; }
+}
+
+@keyframes alertScanlineScroll {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 200%; }
+}
+
+@keyframes thinkingScanlineScroll {
+  0% { background-position: 0 0; }
+  33% { background-position: 0 100%; }
+  33.1% { background-position: 0 33%; }
+  66% { background-position: 0 66%; }
+  66.1% { background-position: 0 0%; }
+  100% { background-position: 0 100%; }
+}
+
+@keyframes confusedScanlineScroll {
+  0% { background-position: 0 0; }
+  10% { background-position: 0 50%; }
+  20% { background-position: 0 10%; }
+  30% { background-position: 0 90%; }
+  40% { background-position: 0 20%; }
+  50% { background-position: 0 80%; }
+  60% { background-position: 0 40%; }
+  70% { background-position: 0 60%; }
+  80% { background-position: 0 30%; }
+  90% { background-position: 0 70%; }
+  100% { background-position: 0 100%; }
+}
+
+/* Digital noise animation - legacy version */
+@keyframes digitalNoise {
+  0% { background-size: 100% 100%; background-position: 0% 0%; opacity: 0.1; }
+  10% { background-size: 102% 98%; background-position: -1% 1%; opacity: 0.12; }
+  20% { background-size: 99% 101%; background-position: 1% -1%; opacity: 0.09; }
+  30% { background-size: 103% 97%; background-position: -2% 2%; opacity: 0.11; }
+  40% { background-size: 98% 100%; background-position: 2% 0%; opacity: 0.1; }
+  50% { background-size: 101% 102%; background-position: 0% -1%; opacity: 0.13; }
+  60% { background-size: 97% 99%; background-position: 3% 1%; opacity: 0.08; }
+  70% { background-size: 100% 98%; background-position: 0% 2%; opacity: 0.1; }
+  80% { background-size: 102% 101%; background-position: -1% -1%; opacity: 0.12; }
+  90% { background-size: 99% 97%; background-position: 1% 3%; opacity: 0.09; }
+  100% { background-size: 100% 100%; background-position: 0% 0%; opacity: 0.1; }
+}
+
+/* Enhanced PBR-like digital noise animation with rotational distortion */
+@keyframes enhancedDigitalNoise {
+  0% { 
+    background-size: 100% 100%; 
+    background-position: 0% 0%; 
+    opacity: 0.15; 
+    transform: scale(1) rotate(0deg);
+    filter: brightness(1) contrast(1);
+  }
+  10% { 
+    background-size: 102% 99%; 
+    background-position: -1% 1%; 
+    opacity: 0.16; 
+    transform: scale(1.01) rotate(0.1deg);
+    filter: brightness(1.05) contrast(0.98);
+  }
+  20% { 
+    background-size: 99.5% 101.5%; 
+    background-position: 0.5% -0.5%; 
+    opacity: 0.14; 
+    transform: scale(0.995) rotate(-0.2deg);
+    filter: brightness(0.98) contrast(1.02);
+  }
+  30% { 
+    background-size: 103% 98%; 
+    background-position: -1.5% 1%; 
+    opacity: 0.17; 
+    transform: scale(1.005) rotate(0.15deg);
+    filter: brightness(1.02) contrast(0.99);
+  }
+  40% { 
+    background-size: 98.5% 100.5%; 
+    background-position: 1% -0.3%; 
+    opacity: 0.15; 
+    transform: scale(0.998) rotate(-0.1deg);
+    filter: brightness(0.99) contrast(1.01);
+  }
+  50% { 
+    background-size: 101% 102%; 
+    background-position: -0.5% -0.8%; 
+    opacity: 0.18; 
+    transform: scale(1.02) rotate(0.2deg);
+    filter: brightness(1.04) contrast(0.97);
+  }
+  60% { 
+    background-size: 97.5% 99.5%; 
+    background-position: 1.5% 0.4%; 
+    opacity: 0.13; 
+    transform: scale(0.99) rotate(-0.15deg);
+    filter: brightness(0.97) contrast(1.03);
+  }
+  70% { 
+    background-size: 100.5% 98%; 
+    background-position: -0.2% 1.2%; 
+    opacity: 0.16; 
+    transform: scale(1.01) rotate(0.05deg);
+    filter: brightness(1.01) contrast(0.99);
+  }
+  80% { 
+    background-size: 102.5% 101.5%; 
+    background-position: -1.2% -0.7%; 
+    opacity: 0.17; 
+    transform: scale(1.015) rotate(0.18deg);
+    filter: brightness(1.03) contrast(0.98);
+  }
+  90% { 
+    background-size: 99% 97.5%; 
+    background-position: 0.8% 1.5%; 
+    opacity: 0.14; 
+    transform: scale(0.995) rotate(-0.08deg);
+    filter: brightness(0.96) contrast(1.02);
+  }
+  100% { 
+    background-size: 100% 100%; 
+    background-position: 0% 0%; 
+    opacity: 0.15; 
+    transform: scale(1) rotate(0deg);
+    filter: brightness(1) contrast(1);
+  }
+}
+
+/* Glitch animation for alert/error states */
+@keyframes glitchEffect {
+  0% {
+    transform: translate(0);
+    filter: hue-rotate(0deg);
+  }
+  10% {
+    transform: translate(-2px, 1px);
+    filter: hue-rotate(45deg);
+  }
+  20% {
+    transform: translate(2px, 0);
+    filter: hue-rotate(0deg);
+  }
+  30% {
+    transform: translate(0, 1px);
+    filter: hue-rotate(-45deg);
+  }
+  40% {
+    transform: translate(1px, -1px);
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    transform: translate(-1px, 2px);
+    filter: hue-rotate(45deg);
+  }
+  60% {
+    transform: translate(-2px, 1px);
+    filter: hue-rotate(0deg);
+  }
+  70% {
+    transform: translate(2px, 1px);
+    filter: hue-rotate(-45deg);
+  }
+  80% {
+    transform: translate(-1px, -1px);
+    filter: hue-rotate(0deg);
+  }
+  90% {
+    transform: translate(1px, 2px);
+    filter: hue-rotate(45deg);
+  }
+  100% {
+    transform: translate(0);
+    filter: hue-rotate(0deg);
+  }
+}
+
+/* Enhanced utility classes for specific UI elements */
+.digitalNoiseEffect {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.1;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  animation: digitalNoise 8s linear infinite;
+  z-index: 11;
+}
+
+/* Interlaced scanline effect for alert states */
+.interlacedScanlines {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, 
+    rgba(255, 100, 100, 0.05) 0%, 
+    transparent 10%, 
+    rgba(255, 100, 100, 0.08) 20%, 
+    transparent 30%,
+    rgba(255, 100, 100, 0.05) 40%,
+    transparent 50%,
+    rgba(255, 100, 100, 0.08) 60%,
+    transparent 70%,
+    rgba(255, 100, 100, 0.05) 80%,
+    transparent 90%,
+    rgba(255, 100, 100, 0.08) 100%
+  );
+  background-size: 100% 200%;
+  animation: scanlineScroll 10s linear infinite;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 10;
+}

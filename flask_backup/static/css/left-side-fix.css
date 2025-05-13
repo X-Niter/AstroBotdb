@@ -1,0 +1,256 @@
+/**
+ * AstroBot AI - Left Side Clipping Fixes
+ * 
+ * This stylesheet specifically targets and fixes UI clipping issues on the left side
+ * of the application, focusing on sidebar navigation and left-aligned elements.
+ */
+
+/* ===== Core Sidebar Fixes ===== */
+
+/* Force proper sidebar positioning and prevent overflow */
+.cosmic-sidebar,
+.side-nav,
+.sidebar,
+.md-sidebar,
+.side-navigation,
+#sidebarMenu,
+.side-navbar-astro {
+  transform: none !important;
+  left: 0 !important;
+  margin-left: 0 !important;
+  position: fixed !important;
+  overflow-x: hidden !important; 
+  z-index: 40;
+  max-width: 100vw !important; 
+  box-sizing: border-box !important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Allow vertical scrolling in sidebar when content overflows */
+.cosmic-sidebar-content,
+.sidebar-content,
+.md-sidebar__scrollwrap {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  height: calc(100vh - 4rem) !important;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(78, 119, 255, 0.5) rgba(15, 23, 42, 0.2);
+}
+
+/* Create safe margins for sidebar content */
+.cosmic-sidebar-section,
+.sidebar-section,
+.cosmic-sidebar-nav,
+.cosmic-sidebar-heading {
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Fix icon alignment inside sidebar navigation links */
+.cosmic-sidebar-nav-link i,
+.sidebar-link i,
+.side-nav-link i,
+.md-nav__link i {
+  min-width: 1.5rem !important;
+  text-align: center !important;
+  margin-right: 0.75rem !important;
+}
+
+/* Prevent sidebar link text from overflowing */
+.cosmic-sidebar-nav-link span,
+.sidebar-link span,
+.side-nav-link span,
+.md-nav__link span {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: calc(100% - 2.25rem) !important;
+}
+
+/* ===== Left-Aligned Content Adjustments ===== */
+
+/* Ensure proper content margins when sidebar is present */
+.main-content,
+.content-wrapper,
+.content-area,
+.cosmic-content {
+  margin-left: 16rem !important;
+  width: calc(100% - 16rem) !important;
+  max-width: calc(100% - 16rem) !important;
+  box-sizing: border-box !important;
+  transition: margin-left 0.3s ease, width 0.3s ease, max-width 0.3s ease;
+}
+
+/* Content adjustment when sidebar is collapsed */
+body.sidebar-collapsed .main-content,
+body.sidebar-collapsed .content-wrapper,
+body.sidebar-collapsed .content-area,
+.cosmic-content.expanded {
+  margin-left: 5rem !important;
+  width: calc(100% - 5rem) !important;
+  max-width: calc(100% - 5rem) !important;
+}
+
+/* Fix for sidebar logo elements */
+.cosmic-sidebar-logo,
+.sidebar-logo,
+.side-nav-logo {
+  padding-left: 1.5rem !important;
+  padding-right: 1.5rem !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  box-sizing: border-box !important;
+}
+
+/* ===== Mobile Adjustments ===== */
+@media (max-width: 768px) {
+  /* Proper mobile sidebar handling */
+  .cosmic-sidebar,
+  .side-nav,
+  .sidebar,
+  .md-sidebar,
+  .side-navigation,
+  #sidebarMenu,
+  .side-navbar-astro {
+    transform: translateX(-100%) !important;
+    box-shadow: none !important;
+  }
+  
+  /* Show sidebar when active on mobile */
+  .cosmic-sidebar.mobile-active,
+  .side-nav.mobile-active,
+  .sidebar.mobile-active,
+  .md-sidebar.mobile-active,
+  .side-navigation.mobile-active,
+  #sidebarMenu.mobile-active,
+  .side-navbar-astro.mobile-active,
+  [data-md-toggle=drawer]:checked ~ .md-container .md-sidebar--primary {
+    transform: translateX(0) !important;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Reset content margins on mobile */
+  .main-content,
+  .content-wrapper,
+  .content-area,
+  .cosmic-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Ensure content has proper padding on mobile */
+  .main-content .container,
+  .content-wrapper .container, 
+  .content-area .container,
+  .cosmic-content .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Mobile overlay when sidebar is active */
+  .sidebar-overlay.active {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 39;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+}
+
+/* ===== Left-Aligned Element Fixes ===== */
+
+/* Properly position badges and indicators */
+.cosmic-sidebar-nav-link .badge,
+.sidebar-link .badge,
+.md-nav__link .badge {
+  margin-left: auto !important;
+  position: relative !important;
+  right: 0 !important;
+}
+
+/* Fix alignment of left-positioned modals and popovers */
+.modal-left,
+.popover-left,
+.dropdown-left {
+  left: 0 !important;
+  margin-left: 0 !important;
+  transform: none !important;
+}
+
+/* Fix positioning of fixed elements on the left side */
+.fixed-left,
+.sticky-left {
+  left: 0 !important; 
+  margin-left: 0 !important;
+  position: fixed !important;
+  max-width: 100vw !important;
+  box-sizing: border-box !important;
+}
+
+/* ===== CSS Specificity Override ===== */
+/* Force left positioning regardless of other styles */
+.force-left {
+  left: 0 !important;
+  margin-left: 0 !important;
+  transform: none !important;
+  position: relative !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Override for important sidebar elements */
+.md-sidebar--primary,
+.sidebar--primary,
+.side-nav--primary {
+  max-width: 16rem !important;
+  width: 16rem !important;
+  left: 0 !important;
+  transform: translateX(0) !important;
+  transition: transform 0.3s ease !important;
+}
+
+/* Ensure we fix any nested components inside the sidebar */
+.cosmic-sidebar *,
+.sidebar *,
+.side-nav *,
+.md-sidebar * {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Fix for cosmic-sidebar link active indicator */
+.cosmic-sidebar-nav-link.active:before {
+  left: 0 !important;
+  max-width: 3px !important;
+  box-sizing: border-box !important;
+}
+
+/* Fix for dropdown menus in sidebar */
+.cosmic-sidebar .dropdown-menu,
+.sidebar .dropdown-menu,
+.side-nav .dropdown-menu {
+  position: relative !important;
+  left: 0 !important;
+  margin-left: 1.5rem !important;
+  width: auto !important;
+  max-width: calc(100% - 1.5rem) !important;
+  box-shadow: none !important;
+}
+
+/* Force proper z-index layering */
+.cosmic-sidebar .z-index-fix,
+.sidebar .z-index-fix,
+.side-nav .z-index-fix {
+  z-index: auto !important;
+  position: relative !important;
+}

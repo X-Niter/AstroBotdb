@@ -1,0 +1,459 @@
+{% extends "layouts/clean.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="card-title">Account Settings</h3>
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="#profile" class="list-group-item list-group-item-action active" data-bs-toggle="list">
+                    <i class="bi bi-person-fill me-2"></i> Profile
+                </a>
+                <a href="#appearance" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-palette-fill me-2"></i> Appearance
+                </a>
+                <a href="#notifications" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-bell-fill me-2"></i> Notifications
+                </a>
+                <a href="#security" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-shield-lock-fill me-2"></i> Security
+                </a>
+                <a href="#connected-accounts" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-link-45deg me-2"></i> Connected Accounts
+                </a>
+                <a href="#premium" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-stars me-2"></i> Premium Features
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="tab-content">
+            <!-- Profile Tab -->
+            <div class="tab-pane fade show active" id="profile">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Profile Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{{ url_for('update_profile') }}">
+                            <div class="row mb-3">
+                                <div class="col-md-2">
+                                    <div class="avatar-wrapper text-center">
+                                        <div class="avatar rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; font-size: 28px;">
+                                            {{ current_user.username[0].upper() }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-10">
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Username</label>
+                                        <input type="text" class="form-control" id="username" name="username" value="{{ current_user.username }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" name="email" value="{{ current_user.email }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="bio" class="form-label">Bio</label>
+                                <textarea class="form-control" id="bio" name="bio" rows="3">{{ current_user.bio }}</textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appearance Tab -->
+            <div class="tab-pane fade" id="appearance">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Appearance Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{{ url_for('update_appearance') }}">
+                            <div class="mb-4">
+                                <label class="form-label">Theme</label>
+                                <div class="row g-3 mb-3">
+                                    <div class="col-6 col-md-4">
+                                        <div class="card theme-card h-100 {% if current_user.theme_preference == 'light' %}border-primary{% endif %}" data-theme="light">
+                                            <div class="card-body p-2">
+                                                <div class="theme-preview d-flex flex-column" style="height: 120px; cursor: pointer;" 
+                                                     onclick="document.getElementById('theme-light').checked = true;"
+                                                     data-bs-toggle="tooltip" title="Click to preview Light theme">
+                                                    <div class="theme-preview-header bg-light p-2 mb-2" style="height: 30px; border-bottom: 1px solid #dee2e6;"></div>
+                                                    <div class="theme-preview-content d-flex">
+                                                        <div class="theme-preview-sidebar bg-light p-2 me-2" style="width: 30px; height: 80px;"></div>
+                                                        <div class="theme-preview-main bg-white p-2 flex-grow-1" style="height: 80px;"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex align-items-center mt-2">
+                                                    <input class="form-check-input me-2 theme-radio" type="radio" 
+                                                           name="theme_preference" id="theme-light" value="light" 
+                                                           {% if current_user.theme_preference == 'light' %}checked{% endif %}
+                                                           onchange="updateTheme('light');">
+                                                    <label class="form-check-label" for="theme-light">Light</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-4">
+                                        <div class="card theme-card h-100 {% if current_user.theme_preference == 'dark' %}border-primary{% endif %}" data-theme="dark">
+                                            <div class="card-body p-2">
+                                                <div class="theme-preview d-flex flex-column" style="height: 120px; cursor: pointer;" 
+                                                     onclick="document.getElementById('theme-dark').checked = true;"
+                                                     data-bs-toggle="tooltip" title="Click to preview Dark theme">
+                                                    <div class="theme-preview-header bg-dark p-2 mb-2" style="height: 30px; border-bottom: 1px solid #444;"></div>
+                                                    <div class="theme-preview-content d-flex">
+                                                        <div class="theme-preview-sidebar bg-dark p-2 me-2" style="width: 30px; height: 80px;"></div>
+                                                        <div class="theme-preview-main bg-secondary p-2 flex-grow-1" style="height: 80px; background-color: #252525 !important;"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex align-items-center mt-2">
+                                                    <input class="form-check-input me-2 theme-radio" type="radio" 
+                                                           name="theme_preference" id="theme-dark" value="dark" 
+                                                           {% if current_user.theme_preference == 'dark' %}checked{% endif %}
+                                                           onchange="updateTheme('dark');">
+                                                    <label class="form-check-label" for="theme-dark">Dark</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% if current_user.is_premium %}
+                                    <div class="col-6 col-md-4">
+                                        <div class="card theme-card h-100 {% if current_user.theme_preference == 'space' %}border-primary{% endif %}" data-theme="space">
+                                            <div class="card-body p-2">
+                                                <div class="theme-preview d-flex flex-column" style="height: 120px; background-color: #0d1117; cursor: pointer;" 
+                                                     onclick="document.getElementById('theme-space').checked = true;"
+                                                     data-bs-toggle="tooltip" title="Click to preview Space theme">
+                                                    <div class="theme-preview-header p-2 mb-2" style="height: 30px; border-bottom: 1px solid #30363d; background: linear-gradient(90deg, #0d1117, #1a1f27);"></div>
+                                                    <div class="theme-preview-content d-flex">
+                                                        <div class="theme-preview-sidebar p-2 me-2" style="width: 30px; height: 80px; background: linear-gradient(140deg, #0d1117, #1a1f27);"></div>
+                                                        <div class="theme-preview-main p-2 flex-grow-1" style="height: 80px; background: linear-gradient(140deg, #21262d, #2c313a);"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex align-items-center mt-2">
+                                                    <input class="form-check-input me-2 theme-radio" type="radio" 
+                                                           name="theme_preference" id="theme-space" value="space" 
+                                                           {% if current_user.theme_preference == 'space' %}checked{% endif %}
+                                                           onchange="updateTheme('space');">
+                                                    <label class="form-check-label" for="theme-space">Space <span class="badge bg-warning text-dark">Premium</span></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-4">
+                                        <div class="card theme-card h-100 {% if current_user.theme_preference == 'neon' %}border-primary{% endif %}" data-theme="neon">
+                                            <div class="card-body p-2">
+                                                <div class="theme-preview d-flex flex-column" style="height: 120px; background-color: #0f0f12; cursor: pointer;" 
+                                                     onclick="document.getElementById('theme-neon').checked = true;"
+                                                     data-bs-toggle="tooltip" title="Click to preview Neon theme">
+                                                    <div class="theme-preview-header p-2 mb-2" style="height: 30px; border-bottom: 1px solid #ff00ff; background-color: #000000;"></div>
+                                                    <div class="theme-preview-content d-flex">
+                                                        <div class="theme-preview-sidebar p-2 me-2" style="width: 30px; height: 80px; background-color: #0f0f12;"></div>
+                                                        <div class="theme-preview-main p-2 flex-grow-1" style="height: 80px; background-color: #1e1e24; border: 1px solid #ff00ff; box-shadow: 0 0 5px rgba(255, 0, 255, 0.5);"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex align-items-center mt-2">
+                                                    <input class="form-check-input me-2 theme-radio" type="radio" 
+                                                           name="theme_preference" id="theme-neon" value="neon" 
+                                                           {% if current_user.theme_preference == 'neon' %}checked{% endif %}
+                                                           onchange="updateTheme('neon');">
+                                                    <label class="form-check-label" for="theme-neon">Neon <span class="badge bg-warning text-dark">Premium</span></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-4">
+                                        <div class="card theme-card h-100 {% if current_user.theme_preference == 'contrast' %}border-primary{% endif %}" data-theme="contrast">
+                                            <div class="card-body p-2">
+                                                <div class="theme-preview d-flex flex-column" style="height: 120px; background-color: #000000; cursor: pointer;" 
+                                                     onclick="document.getElementById('theme-contrast').checked = true;"
+                                                     data-bs-toggle="tooltip" title="Click to preview High Contrast theme">
+                                                    <div class="theme-preview-header p-2 mb-2" style="height: 30px; border-bottom: 2px solid #ffcc00; background-color: #000000;"></div>
+                                                    <div class="theme-preview-content d-flex">
+                                                        <div class="theme-preview-sidebar p-2 me-2" style="width: 30px; height: 80px; background-color: #000000;"></div>
+                                                        <div class="theme-preview-main p-2 flex-grow-1" style="height: 80px; background-color: #1a1a1a; border: 2px solid #444444;"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex align-items-center mt-2">
+                                                    <input class="form-check-input me-2 theme-radio" type="radio" 
+                                                           name="theme_preference" id="theme-contrast" value="contrast" 
+                                                           {% if current_user.theme_preference == 'contrast' %}checked{% endif %}
+                                                           onchange="updateTheme('contrast');">
+                                                    <label class="form-check-label" for="theme-contrast">High Contrast <span class="badge bg-warning text-dark">Premium</span></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div class="col-12 col-md-8">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h5>Premium Themes</h5>
+                                                <p>Upgrade to Premium to access exclusive themes:</p>
+                                                <ul>
+                                                    <li>Space Theme - Dark space-inspired theme with stars</li>
+                                                    <li>Neon Theme - Vibrant neon colors on dark background</li>
+                                                    <li>High Contrast Theme - Improved accessibility with high contrast colors</li>
+                                                </ul>
+                                                <a href="{{ url_for('premium_plans') }}" class="btn btn-warning">Upgrade to Premium</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Preferences</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Tab -->
+            <div class="tab-pane fade" id="notifications">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Notification Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{{ url_for('update_notifications') }}">
+                            <div class="mb-3">
+                                <h6>Email Notifications</h6>
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="email-updates" checked>
+                                    <label class="form-check-label" for="email-updates">Product updates and announcements</label>
+                                </div>
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="email-security" checked>
+                                    <label class="form-check-label" for="email-security">Security alerts</label>
+                                </div>
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="email-marketing">
+                                    <label class="form-check-label" for="email-marketing">Marketing and promotional emails</label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <h6>Discord Notifications</h6>
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="discord-mentions" checked>
+                                    <label class="form-check-label" for="discord-mentions">When bot mentions you</label>
+                                </div>
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="discord-commands" checked>
+                                    <label class="form-check-label" for="discord-commands">When someone uses your custom commands</label>
+                                </div>
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="discord-moderation" checked>
+                                    <label class="form-check-label" for="discord-moderation">Moderation actions in your servers</label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Notification Settings</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Tab -->
+            <div class="tab-pane fade" id="security">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Security Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{{ url_for('update_security') }}">
+                            <div class="mb-4">
+                                <h6>Change Password</h6>
+                                <div class="mb-3">
+                                    <label for="current-password" class="form-label">Current Password</label>
+                                    <input type="password" class="form-control" id="current-password" name="current_password">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="new-password" class="form-label">New Password</label>
+                                    <input type="password" class="form-control" id="new-password" name="new_password">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="confirm-password" class="form-label">Confirm New Password</label>
+                                    <input type="password" class="form-control" id="confirm-password" name="confirm_password">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Password</button>
+                            </div>
+                        </form>
+                        <hr>
+                        <div class="mb-4">
+                            <h6>Two-Factor Authentication</h6>
+                            <p>Add an extra layer of security to your account.</p>
+                            <button class="btn btn-outline-primary">Enable 2FA</button>
+                        </div>
+                        <hr>
+                        <div>
+                            <h6 class="text-danger">Danger Zone</h6>
+                            <p>Once you delete your account, there is no going back. Please be certain.</p>
+                            <button class="btn btn-outline-danger">Delete Account</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connected Accounts Tab -->
+            <div class="tab-pane fade" id="connected-accounts">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Connected Accounts</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-discord me-3" style="font-size: 24px;"></i>
+                                    <div>
+                                        <h6 class="mb-0">Discord</h6>
+                                        <small class="text-muted">Connected as DiscordUser#1234</small>
+                                    </div>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger">Disconnect</button>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-twitch me-3" style="font-size: 24px;"></i>
+                                    <div>
+                                        <h6 class="mb-0">Twitch</h6>
+                                        <small class="text-muted">Not connected</small>
+                                    </div>
+                                </div>
+                                <button class="btn btn-sm btn-primary">Connect</button>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-github me-3" style="font-size: 24px;"></i>
+                                    <div>
+                                        <h6 class="mb-0">GitHub</h6>
+                                        <small class="text-muted">Not connected</small>
+                                    </div>
+                                </div>
+                                <button class="btn btn-sm btn-primary">Connect</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premium Features Tab -->
+            <div class="tab-pane fade" id="premium">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Premium Features</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if current_user.is_premium %}
+                        <div class="alert alert-success">
+                            <h5><i class="bi bi-star-fill me-2"></i> Premium Membership Active</h5>
+                            <p class="mb-0">You have access to all premium features. Thank you for your support!</p>
+                        </div>
+                        <h6>Your Premium Features</h6>
+                        <div class="list-group mb-4">
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-0">Custom Bot Appearance</h6>
+                                        <p class="mb-0 text-muted small">Customize your bot's name, avatar, and status</p>
+                                    </div>
+                                    <a href="{{ url_for('bot_customization') }}" class="btn btn-sm btn-primary">Configure</a>
+                                </div>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-0">Premium Themes</h6>
+                                        <p class="mb-0 text-muted small">Access exclusive website themes</p>
+                                    </div>
+                                    <a href="#appearance" class="btn btn-sm btn-primary" data-bs-toggle="list">Configure</a>
+                                </div>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-0">Advanced Analytics</h6>
+                                        <p class="mb-0 text-muted small">Detailed insights and reports</p>
+                                    </div>
+                                    <a href="{{ url_for('premium_analytics') }}" class="btn btn-sm btn-primary">View</a>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('manage_subscription') }}" class="btn btn-outline-primary">Manage Subscription</a>
+                        {% else %}
+                        <div class="alert alert-info">
+                            <h5><i class="bi bi-star me-2"></i> Upgrade to Premium</h5>
+                            <p class="mb-0">Unlock exclusive features and enhance your experience.</p>
+                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Custom Bot</h5>
+                                        <p class="card-text">Customize your bot's appearance and behavior.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Premium Themes</h5>
+                                        <p class="card-text">Access exclusive website themes.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Advanced Analytics</h5>
+                                        <p class="card-text">Get detailed insights and reports.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('premium_plans') }}" class="btn btn-warning">View Premium Plans</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Theme card selection handler
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeCards = document.querySelectorAll('.theme-card');
+        
+        themeCards.forEach(card => {
+            card.addEventListener('click', function() {
+                // Find the radio input in this card and check it
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                
+                // Update visual selection
+                themeCards.forEach(c => c.classList.remove('border-primary'));
+                this.classList.add('border-primary');
+                
+                // Get selected theme
+                const theme = this.dataset.theme;
+                
+                // Preview theme
+                document.body.className = '';
+                document.body.classList.add('theme-' + theme);
+            });
+        });
+    });
+</script>
+{% endblock %}

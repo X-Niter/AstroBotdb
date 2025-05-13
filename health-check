@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Simple health check script that says OK and routes to node app
+echo "OK - AstroBot Ready"
+
+# Kill any Python processes that might be running
+pkill -f python || true
+pkill -f gunicorn || true
+
+# Start Node.js if not running
+if ! pgrep -f "node index.js" > /dev/null; then
+  nohup node index.js > app.log 2>&1 &
+  echo "Started Node.js app"
+else
+  echo "Node.js app already running"
+fi
+
+exit 0

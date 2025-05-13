@@ -1,0 +1,572 @@
+{% extends "layouts/documentation.html" %}
+
+{% block title %}Documentation{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/documentation.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components/cosmic-cards.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components/cosmic-effects.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components/chat-styles.css') }}">
+{% endblock %}
+
+<!-- Scripts are in the main scripts block at the bottom -->
+<script src="{{ url_for('static', filename='js/cosmic-effects.js') }}"></script>
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Overview</li>
+{% endblock %}
+
+{% block toc %}
+<ul class="cosmic-list">
+    <li><a href="#getting-started" class="cosmic-link">Getting Started</a>
+        <ul>
+            <li><a href="#key-features" class="cosmic-link">Key Features</a></li>
+        </ul>
+    </li>
+    <li><a href="#quick-start-guide" class="cosmic-link">Quick Start Guide</a></li>
+    <li><a href="#get-help" class="cosmic-link">Need Help?</a></li>
+</ul>
+{% endblock %}
+
+{% block doc_content %}
+<!-- Main documentation content -->
+<div class="position-relative">
+    <!-- Header Section with Hero -->
+    <section class="cosmic-hero-section mb-5">
+        <h1 class="cosmic-glow-text mb-4" id="getting-started">AstroBot Documentation</h1>
+        <p class="lead mb-4">
+            Welcome to the AstroBot documentation. Here you'll find comprehensive guides and documentation to help you start working with AstroBot as quickly as possible.
+        </p>
+        <div class="cosmic-divider mb-4"></div>
+    </section>
+                    
+                    <!-- Sidebar content - collapsible on mobile -->
+                    <div class="collapse d-md-block" id="docSidebarContent">
+                        <div class="doc-nav cosmic-fade-in p-3">
+                            <div class="cosmic-nebula cosmic-nebula-1"></div>
+                            <div class="cosmic-nebula cosmic-nebula-2"></div>
+                            
+                            <a href="{{ url_for('documentation_index') }}" class="nav-link active cosmic-glow mb-2">
+                                <i class="bi bi-house-door me-2"></i> Getting Started
+                            </a>
+                            
+                            <div class="nav-heading mt-4">Discord Bot</div>
+                            <a href="{{ url_for('documentation_page', page_type='features', page_name='moderation') }}" class="nav-link ms-2 mb-1">
+                                <i class="bi bi-shield-check me-2"></i> Moderation System
+                            </a>
+                            <a href="{{ url_for('documentation_page', page_type='features', page_name='custom_commands') }}" class="nav-link ms-2 mb-1">
+                                <i class="bi bi-terminal me-2"></i> Custom Commands
+                            </a>
+                            <a href="{{ url_for('documentation_page', page_type='features', page_name='ai_features') }}" class="nav-link ms-2 mb-1">
+                                <i class="bi bi-chat-dots me-2"></i> AI Features
+                            </a>
+                            
+                            <div class="nav-heading mt-4">Minecraft</div>
+                            <a href="{{ url_for('documentation_page', page_type='features', page_name='server_management') }}" class="nav-link ms-2 mb-1">
+                                <i class="bi bi-hdd-rack me-2"></i> Server Management
+                            </a>
+                            <a href="{{ url_for('documentation_page', page_type='features', page_name='whitelist') }}" class="nav-link ms-2 mb-1">
+                                <i class="bi bi-person-check me-2"></i> Whitelist System
+                            </a>
+                            <a href="{{ url_for('documentation_page', page_type='features', page_name='mod_integration') }}" class="nav-link ms-2 mb-1">
+                                <i class="bi bi-puzzle me-2"></i> Mod Integration
+                            </a>
+                
+                            <div class="nav-heading mt-4">Twitch</div>
+                            <a href="{{ url_for('documentation_page', page_type='features', page_name='twitch_integration') }}" class="nav-link ms-2 mb-1">
+                                <i class="bi bi-twitch me-2"></i> Twitch Integration
+                            </a>
+                            <a href="{{ url_for('documentation_page', page_type='features', page_name='points_system') }}" class="nav-link ms-2 mb-1">
+                                <i class="bi bi-star me-2"></i> Points System
+                            </a>
+                            
+                            <div class="nav-heading mt-4">API</div>
+                            <a href="{{ url_for('documentation_page', page_type='api', page_name='overview') }}" class="nav-link ms-2 mb-1">
+                                <i class="bi bi-braces me-2"></i> API Overview
+                            </a>
+                            <a href="{{ url_for('documentation_page', page_type='api', page_name='authentication') }}" class="nav-link ms-2 mb-1">
+                                <i class="bi bi-key me-2"></i> Authentication
+                            </a>
+                            <a href="{{ url_for('documentation_page', page_type='api', page_name='endpoints') }}" class="nav-link ms-2 mb-1">
+                                <i class="bi bi-box-arrow-in-right me-2"></i> Endpoints
+                            </a>
+                            
+                            <div class="nav-heading mt-4">Guides</div>
+                            <a href="{{ url_for('documentation_page', page_type='guides', page_name='setup') }}" class="nav-link ms-2 mb-1">
+                                <i class="bi bi-book me-2"></i> Setup Guide
+                            </a>
+                            <a href="{{ url_for('documentation_page', page_type='guides', page_name='permissions') }}" class="nav-link ms-2 mb-1">
+                                <i class="bi bi-person-lock me-2"></i> Permissions Guide
+                            </a>
+                            <a href="{{ url_for('documentation_page', page_type='guides', page_name='advanced_commands') }}" class="nav-link ms-2 mb-1">
+                                <i class="bi bi-terminal-plus me-2"></i> Advanced Commands
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        
+        <!-- Main Content -->
+        <main class="col-md-9 col-lg-10">
+            <div class="glass-card p-4 p-md-5 rounded-lg doc-content cosmic-scrollbar position-relative overflow-hidden">
+                <!-- Background effects -->
+                <div class="cosmic-nebula cosmic-nebula-1" style="opacity: 0.05; top: 10%; right: 5%; transform: scale(3);"></div>
+                <div class="cosmic-nebula cosmic-nebula-2" style="opacity: 0.05; bottom: 30%; left: 5%; transform: scale(2.5);"></div>
+                <div class="cosmic-shooting-star cosmic-shooting-star-1"></div>
+                <div class="cosmic-dust position-absolute" style="opacity: 0.3; top: 0; right: 0; width: 100%; height: 100%;"></div>
+                
+                <!-- Content container with z-index to sit above effects -->
+                <div class="position-relative z-10">
+                    <!-- Page header with glowing effect -->
+                    <div class="mb-5 cosmic-fade-in">
+                        <h1 class="cosmic-glow-text display-4 mb-3">AstroBot AI Documentation</h1>
+                        
+                        <p class="lead text-light cosmic-fade-in opacity-80">
+                            Welcome to the official AstroBot AI documentation. Here you'll find comprehensive guides to help you start your cosmic journey with AstroBot.
+                        </p>
+                    </div>
+                    
+                    <!-- Info callout -->
+                    <div class="callout callout-info cosmic-shimmer mb-4">
+                        <h4><i class="bi bi-stars"></i> New to AstroBot?</h4>
+                        <p>Get started by following our <a href="{{ url_for('documentation_page', page_type='guides', page_name='setup') }}" class="cosmic-link">setup guide</a> to add AstroBot to your Discord server in just a few clicks.</p>
+                    </div>
+                    
+                    <!-- Introduction section -->
+                    <div class="mb-5">
+                        <h2 class="cosmic-glow-text h2 mb-3">Getting Started</h2>
+                        
+                        <p class="mb-4">
+                            AstroBot AI is a feature-rich Discord bot designed specifically for Minecraft modding communities, server management, and enhancing your Discord experience with cutting-edge AI-powered features. It combines the capabilities of multiple bots into one unified cosmic solution.
+                        </p>
+                        
+                        <div class="cosmic-divider mb-5"></div>
+                        
+                        <h3 class="cosmic-glow-text h3 mb-4">Key Features</h3>
+                    
+                        <div class="row cosmic-stagger-children">
+                            <div class="col-md-6 mb-4">
+                                <div class="cosmic-card feature-card h-100 cosmic-shimmer">
+                                    <div class="nebula-bg cosmic-space-bg"></div>
+                                    <div class="cosmic-dust"></div>
+                                    <div class="card-body position-relative z-1">
+                                        <div class="feature-icon-wrapper">
+                                            <div class="feature-icon cosmic-glow" style="background: linear-gradient(135deg, #3b82f630, #3b82f610);">
+                                                <i class="bi bi-shield" style="color: #3b82f6;"></i>
+                                            </div>
+                                        </div>
+                                        <h4 class="card-title fw-bold">Advanced Moderation</h4>
+                                        <p class="card-text">Multi-stage warnings, auto-mod with AI context analysis, and comprehensive moderation logs with actionable insights.</p>
+                                        <a href="{{ url_for('documentation_page', page_type='features', page_name='moderation') }}" class="cosmic-btn-outline" style="--btn-color: #3b82f6;">
+                                            Learn More
+                                            <i class="bi bi-arrow-right ms-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <div class="cosmic-card feature-card h-100 cosmic-shimmer">
+                                    <div class="nebula-bg cosmic-space-bg"></div>
+                                    <div class="cosmic-dust"></div>
+                                    <div class="card-body position-relative z-1">
+                                        <div class="feature-icon-wrapper">
+                                            <div class="feature-icon cosmic-glow" style="background: linear-gradient(135deg, #10b98130, #10b98110);">
+                                                <i class="bi bi-code-slash" style="color: #10b981;"></i>
+                                            </div>
+                                        </div>
+                                        <h4 class="card-title fw-bold">Custom Commands</h4>
+                                        <p class="card-text">Create powerful custom commands with variables, conditionals, API integrations, and dynamic responses.</p>
+                                        <a href="{{ url_for('documentation_page', page_type='features', page_name='custom_commands') }}" class="cosmic-btn-outline" style="--btn-color: #10b981;">
+                                            Learn More
+                                            <i class="bi bi-arrow-right ms-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <div class="cosmic-card feature-card h-100 cosmic-shimmer">
+                                    <div class="nebula-bg cosmic-space-bg"></div>
+                                    <div class="cosmic-dust"></div>
+                                    <div class="card-body position-relative z-1">
+                                        <div class="feature-icon-wrapper">
+                                            <div class="feature-icon cosmic-glow" style="background: linear-gradient(135deg, #0ea5e930, #0ea5e910);">
+                                                <i class="bi bi-box" style="color: #0ea5e9;"></i>
+                                            </div>
+                                        </div>
+                                        <h4 class="card-title fw-bold">Minecraft Integration</h4>
+                                        <p class="card-text">Manage Minecraft servers, whitelist, view server status, run console commands, and more directly from Discord.</p>
+                                        <a href="{{ url_for('documentation_page', page_type='features', page_name='server_management') }}" class="cosmic-btn-outline" style="--btn-color: #0ea5e9;">
+                                            Learn More
+                                            <i class="bi bi-arrow-right ms-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <div class="cosmic-card feature-card h-100 cosmic-shimmer">
+                                    <div class="nebula-bg cosmic-space-bg"></div>
+                                    <div class="cosmic-dust"></div>
+                                    <div class="card-body position-relative z-1">
+                                        <div class="feature-icon-wrapper">
+                                            <div class="feature-icon cosmic-glow" style="background: linear-gradient(135deg, #ef444430, #ef444410);">
+                                                <i class="bi bi-cpu" style="color: #ef4444;"></i>
+                                            </div>
+                                        </div>
+                                        <h4 class="card-title fw-bold">AI Features</h4>
+                                        <p class="card-text">Ask questions to Claude 3.5 and GPT-4o, generate mod ideas, automatic moderation, and more AI-powered features.</p>
+                                        <a href="{{ url_for('documentation_page', page_type='features', page_name='ai_features') }}" class="cosmic-btn-outline" style="--btn-color: #ef4444;">
+                                            Learn More
+                                            <i class="bi bi-arrow-right ms-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <div class="cosmic-card feature-card h-100 cosmic-shimmer">
+                                    <div class="nebula-bg cosmic-space-bg"></div>
+                                    <div class="cosmic-dust"></div>
+                                    <div class="card-body position-relative z-1">
+                                        <div class="feature-icon-wrapper">
+                                            <div class="feature-icon cosmic-glow" style="background: linear-gradient(135deg, #8b5cf630, #8b5cf610);">
+                                                <i class="bi bi-twitch" style="color: #8b5cf6;"></i>
+                                            </div>
+                                        </div>
+                                        <h4 class="card-title fw-bold">Twitch Integration</h4>
+                                        <p class="card-text">Stream alerts, viewer point systems, and fully integrated Twitch-Discord experience for streamers.</p>
+                                        <a href="{{ url_for('documentation_page', page_type='features', page_name='twitch_integration') }}" class="cosmic-btn-outline" style="--btn-color: #8b5cf6;">
+                                            Learn More
+                                            <i class="bi bi-arrow-right ms-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <div class="cosmic-card feature-card h-100 cosmic-shimmer">
+                                    <div class="nebula-bg cosmic-space-bg"></div>
+                                    <div class="cosmic-dust"></div>
+                                    <div class="card-body position-relative z-1">
+                                        <div class="feature-icon-wrapper">
+                                            <div class="feature-icon cosmic-glow" style="background: linear-gradient(135deg, #f59e0b30, #f59e0b10);">
+                                                <i class="bi bi-graph-up" style="color: #f59e0b;"></i>
+                                            </div>
+                                        </div>
+                                        <h4 class="card-title fw-bold">Advanced Analytics</h4>
+                                        <p class="card-text">Comprehensive server analytics, command usage, user activity, and moderation trends.</p>
+                                        <a href="{{ url_for('documentation_page', page_type='features', page_name='analytics') }}" class="cosmic-btn-outline" style="--btn-color: #f59e0b;">
+                                            Learn More
+                                            <i class="bi bi-arrow-right ms-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <!-- Quick Start Guide Section -->
+                        <div class="mt-5 pt-3">
+                            <h2 class="cosmic-glow-text h2 mb-3" id="quick-start-guide">Quick Start Guide</h2>
+                            
+                            <div class="cosmic-divider mb-4"></div>
+                            <div class="cosmic-nebula cosmic-nebula-3" style="opacity: 0.04; bottom: 10%; right: 15%; transform: scale(1.5);"></div>
+                            
+                            <ol class="cosmic-list cosmic-stagger-children mt-4">
+                                <li class="cosmic-fade-in mb-3">
+                                    <strong class="cosmic-glow-text">Add AstroBot to your Discord server</strong>
+                                    <p>Click the "Add to Discord" button on our website or use <a href="#" class="cosmic-link">this link</a>.</p>
+                                </li>
+                                <li class="cosmic-fade-in mb-3">
+                                    <strong class="cosmic-glow-text">Set up permissions</strong>
+                                    <p>AstroBot needs certain permissions to function properly. Follow our <a href="{{ url_for('documentation_page', page_type='guides', page_name='permissions') }}" class="cosmic-link">permissions guide</a> to ensure everything works correctly.</p>
+                                </li>
+                                <li class="cosmic-fade-in mb-3">
+                                    <strong class="cosmic-glow-text">Configure basic settings</strong>
+                                    <p>Use the <code class="cosmic-code">!astro setup</code> command to run through the basic configuration wizard.</p>
+                                </li>
+                                <li class="cosmic-fade-in mb-3">
+                                    <strong class="cosmic-glow-text">Explore features</strong>
+                                    <p>Use <code class="cosmic-code">!astro help</code> to see all available commands and features.</p>
+                                </li>
+                            </ol>
+                            
+                            <!-- Discord Command Example -->
+                            <div class="mt-5 mb-5">
+                                <h3 class="cosmic-glow-text h3 mb-3" id="command-examples">Command Examples</h3>
+                                
+                                <div class="doc-example position-relative glass-card rounded-lg overflow-hidden">
+                                    <div class="nebula-bg cosmic-space-bg"></div>
+                                    <div class="cosmic-dust"></div>
+                                    <div class="doc-example-preview mb-4 position-relative z-1 p-3">
+                                        <div class="cosmic-card cosmic-shimmer">
+                                            <div class="card-header bg-gray-900 border-bottom border-indigo-500/30">
+                                                <h5 class="mb-0 text-white">
+                                                    <i class="bi bi-discord me-2 text-indigo-400"></i>
+                                                    Discord Command Example
+                                                </h5>
+                                            </div>
+                                            <div class="card-body bg-gray-900 text-light">
+                                                <div class="chat-message user-message mb-3">
+                                                    <div class="chat-avatar">
+                                                        <div class="avatar-placeholder bg-indigo-600/20">
+                                                            <i class="bi bi-person-fill"></i>
+                                                        </div>
+                                                    </div>
+                                                    <div class="chat-content">
+                                                        <div class="chat-author">User</div>
+                                                        <div class="chat-text">!astro help</div>
+                                                    </div>
+                                                </div>
+                                                <div class="chat-message bot-message">
+                                                    <div class="chat-avatar">
+                                                        <div class="avatar-placeholder cosmic-glow" style="background-color: rgba(79, 70, 229, 0.2);">
+                                                            <i class="bi bi-robot"></i>
+                                                        </div>
+                                                    </div>
+                                                    <div class="chat-content">
+                                                        <div class="chat-author">AstroBot</div>
+                                                        <div class="chat-text">
+                                                            <div class="cosmic-card p-3 mb-2">
+                                                                <h6 class="mb-2 text-indigo-300">Available Commands</h6>
+                                                                <ul class="list-group list-group-flush bg-transparent">
+                                                                    <li class="list-group-item bg-transparent border-indigo-500/10 text-light py-1">
+                                                                        <i class="bi bi-rocket-takeoff me-2 text-indigo-400"></i> moderation
+                                                                    </li>
+                                                                    <li class="list-group-item bg-transparent border-indigo-500/10 text-light py-1">
+                                                                        <i class="bi bi-box me-2 text-indigo-400"></i> minecraft
+                                                                    </li>
+                                                                    <li class="list-group-item bg-transparent border-indigo-500/10 text-light py-1">
+                                                                        <i class="bi bi-cpu me-2 text-indigo-400"></i> ai
+                                                                    </li>
+                                                                    <li class="list-group-item bg-transparent border-indigo-500/10 text-light py-1">
+                                                                        <i class="bi bi-twitch me-2 text-indigo-400"></i> twitch
+                                                                    </li>
+                                                                </ul>
+                                                                <p class="card-text small mt-2 mb-0 text-muted">
+                                                                    Use !astro [category] for more info
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                        </div>
+                    </div>
+                </div>
+                                    <!-- Command Structure Card -->
+                                    <div class="glass-card rounded-lg overflow-hidden mt-5 mb-5">
+                                        <div class="card-header bg-gray-900 border-bottom border-indigo-500/30">
+                                            <h5 class="mb-0 text-white">
+                                                <i class="bi bi-code-slash me-2 text-indigo-400"></i>
+                                                Command Structure
+                                            </h5>
+                                        </div>
+                                        <div class="card-body bg-gray-900 text-light">
+                                            <pre class="cosmic-code-block bg-gray-800 p-3 rounded mb-0"><code>// Basic command structure
+!astro [command] [subcommand] [arguments]
+
+// Examples:
+!astro help
+!astro server status
+!astro mod search create
+!astro ai ask "How do I create a Minecraft mod?"</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Help Section -->
+                        <div class="mt-5 pt-3">
+                            <h2 class="cosmic-glow-text h2 mb-3" id="get-help">Need Help?</h2>
+                            
+                            <div class="cosmic-divider mb-4"></div>
+                            
+                            <p class="mb-4">
+                                If you're having trouble with AstroBot, check out these resources:
+                            </p>
+                            
+                            <div class="glass-card rounded-lg p-4 mb-5">
+                                <ul class="cosmic-list cosmic-fade-in ps-3">
+                                    <li class="mb-2">
+                                        <a href="{{ url_for('documentation_page', page_type='guides', page_name='faq') }}" class="cosmic-link">
+                                            <i class="bi bi-question-circle me-2"></i> Frequently Asked Questions
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a href="{{ url_for('documentation_page', page_type='guides', page_name='troubleshooting') }}" class="cosmic-link">
+                                            <i class="bi bi-tools me-2"></i> Troubleshooting Guide
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a href="https://discord.gg/astrobot" class="cosmic-link">
+                                            <i class="bi bi-discord me-2"></i> Join our Discord Support Server
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a href="{{ url_for('feedback') }}" class="cosmic-link">
+                                            <i class="bi bi-bug me-2"></i> Submit Feedback or Bug Reports
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+            
+                            <!-- Documentation Feedback -->
+                            <div class="glass-card cosmic-card my-5 position-relative">
+                                <div class="cosmic-space-bg nebula-bg parallax-bg"></div>
+                                <div class="cosmic-dust"></div>
+                                <div class="card-body position-relative z-1 p-4">
+                                    <h4 class="text-center mb-4 cosmic-glow-text fw-bold">Was this page helpful?</h4>
+                                    <div class="d-flex justify-content-center gap-3 mb-4 doc-feedback-buttons">
+                                        <button class="cosmic-btn feedback-helpful pulse-glow" style="--btn-color: #10b981;" data-page="{{ request.path }}">
+                                            <i class="bi bi-hand-thumbs-up me-2"></i> Yes, it was helpful
+                                        </button>
+                                        <button class="cosmic-btn-outline feedback-not-helpful" style="--btn-color: #ef4444;" data-page="{{ request.path }}">
+                                            <i class="bi bi-hand-thumbs-down me-2"></i> No, I need more help
+                                        </button>
+                                    </div>
+                                    <div class="doc-feedback-comment d-none">
+                                        <div class="form-floating mb-3">
+                                            <textarea class="form-control bg-gray-800 text-light border-indigo-500/30" id="feedbackText" rows="4" placeholder="How can we improve this page?" style="min-height: 120px;"></textarea>
+                                            <label for="feedbackText" class="text-light-50">How can we improve this page?</label>
+                                        </div>
+                                        <div class="text-center">
+                                            <button class="cosmic-btn submit-feedback" style="--btn-color: #818cf8;">
+                                                <i class="bi bi-send me-2"></i> Submit Feedback
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="doc-feedback-thanks d-none">
+                                        <div class="text-center cosmic-stagger-children">
+                                            <div class="cosmic-glow-icon mb-3">
+                                                <i class="bi bi-stars text-amber-400" style="font-size: 3rem;"></i>
+                                            </div>
+                                            <h5 class="mt-3 mb-2 cosmic-glow-text">Thank you for your feedback!</h5>
+                                            <p class="text-light-50">Your input helps us improve our documentation.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                    
+                    <!-- Right sidebar - Table of Contents -->
+                    <div class="d-none d-lg-block col-lg-2">
+                        <div class="doc-toc">
+                            <div class="doc-toc-title">On This Page</div>
+                            <ul class="cosmic-list">
+                                <li><a href="#getting-started" class="cosmic-link">Getting Started</a>
+                                    <ul>
+                                        <li><a href="#key-features" class="cosmic-link">Key Features</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#quick-start-guide" class="cosmic-link">Quick Start Guide</a></li>
+                                <li><a href="#get-help" class="cosmic-link">Need Help?</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/cosmic-effects.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize cosmic effects
+        if (typeof initTwinklingStars === 'function') {
+            initTwinklingStars();
+            initShootingStars();
+            initCosmicDust();
+        }
+        
+        // Toggle sidebar on mobile
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.querySelector('.doc-sidebar');
+        
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+        }
+        
+        // Documentation feedback system
+        const helpfulBtn = document.querySelector('.feedback-helpful');
+        const notHelpfulBtn = document.querySelector('.feedback-not-helpful');
+        const feedbackComment = document.querySelector('.doc-feedback-comment');
+        const submitFeedback = document.querySelector('.submit-feedback');
+        
+        helpfulBtn.addEventListener('click', function() {
+            helpfulBtn.classList.add('active');
+            notHelpfulBtn.classList.remove('active');
+            
+            // Add cosmic effects to the button
+            helpfulBtn.classList.add('cosmic-pulse');
+            
+            // Submit positive feedback immediately
+            const pagePath = this.dataset.page;
+            submitDocFeedback(pagePath, true, '');
+        });
+        
+        notHelpfulBtn.addEventListener('click', function() {
+            notHelpfulBtn.classList.add('active');
+            helpfulBtn.classList.remove('active');
+            feedbackComment.classList.remove('d-none');
+        });
+        
+        submitFeedback.addEventListener('click', function() {
+            const pagePath = notHelpfulBtn.dataset.page;
+            const comment = feedbackComment.querySelector('textarea').value;
+            
+            if (comment.trim() !== '') {
+                submitDocFeedback(pagePath, false, comment);
+                feedbackComment.innerHTML = '<div class="alert alert-success">Thank you for your feedback!</div>';
+            }
+        });
+        
+        function submitDocFeedback(pagePath, helpful, comment) {
+            fetch('/api/documentation/feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    page: pagePath,
+                    helpful: helpful,
+                    comment: comment
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.querySelector('.doc-feedback-buttons').innerHTML = 
+                        '<div class="alert alert-success py-2 mb-0">Thank you for your feedback!</div>';
+                    feedbackComment.classList.add('d-none');
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting feedback:', error);
+            });
+        }
+        
+        // Add smooth scrolling to TOC links
+        document.querySelectorAll('.doc-toc a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 70,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

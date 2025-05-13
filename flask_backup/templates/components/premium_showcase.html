@@ -1,0 +1,83 @@
+{% macro premium_showcase(title, description, cta_text="Explore Premium Features", cta_url="#") %}
+<section class="premium-showcase star-background">
+  <div class="premium-showcase-bg"></div>
+  
+  <div class="premium-showcase-content">
+    <h2 class="premium-showcase-title">{{ title }}</h2>
+    <p class="premium-showcase-description">{{ description }}</p>
+    
+    <a href="{{ cta_url }}" class="upgrade-button">
+      <span class="icon">✦</span>
+      {{ cta_text }}
+    </a>
+  </div>
+</section>
+{% endmacro %}
+
+{% macro premium_comparison(plans=[]) %}
+<div class="premium-comparison">
+  {% for plan in plans %}
+  <div class="premium-comparison-card {% if plan.is_highlighted %}premium-comparison-card-highlighted{% endif %}">
+    <div class="premium-comparison-header">
+      <h3 class="premium-comparison-title">{{ plan.title }}</h3>
+      
+      {% if plan.price %}
+      <div class="premium-comparison-price">
+        <span class="currency">$</span>{{ plan.price }}<span class="period">/mo</span>
+      </div>
+      {% else %}
+      <div class="premium-comparison-price free">
+        Free
+      </div>
+      {% endif %}
+    </div>
+    
+    <div class="premium-comparison-body">
+      <ul class="premium-comparison-features">
+        {% for feature in plan.features %}
+        <li class="premium-comparison-feature">
+          {% if feature.included %}
+          <span class="feature-included">✓</span>
+          {% else %}
+          <span class="feature-not-included">✗</span>
+          {% endif %}
+          {{ feature.text }}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    
+    <div class="premium-comparison-footer">
+      {% if not plan.is_owned and not plan.soon %}
+      <a href="{{ plan.cta_url }}" class="premium-cta-button">
+        {{ plan.cta_text }}
+      </a>
+      {% elif plan.is_owned %}
+      <button class="premium-cta-button premium-cta-owned" disabled>
+        Current Plan
+      </button>
+      {% elif plan.soon %}
+      <button class="premium-cta-button premium-cta-soon" disabled>
+        Coming Soon
+      </button>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endmacro %}
+
+{% macro premium_toggle(options=[], active_option=0) %}
+<div class="premium-toggle">
+  {% for option in options %}
+  <label class="premium-toggle-label {% if loop.index0 == active_option %}active{% endif %}">
+    <input type="radio" name="premium-toggle" value="{{ option.value }}" {% if loop.index0 == active_option %}checked{% endif %} class="sr-only">
+    {{ option.label }}
+  </label>
+  
+  {% if not loop.last %}
+  <span class="premium-toggle-separator">|</span>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endmacro %}

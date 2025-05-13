@@ -1,0 +1,390 @@
+/**
+ * AstroBot AI - Glassy Navigation Effects
+ * 
+ * Creates advanced glassmorphic navigation elements for the cosmic theme
+ * with attention to preventing left-side clipping issues
+ */
+
+/* Base glassmorphic panel effect */
+.glassy-panel {
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.7),
+    rgba(15, 23, 42, 0.8)
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  box-shadow: 
+    0 10px 30px -5px rgba(0, 0, 0, 0.3),
+    0 0 15px rgba(59, 130, 246, 0.1),
+    inset 0 0 1px 1px rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  max-width: 100%;
+  box-sizing: border-box;
+  /* Safe zone fixes */
+  margin-left: 0;
+  left: 0;
+  transform: translateX(0);
+}
+
+/* Glassy navigation sidebar */
+.glassy-nav-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 16rem;
+  z-index: 40;
+  border-radius: 0;
+  border-right: 1px solid rgba(59, 130, 246, 0.15);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  /* Clipping prevention fixes */
+  margin-left: 0 !important;
+  transform: translateX(0) !important;
+  max-width: 16rem !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+}
+
+/* Glassy navigation content */
+.glassy-nav-content {
+  height: calc(100vh - 5rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(59, 130, 246, 0.5) rgba(15, 23, 42, 0.2);
+}
+
+.glassy-nav-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.glassy-nav-content::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.2);
+  border-radius: 2px;
+}
+
+.glassy-nav-content::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.5);
+  border-radius: 2px;
+}
+
+/* Glassy navigation header */
+.glassy-nav-header {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+  min-height: 5rem;
+  box-sizing: border-box;
+}
+
+.glassy-nav-logo {
+  display: flex;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.25rem;
+  background: linear-gradient(90deg, #fff, #89CFF0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+  /* Clipping prevention */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.glassy-nav-logo img {
+  height: 2.5rem;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* Glassy navigation sections */
+.glassy-nav-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  /* Safe zone fixes */
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+.glassy-nav-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.75rem;
+  padding-left: 0.5rem;
+}
+
+/* Glassy navigation links */
+.glassy-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  /* Clipping prevention */
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.glassy-nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  position: relative;
+  /* Clipping prevention */
+  max-width: 100%;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.glassy-nav-link:hover {
+  background-color: rgba(78, 119, 255, 0.1);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.glassy-nav-link.active {
+  background: rgba(78, 119, 255, 0.15);
+  color: white;
+  box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.2);
+}
+
+.glassy-nav-link.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+  border-radius: 2px;
+}
+
+.glassy-nav-link i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
+  font-size: 1.125rem;
+  color: rgba(78, 119, 255, 0.9);
+  transition: all 0.2s ease;
+  min-width: 1.5rem;
+}
+
+.glassy-nav-link:hover i {
+  transform: translateY(-2px);
+}
+
+.glassy-nav-link .badge {
+  margin-left: auto;
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 20px;
+  background: rgba(59, 130, 246, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Glassy navigation footer */
+.glassy-nav-footer {
+  margin-top: auto;
+  padding: 1.5rem;
+  border-top: 1px solid rgba(59, 130, 246, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.glassy-nav-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0; /* Allow truncation */
+}
+
+.glassy-nav-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(78, 119, 255, 0.3);
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.glassy-nav-user-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* Allow truncation */
+}
+
+.glassy-nav-user-name {
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.glassy-nav-user-role {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Collapsed sidebar adjustments */
+.glassy-nav-sidebar.collapsed {
+  width: 5rem;
+}
+
+.glassy-nav-sidebar.collapsed .glassy-nav-logo span,
+.glassy-nav-sidebar.collapsed .glassy-nav-title,
+.glassy-nav-sidebar.collapsed .glassy-nav-user-info,
+.glassy-nav-sidebar.collapsed .glassy-nav-link span {
+  display: none;
+}
+
+.glassy-nav-sidebar.collapsed .glassy-nav-link {
+  justify-content: center;
+  padding: 0.75rem;
+}
+
+.glassy-nav-sidebar.collapsed .glassy-nav-link i {
+  margin-right: 0;
+  font-size: 1.25rem;
+}
+
+.glassy-nav-sidebar.collapsed .glassy-nav-footer {
+  justify-content: center;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .glassy-nav-sidebar {
+    transform: translateX(-100%) !important;
+    box-shadow: none;
+  }
+  
+  .glassy-nav-sidebar.mobile-active {
+    transform: translateX(0) !important;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+  }
+  
+  .glassy-nav-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 39;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  .glassy-nav-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* Visual effects for glassmorphic UI */
+.glassy-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.03),
+    transparent
+  );
+  pointer-events: none;
+}
+
+/* Subtle glow effect */
+.glassy-panel-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba(59, 130, 246, 0.08) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 1s ease;
+  z-index: -1;
+  animation: glow-pulse 8s infinite;
+  pointer-events: none;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+/* Subtle particle effect for glassmorphic UI */
+.glassy-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+  opacity: 0.2;
+}
+
+.glassy-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  pointer-events: none;
+}

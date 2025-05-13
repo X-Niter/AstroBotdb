@@ -1,0 +1,321 @@
+/**
+ * AstroBot AI - Critical Left Side Reset
+ * 
+ * This is a specialized CSS reset that targets and fixes left-side clipping issues
+ * by aggressively overriding problematic styles. This should be loaded LAST to ensure 
+ * it takes precedence over other stylesheets.
+ */
+
+/* === RESET CORE POSITIONING === */
+/* Target every potential navigation element */
+.cosmic-sidebar,
+.glassy-nav-sidebar,
+.side-nav,
+.sidebar,
+.md-sidebar,
+.side-navigation,
+#sidebarMenu,
+.side-navbar-astro,
+.nav-sidebar,
+.doc-sidebar,
+[class*="sidebar"],
+[class*="side-nav"],
+[id*="sidebar"],
+[id*="side-nav"] {
+  /* !important on all rules to ensure they override anything else */
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  margin-left: 0 !important;
+  transform: none !important;
+  z-index: 9000 !important; /* Very high z-index */
+  max-width: 16rem !important;
+  width: 16rem !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+  /* Prevent any negative margins or offsets */
+  margin-right: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-left: 0 !important;
+  /* Add safe shadow to visually separate from content */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15) !important;
+  /* Fix height */
+  height: 100vh !important;
+}
+
+/* On small screens, hide the sidebar by default */
+@media (max-width: 768px) {
+  .cosmic-sidebar,
+  .glassy-nav-sidebar,
+  .side-nav,
+  .sidebar,
+  .md-sidebar,
+  .side-navigation,
+  #sidebarMenu,
+  .side-navbar-astro,
+  .nav-sidebar,
+  .doc-sidebar,
+  [class*="sidebar"],
+  [class*="side-nav"],
+  [id*="sidebar"],
+  [id*="side-nav"] {
+    transform: translateX(-100%) !important;
+  }
+  
+  /* Show sidebar when it has mobile-active class */
+  .cosmic-sidebar.mobile-active,
+  .glassy-nav-sidebar.mobile-active,
+  .side-nav.mobile-active,
+  .sidebar.mobile-active,
+  .md-sidebar.mobile-active,
+  .side-navigation.mobile-active,
+  #sidebarMenu.mobile-active,
+  .side-navbar-astro.mobile-active,
+  .nav-sidebar.mobile-active,
+  .doc-sidebar.mobile-active,
+  [class*="sidebar"].mobile-active,
+  [class*="side-nav"].mobile-active,
+  [id*="sidebar"].mobile-active,
+  [id*="side-nav"].mobile-active {
+    transform: translateX(0) !important;
+  }
+}
+
+/* === RESET SCROLLING === */
+/* Ensure sidebar content is scrollable */
+.cosmic-sidebar-content,
+.glassy-nav-content,
+.sidebar-content,
+.md-sidebar__scrollwrap,
+.side-nav-content,
+.sidebar-inner,
+[class*="sidebar"] > div,
+[class*="side-nav"] > div {
+  height: calc(100vh - 4rem) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  position: relative !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 1rem !important;
+  /* Improve scrollbar appearance */
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(78, 119, 255, 0.5) rgba(15, 23, 42, 0.2) !important;
+}
+
+/* === RESET CONTENT MARGINS === */
+/* Ensure content area has proper margins */
+body.has-sidebar .main-content,
+body.has-sidebar .content-wrapper,
+body.has-sidebar .content-area,
+body.has-sidebar .cosmic-content,
+.main-content,
+.content-wrapper,
+.content-area,
+.cosmic-content {
+  margin-left: 16rem !important;
+  width: calc(100% - 16rem) !important;
+  max-width: calc(100% - 16rem) !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Adjust content when sidebar is collapsed */
+body.sidebar-collapsed .main-content,
+body.sidebar-collapsed .content-wrapper,
+body.sidebar-collapsed .content-area,
+body.sidebar-collapsed .cosmic-content,
+.main-content.sidebar-collapsed,
+.content-wrapper.sidebar-collapsed,
+.content-area.sidebar-collapsed,
+.cosmic-content.sidebar-collapsed,
+.main-content.expanded,
+.content-wrapper.expanded,
+.content-area.expanded,
+.cosmic-content.expanded {
+  margin-left: 5rem !important;
+  width: calc(100% - 5rem) !important;
+  max-width: calc(100% - 5rem) !important;
+}
+
+/* Reset content margins on mobile */
+@media (max-width: 768px) {
+  body.has-sidebar .main-content,
+  body.has-sidebar .content-wrapper,
+  body.has-sidebar .content-area,
+  body.has-sidebar .cosmic-content,
+  .main-content,
+  .content-wrapper,
+  .content-area,
+  .cosmic-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* === FIX NESTED SIDEBAR ELEMENTS === */
+/* Remove any transforms on all descendants */
+.cosmic-sidebar *,
+.glassy-nav-sidebar *,
+.side-nav *,
+.sidebar *,
+.md-sidebar *,
+.side-navigation *,
+#sidebarMenu *,
+.side-navbar-astro *,
+.nav-sidebar *,
+.doc-sidebar *,
+[class*="sidebar"] *,
+[class*="side-nav"] *,
+[id*="sidebar"] *,
+[id*="side-nav"] * {
+  transform: none !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  position: static !important;
+  /* Reset negative margins */
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Give links correct positioning */
+.cosmic-sidebar a,
+.glassy-nav-sidebar a,
+.side-nav a,
+.sidebar a,
+.md-sidebar a,
+[class*="sidebar"] a,
+[class*="side-nav"] a {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Fix sidebar list elements */
+.cosmic-sidebar ul,
+.glassy-nav-sidebar ul,
+.side-nav ul,
+.sidebar ul,
+.md-sidebar ul,
+[class*="sidebar"] ul,
+[class*="side-nav"] ul {
+  padding-left: 0.5rem !important;
+  margin-left: 0 !important;
+  max-width: 100% !important;
+  list-style-position: inside !important;
+}
+
+/* === SPECIAL FIXES === */
+/* Fix for MkDocs sidebar */
+.md-sidebar--primary {
+  width: 16rem !important;
+  max-width: 16rem !important;
+  left: 0 !important;
+  transform: translateX(0) !important;
+}
+
+[data-md-toggle=drawer]:checked ~ .md-container .md-sidebar--primary {
+  transform: translateX(0) !important;
+}
+
+/* Fix for Alpine.js hidden elements */
+[x-cloak],
+[x-cloak] * {
+  display: none !important;
+}
+
+/* Force main wrapper to have correct spacing */
+#page-wrapper,
+#content-wrapper,
+.main-wrapper,
+.page-wrapper,
+.content-wrapper {
+  margin-left: 16rem !important;
+  width: calc(100% - 16rem) !important;
+  max-width: calc(100% - 16rem) !important;
+}
+
+/* Mobile adjustments for wrappers */
+@media (max-width: 768px) {
+  #page-wrapper,
+  #content-wrapper,
+  .main-wrapper,
+  .page-wrapper,
+  .content-wrapper {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Fix for cosmic-bg-* elements */
+.cosmic-bg-stars,
+.cosmic-bg-space,
+.cosmic-dust,
+.stars-container,
+#stars-background,
+.star-field {
+  left: 0 !important;
+  right: 0 !important;
+  max-width: none !important;
+  width: 100% !important;
+  transform: none !important;
+  position: fixed !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Fix for documentation */
+.documentation-content {
+  margin-left: 18rem !important;
+  width: calc(100% - 18rem) !important;
+  max-width: calc(100% - 18rem) !important;
+}
+
+@media (max-width: 768px) {
+  .documentation-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Global forcing utilities */
+.force-left {
+  left: 0 !important;
+  margin-left: 0 !important;
+  transform: none !important;
+}
+
+.force-no-clip {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.force-relative {
+  position: relative !important;
+}
+
+.force-fixed {
+  position: fixed !important;
+}
+
+/* Reset container padding to ensure no clipping */
+.container, 
+.container-fluid, 
+.container-sm, 
+.container-md, 
+.container-lg, 
+.container-xl {
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}

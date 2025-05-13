@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Server Customization{% endblock %}
+
+{% block content %}
+<div class="container mx-auto py-6">
+    <div class="flex flex-col space-y-4">
+        <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                Server Customization
+                <span class="ml-2 px-2 py-1 text-xs bg-indigo-600 text-white rounded-full">Premium</span>
+            </h1>
+            
+            <p class="text-gray-700 dark:text-gray-300 mb-6">
+                Customize your AstroBot's appearance and behavior in your Discord servers. 
+                Select a server below to begin customizing.
+            </p>
+            
+            {% if not current_user.is_premium %}
+            <div class="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700 p-4 rounded-md mb-6">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <i class="bi bi-gem text-indigo-500 dark:text-indigo-400 text-xl"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-indigo-800 dark:text-indigo-300 font-medium">Premium Feature</h3>
+                        <div class="mt-2 text-sm text-indigo-700 dark:text-indigo-400">
+                            <p>This feature requires a premium subscription. Upgrade today to customize your bot's appearance in Discord servers!</p>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{{ url_for('premium_plans') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                View Premium Plans
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% if servers %}
+                    {% for server in servers %}
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm overflow-hidden border border-gray-100 dark:border-gray-600 hover:shadow-md transition-shadow">
+                        <div class="p-5">
+                            <div class="flex items-center mb-4">
+                                {% if server.icon_url %}
+                                <img src="{{ server.icon_url }}" alt="{{ server.name }}" class="w-12 h-12 rounded-full mr-3">
+                                {% else %}
+                                <div class="w-12 h-12 rounded-full mr-3 bg-indigo-600 flex items-center justify-center text-white font-bold text-xl">
+                                    {{ server.name[0] }}
+                                </div>
+                                {% endif %}
+                                
+                                <div>
+                                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ server.name }}</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ server.member_count }} members</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between mt-4">
+                                <span class="text-sm text-gray-500 dark:text-gray-400">
+                                    {% if server.is_owner %}
+                                    <span class="text-green-600 dark:text-green-400">
+                                        <i class="bi bi-check-circle-fill"></i> Server Owner
+                                    </span>
+                                    {% elif server.is_admin %}
+                                    <span class="text-blue-600 dark:text-blue-400">
+                                        <i class="bi bi-shield-fill"></i> Admin
+                                    </span>
+                                    {% else %}
+                                    <span class="text-gray-500">
+                                        <i class="bi bi-person-fill"></i> Member
+                                    </span>
+                                    {% endif %}
+                                </span>
+                                
+                                {% if server.is_owner or server.is_admin %}
+                                <a href="{{ url_for('bot_customization', server_id=server.server_id) }}" 
+                                   class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <i class="bi bi-gear-fill mr-1"></i> Customize
+                                </a>
+                                {% else %}
+                                <span class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-gray-500 bg-gray-200 dark:bg-gray-600 dark:text-gray-400">
+                                    <i class="bi bi-lock-fill mr-1"></i> No Access
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-span-full flex flex-col items-center justify-center py-12 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-100 dark:border-gray-600">
+                        <div class="text-center p-6">
+                            <i class="bi bi-discord text-5xl text-gray-400 dark:text-gray-500 mb-4"></i>
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No Discord Servers Found</h3>
+                            <p class="text-gray-500 dark:text-gray-400 mb-6">
+                                We couldn't find any Discord servers where you have permission to customize the bot.
+                            </p>
+                            <a href="https://discord.com/oauth2/authorize?client_id={{ discord_client_id }}&permissions=8&scope=bot%20applications.commands" 
+                               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" 
+                               target="_blank" rel="noopener noreferrer">
+                                <i class="bi bi-plus-circle mr-1.5"></i> Add Bot to Server
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

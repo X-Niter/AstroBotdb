@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/documentation.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components/cosmic-cards.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components/cosmic-forms.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components/cosmic-effects.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+{% endblock %}
+
+{% block head_extra %}
+<!-- Add consistent meta tags for documentation -->
+<meta name="description" content="AstroBot AI Documentation - Comprehensive guides, tutorials, and reference materials">
+<meta name="keywords" content="AstroBot, AI, Discord Bot, Documentation, Guides, Tutorials, API Reference">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f172a">
+{% endblock %}
+
+{% block content %}
+<div class="cosmic-space-bg">
+    <div class="container-fluid position-relative overflow-hidden">
+        <!-- Cosmic background effects -->
+        <div class="cosmic-stars"></div>
+        <div class="cosmic-shooting-star cosmic-shooting-star-1"></div>
+        <div class="cosmic-shooting-star cosmic-shooting-star-2"></div>
+        
+        <div class="row">
+            <!-- Left sidebar - Navigation -->
+            <nav class="col-md-3 col-lg-2 d-md-block doc-sidebar">
+                <div class="doc-nav glass-card p-3 rounded-lg mt-3 position-relative">
+                    <div class="cosmic-nebula cosmic-nebula-1"></div>
+                    <div class="cosmic-nebula cosmic-nebula-2"></div>
+                    
+                    <div class="d-flex d-md-none justify-content-between align-items-center mb-3">
+                        <button id="sidebar-close" class="btn-close cosmic-btn-close" aria-label="Close"></button>
+                    </div>
+                    
+                    <!-- Documentation Navigation -->
+                    <h5 class="sidebar-heading cosmic-glow-text px-3 mb-3">
+                        <i class="bi bi-book me-2"></i> Documentation
+                    </h5>
+                
+                <!-- Get Started -->
+                <div class="nav-section mb-4">
+                    <div class="nav-section-title cosmic-glow-text">
+                        <i class="bi bi-rocket me-2"></i> Get Started
+                    </div>
+                    <ul class="nav flex-column cosmic-nav">
+                        <li class="nav-item">
+                            <a href="{{ url_for('documentation_index') }}" class="nav-link{% if request.path == url_for('documentation_index') %} active cosmic-glow{% endif %}">
+                                <i class="bi bi-house-door me-2"></i> Overview
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('documentation_page', page_type='guides', page_name='installation') }}" class="nav-link{% if request.path == url_for('documentation_page', page_type='guides', page_name='installation') %} active cosmic-glow{% endif %}">
+                                <i class="bi bi-download me-2"></i> Installation
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('documentation_page', page_type='guides', page_name='quickstart') }}" class="nav-link{% if request.path == url_for('documentation_page', page_type='guides', page_name='quickstart') %} active cosmic-glow{% endif %}">
+                                <i class="bi bi-lightning me-2"></i> Quick Start
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Features -->
+                <div class="nav-section mb-4">
+                    <div class="nav-section-title cosmic-glow-text">
+                        <i class="bi bi-stars me-2"></i> Features
+                    </div>
+                    <ul class="nav flex-column cosmic-nav">
+                        <li class="nav-item">
+                            <a href="{{ url_for('documentation_page', page_type='features', page_name='custom_commands') }}" class="nav-link{% if request.path == url_for('documentation_page', page_type='features', page_name='custom_commands') %} active cosmic-glow{% endif %}">
+                                <i class="bi bi-terminal me-2"></i> Custom Commands
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('documentation_page', page_type='features', page_name='moderation') }}" class="nav-link{% if request.path == url_for('documentation_page', page_type='features', page_name='moderation') %} active cosmic-glow{% endif %}">
+                                <i class="bi bi-shield me-2"></i> Moderation Tools
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('documentation_page', page_type='features', page_name='ai') }}" class="nav-link{% if request.path == url_for('documentation_page', page_type='features', page_name='ai') %} active cosmic-glow{% endif %}">
+                                <i class="bi bi-robot me-2"></i> AI Features
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('documentation_page', page_type='features', page_name='twitch') }}" class="nav-link{% if request.path == url_for('documentation_page', page_type='features', page_name='twitch') %} active cosmic-glow{% endif %}">
+                                <i class="bi bi-twitch me-2"></i> Twitch Integration
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Guides -->
+                <div class="nav-section mb-4">
+                    <div class="nav-section-title cosmic-glow-text">
+                        <i class="bi bi-journal-text me-2"></i> Guides
+                    </div>
+                    <ul class="nav flex-column cosmic-nav">
+                        <li class="nav-item">
+                            <a href="{{ url_for('documentation_page', page_type='guides', page_name='faq') }}" class="nav-link{% if request.path == url_for('documentation_page', page_type='guides', page_name='faq') %} active cosmic-glow{% endif %}">
+                                <i class="bi bi-question-circle me-2"></i> FAQ
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('documentation_page', page_type='guides', page_name='troubleshooting') }}" class="nav-link{% if request.path == url_for('documentation_page', page_type='guides', page_name='troubleshooting') %} active cosmic-glow{% endif %}">
+                                <i class="bi bi-tools me-2"></i> Troubleshooting
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- API Reference -->
+                <div class="nav-section mb-4">
+                    <div class="nav-section-title cosmic-glow-text">
+                        <i class="bi bi-code-square me-2"></i> API Reference
+                    </div>
+                    <ul class="nav flex-column cosmic-nav">
+                        <li class="nav-item">
+                            <a href="{{ url_for('documentation_page', page_type='api', page_name='overview') }}" class="nav-link{% if request.path == url_for('documentation_page', page_type='api', page_name='overview') %} active cosmic-glow{% endif %}">
+                                <i class="bi bi-file-earmark-text me-2"></i> Overview
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('documentation_page', page_type='api', page_name='authentication') }}" class="nav-link{% if request.path == url_for('documentation_page', page_type='api', page_name='authentication') %} active cosmic-glow{% endif %}">
+                                <i class="bi bi-key me-2"></i> Authentication
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Mobile sidebar toggle -->
+                <div class="d-md-none mt-4 d-grid">
+                    <button id="sidebar-close-btn" class="cosmic-btn-outline">
+                        <i class="bi bi-x-lg me-2"></i> Close Menu
+                    </button>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-8 py-3">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3">
+                <div class="d-flex align-items-center">
+                    <!-- Mobile sidebar toggle -->
+                    <button class="d-md-none cosmic-btn-icon me-3" id="sidebar-toggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    
+                    <!-- Breadcrumbs -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0 cosmic-breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="cosmic-link"><i class="bi bi-house-door me-1"></i> Home</a></li>
+                            <li class="breadcrumb-item"><a href="{{ url_for('documentation_index') }}" class="cosmic-link">Documentation</a></li>
+                            {% block breadcrumbs %}{% endblock %}
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            
+            <!-- Page content -->
+            <div class="doc-content glass-card p-4 rounded-lg position-relative">
+                <div class="cosmic-dust"></div>
+                <div class="cosmic-nebula cosmic-nebula-3 opacity-15"></div>
+                
+                <!-- Optional small robot only on main doc pages - with a small class -->
+                {% if request.path == url_for('documentation_index') %}
+                <div class="text-center mb-4">
+                    <div class="astrobot-logo-container small d-inline-block">
+                        <div class="astrobot-logo">
+                            <div class="astrobot-logo-bg"></div>
+                            <div class="astrobot-logo-ring"></div>
+                            <div class="astrobot-robot">
+                                <div class="astrobot-eye astrobot-eye-left">
+                                    <div class="astrobot-eye-pupil"></div>
+                                </div>
+                                <div class="astrobot-eye astrobot-eye-right">
+                                    <div class="astrobot-eye-pupil"></div>
+                                </div>
+                                <div class="astrobot-mouth"></div>
+                            </div>
+                            <div class="astrobot-antenna"></div>
+                            <div class="astrobot-dot astrobot-dot-top"></div>
+                            <div class="astrobot-dot astrobot-dot-right"></div>
+                            <div class="astrobot-dot astrobot-dot-bottom"></div>
+                            <div class="astrobot-dot astrobot-dot-left"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% block doc_content %}{% endblock %}
+            </div>
+        </main>
+        
+        <!-- Right sidebar - Table of Contents -->
+        <div class="d-none d-lg-block col-lg-2">
+            <div class="doc-toc glass-card mt-3 p-3 rounded-lg position-relative">
+                <div class="cosmic-dust"></div>
+                <div class="doc-toc-title cosmic-glow-text mb-3">On This Page</div>
+                {% block toc %}
+                <ul class="cosmic-list">
+                    <li><a href="#getting-started" class="cosmic-link">Getting Started</a></li>
+                    <li><a href="#key-features" class="cosmic-link">Key Features</a></li>
+                    <li><a href="#quick-start" class="cosmic-link">Quick Start</a></li>
+                </ul>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Documentation feedback section at the bottom -->
+    <div class="container-fluid mt-5 mb-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="doc-feedback glass-card p-4 rounded-lg position-relative">
+                    <div class="cosmic-dust"></div>
+                    <div class="text-center mb-3">
+                        <h4 class="cosmic-glow-text">Was this documentation helpful?</h4>
+                        <p class="text-muted">Help us improve our documentation by providing feedback</p>
+                    </div>
+                    
+                    <div class="doc-feedback-buttons text-center mb-3">
+                        <button class="cosmic-btn-primary me-2 feedback-helpful">
+                            <i class="bi bi-emoji-smile me-2"></i> Yes, it was helpful
+                        </button>
+                        <button class="cosmic-btn-outline feedback-not-helpful">
+                            <i class="bi bi-emoji-frown me-2"></i> No, it needs improvement
+                        </button>
+                    </div>
+                    
+                    <div class="doc-feedback-comment d-none">
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control cosmic-input" id="feedbackComment" style="height: 100px"></textarea>
+                            <label for="feedbackComment">What could be improved?</label>
+                        </div>
+                        <div class="text-center">
+                            <button class="cosmic-btn-primary submit-feedback">
+                                <i class="bi bi-send me-2"></i> Submit Feedback
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="doc-feedback-thanks d-none text-center">
+                        <div class="cosmic-success-icon mb-3">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <h5 class="cosmic-glow-text">Thank you for your feedback!</h5>
+                        <p>We appreciate your input and will use it to improve our documentation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/cosmic-effects.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize cosmic effects
+        initCosmicDust();
+        
+        // Staggered animation for content elements
+        initStaggeredAnimations();
+        
+        // Add smooth scrolling for anchor links
+        document.querySelectorAll('a.cosmic-link[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Add highlight effect
+                    targetElement.classList.add('cosmic-highlight');
+                    setTimeout(() => {
+                        targetElement.classList.remove('cosmic-highlight');
+                    }, 1500);
+                }
+            });
+        });
+        
+        // Toggle sidebar on mobile
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebarClose = document.getElementById('sidebar-close');
+        const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
+        const sidebar = document.querySelector('.doc-sidebar');
+        
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show-sidebar');
+            });
+        }
+        
+        if (sidebarClose) {
+            sidebarClose.addEventListener('click', function() {
+                sidebar.classList.remove('show-sidebar');
+            });
+        }
+        
+        if (sidebarCloseBtn) {
+            sidebarCloseBtn.addEventListener('click', function() {
+                sidebar.classList.remove('show-sidebar');
+            });
+        }
+        
+        // Documentation feedback
+        const feedbackHelpful = document.querySelector('.feedback-helpful');
+        const feedbackNotHelpful = document.querySelector('.feedback-not-helpful');
+        const feedbackComment = document.querySelector('.doc-feedback-comment');
+        const feedbackThanks = document.querySelector('.doc-feedback-thanks');
+        const submitFeedback = document.querySelector('.submit-feedback');
+        
+        if (feedbackHelpful) {
+            feedbackHelpful.addEventListener('click', function() {
+                feedbackComment.classList.add('d-none');
+                feedbackThanks.classList.remove('d-none');
+                document.querySelectorAll('.doc-feedback-buttons button').forEach(function(btn) {
+                    btn.disabled = true;
+                });
+            });
+        }
+        
+        if (feedbackNotHelpful) {
+            feedbackNotHelpful.addEventListener('click', function() {
+                feedbackComment.classList.remove('d-none');
+                document.querySelectorAll('.doc-feedback-buttons button').forEach(function(btn) {
+                    btn.disabled = true;
+                });
+            });
+        }
+        
+        if (submitFeedback) {
+            submitFeedback.addEventListener('click', function() {
+                feedbackComment.classList.add('d-none');
+                feedbackThanks.classList.remove('d-none');
+            });
+        }
+    });
+    
+    // Helper function for staggered animations
+    function staggeredFadeIn(elements, delay) {
+        elements.forEach((el, index) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            
+            setTimeout(() => {
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            }, index * delay);
+        });
+    }
+</script>
+{% endblock %}

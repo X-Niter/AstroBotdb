@@ -1,0 +1,809 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}Admin - System Logs{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2 mb-0">System Logs</h1>
+        <div>
+            <button id="btn-refresh" class="btn btn-outline-primary me-2">
+                <i class="fas fa-sync-alt me-1"></i> Refresh
+            </button>
+            <div class="dropdown d-inline-block">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-download me-1"></i> Export
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportDropdown">
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-file-csv me-2"></i> CSV</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-file-excel me-2"></i> Excel</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-file-alt me-2"></i> Text</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logs filter -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-transparent">
+            <h5 class="card-title mb-0">Log Filters</h5>
+        </div>
+        <div class="card-body">
+            <form id="log-filter-form">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="log-level" class="form-label">Log Level</label>
+                        <select class="form-select" id="log-level" name="level">
+                            <option value="all" selected>All Levels</option>
+                            <option value="error">Error</option>
+                            <option value="warning">Warning</option>
+                            <option value="info">Info</option>
+                            <option value="debug">Debug</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="log-source" class="form-label">Log Source</label>
+                        <select class="form-select" id="log-source" name="source">
+                            <option value="all" selected>All Sources</option>
+                            <option value="application">Application</option>
+                            <option value="database">Database</option>
+                            <option value="bot">Bot</option>
+                            <option value="api">API</option>
+                            <option value="auth">Authentication</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="start-date" class="form-label">Start Date</label>
+                        <input type="datetime-local" class="form-control" id="start-date" name="startDate">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="end-date" class="form-label">End Date</label>
+                        <input type="datetime-local" class="form-control" id="end-date" name="endDate">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="search-term" class="form-label">Search</label>
+                        <input type="text" class="form-control" id="search-term" name="search" placeholder="Search by message content, user, or ID...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="limit" class="form-label">Results Limit</label>
+                        <select class="form-select" id="limit" name="limit">
+                            <option value="100">100 entries</option>
+                            <option value="250">250 entries</option>
+                            <option value="500">500 entries</option>
+                            <option value="1000">1000 entries</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <div class="d-grid w-100">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-filter me-1"></i> Apply Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="include-system" name="includeSystem" checked>
+                        <label class="form-check-label" for="include-system">System</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="include-database" name="includeDatabase" checked>
+                        <label class="form-check-label" for="include-database">Database</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="include-bot" name="includeBot" checked>
+                        <label class="form-check-label" for="include-bot">Bot</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="include-api" name="includeApi" checked>
+                        <label class="form-check-label" for="include-api">API</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="include-auth" name="includeAuth" checked>
+                        <label class="form-check-label" for="include-auth">Authentication</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="include-network" name="includeNetwork" checked>
+                        <label class="form-check-label" for="include-network">Network</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Log Entries -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Log Entries</h5>
+            <div>
+                <span class="badge bg-primary rounded-pill">500 entries</span>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Timestamp</th>
+                            <th scope="col">Level</th>
+                            <th scope="col">Source</th>
+                            <th scope="col">Message</th>
+                            <th scope="col">Request ID</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2025-05-10 11:15:32</td>
+                            <td><span class="badge bg-danger">ERROR</span></td>
+                            <td>Database</td>
+                            <td>Connection pool exhausted</td>
+                            <td>req-7839f5c2</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2025-05-10 11:14:28</td>
+                            <td><span class="badge bg-warning">WARN</span></td>
+                            <td>Bot</td>
+                            <td>Rate limit approaching for Discord API</td>
+                            <td>req-6729a3b1</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2025-05-10 11:13:45</td>
+                            <td><span class="badge bg-info">INFO</span></td>
+                            <td>API</td>
+                            <td>Request completed for /api/status</td>
+                            <td>req-5618b2a0</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2025-05-10 11:12:37</td>
+                            <td><span class="badge bg-info">INFO</span></td>
+                            <td>Auth</td>
+                            <td>User 'xniter' logged in successfully</td>
+                            <td>req-4507a1b9</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2025-05-10 11:10:52</td>
+                            <td><span class="badge bg-secondary">DEBUG</span></td>
+                            <td>Application</td>
+                            <td>Cache hit ratio: 87.5%</td>
+                            <td>req-3496b0a8</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2025-05-10 11:09:23</td>
+                            <td><span class="badge bg-danger">ERROR</span></td>
+                            <td>Network</td>
+                            <td>Failed to connect to external service: OpenAI API timeout</td>
+                            <td>req-2385a9c7</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2025-05-10 11:08:15</td>
+                            <td><span class="badge bg-info">INFO</span></td>
+                            <td>Bot</td>
+                            <td>Bot connected to Discord API successfully</td>
+                            <td>req-1274b8d6</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2025-05-10 11:07:42</td>
+                            <td><span class="badge bg-warning">WARN</span></td>
+                            <td>System</td>
+                            <td>High memory usage detected: 85%</td>
+                            <td>req-0163c7e5</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2025-05-10 11:06:30</td>
+                            <td><span class="badge bg-danger">ERROR</span></td>
+                            <td>API</td>
+                            <td>Uncaught exception in API route: TypeError: Cannot read property 'id' of undefined</td>
+                            <td>req-9052d6f4</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2025-05-10 11:05:18</td>
+                            <td><span class="badge bg-info">INFO</span></td>
+                            <td>Database</td>
+                            <td>Database migration completed successfully</td>
+                            <td>req-8941e5d3</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer bg-transparent">
+            <nav>
+                <ul class="pagination justify-content-center mb-0">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Log Stats and Charts -->
+    <div class="row">
+        <!-- Error Distribution Chart -->
+        <div class="col-xl-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">Error Distribution by Source</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="errorDistributionChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Log Volume Chart -->
+        <div class="col-xl-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">Log Volume Trend (24 hours)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="logVolumeChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Retention Settings -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-transparent">
+            <h5 class="card-title mb-0">Log Retention Settings</h5>
+        </div>
+        <div class="card-body">
+            <form id="log-retention-form">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="error-retention" class="form-label">Error Logs Retention</label>
+                        <select class="form-select" id="error-retention" name="errorRetention">
+                            <option value="30">30 days</option>
+                            <option value="60">60 days</option>
+                            <option value="90" selected>90 days</option>
+                            <option value="180">180 days</option>
+                            <option value="365">365 days</option>
+                        </select>
+                        <div class="form-text">How long to keep ERROR level logs</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="warn-retention" class="form-label">Warning Logs Retention</label>
+                        <select class="form-select" id="warn-retention" name="warnRetention">
+                            <option value="14">14 days</option>
+                            <option value="30" selected>30 days</option>
+                            <option value="60">60 days</option>
+                            <option value="90">90 days</option>
+                        </select>
+                        <div class="form-text">How long to keep WARN level logs</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="info-retention" class="form-label">Info Logs Retention</label>
+                        <select class="form-select" id="info-retention" name="infoRetention">
+                            <option value="7">7 days</option>
+                            <option value="14" selected>14 days</option>
+                            <option value="30">30 days</option>
+                            <option value="60">60 days</option>
+                        </select>
+                        <div class="form-text">How long to keep INFO level logs</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="debug-retention" class="form-label">Debug Logs Retention</label>
+                        <select class="form-select" id="debug-retention" name="debugRetention">
+                            <option value="1">1 day</option>
+                            <option value="3" selected>3 days</option>
+                            <option value="7">7 days</option>
+                            <option value="14">14 days</option>
+                        </select>
+                        <div class="form-text">How long to keep DEBUG level logs</div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Save Retention Settings
+                    </button>
+                    <button type="button" class="btn btn-danger ms-2" data-bs-toggle="modal" data-bs-target="#purgeLogsModal">
+                        <i class="fas fa-trash me-1"></i> Purge Logs
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Log Details Modal -->
+<div class="modal fade" id="logDetailsModal" tabindex="-1" aria-labelledby="logDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="logDetailsModalLabel">Log Entry Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" role="alert">
+                    <h5 class="alert-heading">Connection pool exhausted</h5>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <table class="table table-sm">
+                            <tbody>
+                                <tr>
+                                    <th>Log ID:</th>
+                                    <td>log-7839f5c2</td>
+                                </tr>
+                                <tr>
+                                    <th>Timestamp:</th>
+                                    <td>2025-05-10 11:15:32.248 UTC</td>
+                                </tr>
+                                <tr>
+                                    <th>Level:</th>
+                                    <td><span class="badge bg-danger">ERROR</span></td>
+                                </tr>
+                                <tr>
+                                    <th>Source:</th>
+                                    <td>Database</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-sm">
+                            <tbody>
+                                <tr>
+                                    <th>Request ID:</th>
+                                    <td>req-7839f5c2</td>
+                                </tr>
+                                <tr>
+                                    <th>User:</th>
+                                    <td>xniter</td>
+                                </tr>
+                                <tr>
+                                    <th>IP Address:</th>
+                                    <td>192.168.1.1</td>
+                                </tr>
+                                <tr>
+                                    <th>Endpoint:</th>
+                                    <td>/api/servers/123/status</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold">Log Message</h6>
+                <p>Connection pool exhausted - Failed to acquire database connection after waiting for 30000ms. Max connections: 100, Active: 100.</p>
+
+                <h6 class="fw-bold">Stack Trace</h6>
+                <div class="bg-dark text-light p-3 rounded" style="font-family: 'Courier New', monospace; font-size: 0.85rem;">
+                    <pre>java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms.
+    at com.zaxxer.hikari.pool.HikariPool.createTimeoutException(HikariPool.java:695)
+    at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:197)
+    at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:162)
+    at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:128)
+    at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:122)
+    at org.hibernate.internal.NonContextualJdbcConnectionAccess.obtainConnection(NonContextualJdbcConnectionAccess.java:35)
+    at org.hibernate.resource.jdbc.internal.LogicalConnectionManagedImpl.acquireConnectionIfNeeded(LogicalConnectionManagedImpl.java:106)
+    at org.hibernate.resource.jdbc.internal.LogicalConnectionManagedImpl.getPhysicalConnection(LogicalConnectionManagedImpl.java:136)
+    at org.hibernate.internal.SessionFactoryImpl$SessionBuilderImpl.openSession(SessionFactoryImpl.java:1556)
+    at org.springframework.orm.hibernate5.HibernateTransactionManager.doBegin(HibernateTransactionManager.java:565)</pre>
+                </div>
+
+                <h6 class="fw-bold mt-3">Additional Data</h6>
+                <div class="bg-light p-3 rounded">
+                    <pre class="mb-0">{
+    "database_connections": {
+        "total": 100,
+        "active": 100,
+        "idle": 0,
+        "waiting": 25
+    },
+    "server_metrics": {
+        "memory_usage": "87%",
+        "cpu_load": "72%",
+        "disk_space": "65%"
+    },
+    "context": {
+        "user_id": 1042,
+        "server_id": 123,
+        "operation": "get_server_status"
+    }
+}</pre>
+                </div>
+
+                <h6 class="fw-bold mt-3">Related Logs</h6>
+                <table class="table table-sm table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Level</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2025-05-10 11:14:28</td>
+                            <td><span class="badge bg-warning">WARN</span></td>
+                            <td>Database connection pool at 95% capacity (95/100 connections)</td>
+                        </tr>
+                        <tr>
+                            <td>2025-05-10 11:13:45</td>
+                            <td><span class="badge bg-warning">WARN</span></td>
+                            <td>Database connection pool at 90% capacity (90/100 connections)</td>
+                        </tr>
+                        <tr>
+                            <td>2025-05-10 11:10:52</td>
+                            <td><span class="badge bg-info">INFO</span></td>
+                            <td>Database connection pool at 80% capacity (80/100 connections)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-warning">
+                    <i class="fas fa-exclamation-triangle me-1"></i> Create Alert
+                </button>
+                <button type="button" class="btn btn-primary">
+                    <i class="fas fa-copy me-1"></i> Copy Log ID
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Purge Logs Modal -->
+<div class="modal fade" id="purgeLogsModal" tabindex="-1" aria-labelledby="purgeLogsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="purgeLogsModalLabel">Purge System Logs</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i> Warning: This action cannot be undone. Purged logs will be permanently deleted from the system.
+                </div>
+                
+                <form id="purge-logs-form">
+                    <div class="mb-3">
+                        <label for="purge-log-level" class="form-label">Log Level to Purge</label>
+                        <select class="form-select" id="purge-log-level" name="purgeLogLevel">
+                            <option value="all">All Levels</option>
+                            <option value="debug">Debug Logs</option>
+                            <option value="info">Info Logs</option>
+                            <option value="warn">Warning Logs</option>
+                            <option value="error">Error Logs</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="purge-older-than" class="form-label">Purge Logs Older Than</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="purge-older-than" name="purgeOlderThan" value="30" min="1">
+                            <select class="form-select" id="purge-time-unit" name="purgeTimeUnit">
+                                <option value="days">Days</option>
+                                <option value="weeks">Weeks</option>
+                                <option value="months">Months</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="backup-before-purge" name="backupBeforePurge" checked>
+                            <label class="form-check-label" for="backup-before-purge">
+                                Create backup before purging
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="purge-confirmation" class="form-label">Type "PURGE" to confirm</label>
+                        <input type="text" class="form-control" id="purge-confirmation" name="purgeConfirmation" placeholder="PURGE" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirm-purge-btn">
+                    <i class="fas fa-trash me-1"></i> Purge Logs
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // For demo purposes - show modal when View Details buttons are clicked
+        document.querySelectorAll('button[title="View Details"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const logDetailsModal = new bootstrap.Modal(document.getElementById('logDetailsModal'));
+                logDetailsModal.show();
+            });
+        });
+        
+        // Initialize charts
+        // Error Distribution Chart
+        const errorDistributionCtx = document.getElementById('errorDistributionChart').getContext('2d');
+        const errorDistributionChart = new Chart(errorDistributionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Database', 'API', 'Bot', 'System', 'Auth', 'Network'],
+                datasets: [
+                    {
+                        label: 'Error Count',
+                        data: [25, 18, 12, 8, 5, 15],
+                        backgroundColor: 'rgba(220, 53, 69, 0.7)',
+                        borderColor: 'rgba(220, 53, 69, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Error Count'
+                        },
+                        ticks: {
+                            precision: 0
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Source'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+        
+        // Log Volume Chart
+        const logVolumeCtx = document.getElementById('logVolumeChart').getContext('2d');
+        const logVolumeChart = new Chart(logVolumeCtx, {
+            type: 'line',
+            data: {
+                labels: ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
+                datasets: [
+                    {
+                        label: 'Error',
+                        data: [5, 3, 2, 1, 4, 8, 12, 10, 7, 5, 4, 6],
+                        borderColor: 'rgba(220, 53, 69, 1)',
+                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Warning',
+                        data: [10, 8, 5, 3, 12, 15, 20, 18, 16, 12, 10, 14],
+                        borderColor: 'rgba(255, 193, 7, 1)',
+                        backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Info',
+                        data: [50, 45, 30, 25, 60, 80, 120, 100, 90, 70, 65, 75],
+                        borderColor: 'rgba(13, 202, 240, 1)',
+                        backgroundColor: 'rgba(13, 202, 240, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Debug',
+                        data: [100, 95, 70, 60, 120, 170, 250, 220, 180, 150, 130, 160],
+                        borderColor: 'rgba(108, 117, 125, 1)',
+                        backgroundColor: 'rgba(108, 117, 125, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Log Count'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Time (24h)'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                }
+            }
+        });
+        
+        // Purge Logs functionality
+        const confirmPurgeBtn = document.getElementById('confirm-purge-btn');
+        const purgeConfirmationInput = document.getElementById('purge-confirmation');
+        
+        if (confirmPurgeBtn && purgeConfirmationInput) {
+            confirmPurgeBtn.addEventListener('click', function() {
+                if (purgeConfirmationInput.value.toUpperCase() === 'PURGE') {
+                    // Here we would submit the form in a real implementation
+                    // For demo purposes, just close the modal and show a toast
+                    const purgeModal = bootstrap.Modal.getInstance(document.getElementById('purgeLogsModal'));
+                    purgeModal.hide();
+                    
+                    // Show toast
+                    const toastContainer = document.createElement('div');
+                    toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                    toastContainer.innerHTML = `
+                        <div class="toast align-items-center border-0 bg-success text-white" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="d-flex">
+                                <div class="toast-body">
+                                    <strong>Success:</strong> Logs have been purged successfully
+                                </div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(toastContainer);
+                    
+                    const toastElement = toastContainer.querySelector('.toast');
+                    const toast = new bootstrap.Toast(toastElement, {
+                        delay: 3000
+                    });
+                    toast.show();
+                    
+                    // Remove the toast container after the toast is hidden
+                    toastElement.addEventListener('hidden.bs.toast', function () {
+                        toastContainer.remove();
+                    });
+                } else {
+                    purgeConfirmationInput.classList.add('is-invalid');
+                    // Add invalid feedback if it doesn't exist
+                    if (!document.querySelector('.invalid-feedback')) {
+                        const invalidFeedback = document.createElement('div');
+                        invalidFeedback.className = 'invalid-feedback';
+                        invalidFeedback.textContent = 'Please type "PURGE" to confirm';
+                        purgeConfirmationInput.parentNode.appendChild(invalidFeedback);
+                    }
+                }
+            });
+            
+            // Remove is-invalid class when user types
+            purgeConfirmationInput.addEventListener('input', function() {
+                purgeConfirmationInput.classList.remove('is-invalid');
+            });
+        }
+        
+        // Refresh button functionality
+        document.getElementById('btn-refresh').addEventListener('click', function() {
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Refreshing...';
+            
+            // Simulate a refresh delay
+            setTimeout(() => {
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-sync-alt me-1"></i> Refresh';
+                
+                // Show a toast notification
+                const toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                toastContainer.innerHTML = `
+                    <div class="toast align-items-center border-0 bg-success text-white" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <strong>Success:</strong> Logs refreshed successfully
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(toastContainer);
+                
+                const toastElement = toastContainer.querySelector('.toast');
+                const toast = new bootstrap.Toast(toastElement, {
+                    delay: 3000
+                });
+                toast.show();
+                
+                // Remove the toast container after the toast is hidden
+                toastElement.addEventListener('hidden.bs.toast', function () {
+                    toastContainer.remove();
+                });
+            }, 1000);
+        });
+        
+        // Set default dates for the filter
+        const endDateInput = document.getElementById('end-date');
+        const startDateInput = document.getElementById('start-date');
+        
+        if (endDateInput && startDateInput) {
+            // Set end date to now
+            const now = new Date();
+            endDateInput.value = now.toISOString().slice(0, 16);
+            
+            // Set start date to 24 hours ago
+            const yesterday = new Date(now);
+            yesterday.setDate(yesterday.getDate() - 1);
+            startDateInput.value = yesterday.toISOString().slice(0, 16);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Define base styles */
+:root {
+  --space-primary: #4c5cf9;
+  --space-secondary: #8250ff;
+  --space-accent: #a173ff;
+  --space-background: #0c0c28;
+  --space-surface: #151849;
+  --space-text: #ffffff;
+}
+
+/* Apply a consistent cosmic background to the entire app */
+html {
+  background-color: var(--space-background);
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(76, 92, 249, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 80% 60%, rgba(130, 80, 255, 0.08) 0%, transparent 40%);
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-space-grotesk), -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--space-text);
+  background-color: transparent;
+  min-height: 100vh;
+  position: relative;
+}
+
+code, pre {
+  font-family: var(--font-space-mono), SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+}
+
+/* Add star animation */
+@keyframes twinkle {
+  0% { opacity: 0.2; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.2; }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+/* Star styles with enhanced animation */
+.star {
+  position: absolute;
+  background-color: white;
+  border-radius: 50%;
+  animation: twinkle var(--twinkle-duration, 3s) ease-in-out infinite;
+  z-index: 0;
+}
+
+.star.large {
+  width: 3px !important;
+  height: 3px !important;
+  background: linear-gradient(45deg, #fff, #a173ff);
+  box-shadow: 0 0 4px 1px rgba(161, 115, 255, 0.3);
+}
+
+/* Cosmic elements for enhanced backgrounds */
+.nebula {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.15;
+  z-index: 0;
+  animation: pulse 15s ease-in-out infinite;
+}
+
+.shooting-star {
+  position: absolute;
+  width: 2px;
+  background: linear-gradient(90deg, transparent, #fff 20%, #fff 40%, transparent);
+  border-radius: 50px;
+  z-index: 0;
+}
+
+/* Add glass effect */
+.glass-effect {
+  background: rgba(25, 24, 56, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(161, 115, 255, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  position: relative;
+}
+
+.glass-effect::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.02),
+    rgba(255, 255, 255, 0.05)
+  );
+  transform: skewX(-25deg);
+  transition: all 0.6s ease;
+  z-index: 1;
+}
+
+.glass-effect:hover::before {
+  left: 150%;
+  transition: all 0.8s ease;
+}
+
+/* Navbar styling */
+.navbar {
+  background: rgba(12, 12, 40, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(161, 115, 255, 0.15);
+  position: relative;
+  z-index: 50;
+}

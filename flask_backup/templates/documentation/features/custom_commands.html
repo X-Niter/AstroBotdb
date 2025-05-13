@@ -1,0 +1,1702 @@
+{% extends "layouts/documentation.html" %}
+
+{% block title %}Custom Commands System{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{{ url_for('documentation_page', page_type='features', page_name='index') }}" class="cosmic-link">Features</a></li>
+<li class="breadcrumb-item active">Custom Commands</li>
+{% endblock %}
+
+{% block toc %}
+<ul class="cosmic-list">
+    <li><a href="#overview" class="cosmic-link">Overview</a></li>
+    <li><a href="#basic-commands" class="cosmic-link">Basic Commands</a>
+        <ul>
+            <li><a href="#command-parameters" class="cosmic-link">Command Parameters</a></li>
+        </ul>
+    </li>
+    <li><a href="#embeds" class="cosmic-link">Rich Embeds</a></li>
+    <li><a href="#variables" class="cosmic-link">Available Variables</a></li>
+    <li><a href="#conditional-logic" class="cosmic-link">Conditional Logic</a></li>
+    <li><a href="#data-storage" class="cosmic-link">Data Storage</a></li>
+    <li><a href="#api-integration" class="cosmic-link">API Integration</a></li>
+    <li><a href="#command-management" class="cosmic-link">Command Management</a></li>
+</ul>
+{% endblock %}
+
+{% block doc_content %}
+<section>
+    <h1 class="cosmic-glow-text mb-4">Custom Commands System</h1>
+    
+    <p class="lead">
+        Create powerful, customized commands for your Discord server with AstroBot's intuitive custom commands system. From simple text responses to complex, dynamic interactions with external APIs and conditional logic.
+    </p>
+    
+    <div class="cosmic-divider"></div>
+</section>
+
+<section>
+    <h2 id="overview" class="mb-4">Overview</h2>
+    
+    <p>
+        The custom commands system lets you create unique commands specifically tailored to your community's needs. These commands can:
+    </p>
+    
+    <div class="row gy-4 gx-4 mb-4">
+        <div class="col-md-4">
+            <div class="feature-card glass-card h-100 cosmic-shimmer">
+                <div class="cosmic-dust"></div>
+                <div class="card-body">
+                    <div class="feature-icon-wrapper mb-3">
+                        <div class="feature-icon cosmic-glow" style="background: linear-gradient(135deg, #6366f130, #6366f110);">
+                            <i class="bi bi-chat-dots" style="color: #6366f1;"></i>
+                        </div>
+                    </div>
+                    <h4 class="card-title fw-bold">Rich Responses</h4>
+                    <p class="card-text mb-0">
+                        Respond with text, images, embeds, and more
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="feature-card glass-card h-100 cosmic-shimmer">
+                <div class="cosmic-dust"></div>
+                <div class="card-body">
+                    <div class="feature-icon-wrapper mb-3">
+                        <div class="feature-icon cosmic-glow" style="background: linear-gradient(135deg, #10b98130, #10b98110);">
+                            <i class="bi bi-code-slash" style="color: #10b981;"></i>
+                        </div>
+                    </div>
+                    <h4 class="card-title fw-bold">Dynamic Logic</h4>
+                    <p class="card-text mb-0">
+                        Use variables, conditional statements, and store data
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="feature-card glass-card h-100 cosmic-shimmer">
+                <div class="cosmic-dust"></div>
+                <div class="card-body">
+                    <div class="feature-icon-wrapper mb-3">
+                        <div class="feature-icon cosmic-glow" style="background: linear-gradient(135deg, #8b5cf630, #8b5cf610);">
+                            <i class="bi bi-globe" style="color: #8b5cf6;"></i>
+                        </div>
+                    </div>
+                    <h4 class="card-title fw-bold">API Integration</h4>
+                    <p class="card-text mb-0">
+                        Connect to external APIs and services
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="glass-card p-4 rounded-lg mb-4 callout callout-info position-relative">
+        <div class="cosmic-dust"></div>
+        <div class="d-flex">
+            <div class="me-3 fs-3 text-info">
+                <i class="bi bi-info-circle"></i>
+            </div>
+            <div>
+                <h5 class="fw-bold">Administrator Permissions Required</h5>
+                <p class="mb-0">Creating and managing custom commands requires <strong>Administrator</strong> or <strong>Manage Server</strong> permissions, but anyone can use the commands once they're created (unless permissions are restricted).</p>
+            </div>
+        </div>
+    </div>
+</section>
+            
+<section>
+    <h2 id="basic-commands" class="mb-4">Basic Custom Commands</h2>
+    
+    <p>
+        Let's start with the basics of creating a simple custom command:
+    </p>
+    
+    <div class="glass-card p-4 mb-4 position-relative code-block">
+        <div class="cosmic-dust"></div>
+        <div class="cosmic-gradient-overlay"></div>
+        <pre class="mb-0 cosmic-code"><code class="language-bash">!astro cc create welcome "Welcome to our server, {user.mention}! Check out {channel.mention:rules} for our server rules."</code></pre>
+        <div class="copy-btn" onclick="copyCode(this)">
+            <i class="bi bi-clipboard"></i>
+        </div>
+    </div>
+    
+    <p>
+        This creates a command called "welcome" that responds with a personalized greeting, mentioning the user who triggered the command and linking to a channel called "rules".
+    </p>
+    
+    <div class="glass-card p-3 mb-4 position-relative example-card">
+        <div class="cosmic-dust"></div>
+        <div class="d-flex align-items-center">
+            <div class="example-icon me-3">
+                <i class="bi bi-terminal cosmic-glow-text"></i>
+            </div>
+            <div>
+                <p class="mb-0 fw-bold">To use this command, members would type:</p>
+                <pre class="mb-0 mt-2 cosmic-code"><code class="language-bash">!astro welcome</code></pre>
+            </div>
+        </div>
+    </div>
+    
+    <div class="cosmic-divider my-5"></div>
+    
+    <h3 id="command-parameters" class="mb-4">Command Parameters</h3>
+    
+    <p>
+        You can create commands that accept parameters from users:
+    </p>
+    
+    <div class="glass-card p-4 mb-4 position-relative code-block">
+        <div class="cosmic-dust"></div>
+        <div class="cosmic-gradient-overlay"></div>
+        <pre class="mb-0 cosmic-code"><code class="language-bash">!astro cc create greet "Hello, {params.0}! Welcome to {server.name}."</code></pre>
+        <div class="copy-btn" onclick="copyCode(this)">
+            <i class="bi bi-clipboard"></i>
+        </div>
+    </div>
+    
+    <p>
+        This command takes one parameter (a name) and incorporates it into the greeting. Users would invoke it like:
+    </p>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="glass-card p-3 position-relative example-card h-100">
+                <div class="cosmic-dust"></div>
+                <div class="d-flex h-100 flex-column">
+                    <p class="mb-2 fw-bold text-cosmic-blue">Example Usage:</p>
+                    <pre class="mb-0 mt-auto cosmic-code"><code class="language-bash">!astro greet John</code></pre>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="glass-card p-3 position-relative example-card h-100">
+                <div class="cosmic-dust"></div>
+                <div class="d-flex h-100 flex-column">
+                    <p class="mb-2 fw-bold text-cosmic-blue">Expected Response:</p>
+                    <p class="mb-0 mt-auto"><span class="text-cosmic-purple">"Hello, John! Welcome to AstroFrame Server."</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="glass-card p-4 mb-4 position-relative">
+        <div class="cosmic-dust"></div>
+        <h5 class="mb-3"><i class="bi bi-lightbulb me-2 text-cosmic-gold"></i> Parameter Access</h5>
+        <p class="mb-0">
+            You can access parameters by index (<code class="cosmic-inline-code">{params.0}</code>, <code class="cosmic-inline-code">{params.1}</code>, etc.) or collect all remaining parameters with <code class="cosmic-inline-code">{params.all}</code>:
+        </p>
+    </div>
+    
+    <div class="glass-card p-4 mb-4 position-relative code-block">
+        <div class="cosmic-dust"></div>
+        <div class="cosmic-gradient-overlay"></div>
+        <pre class="mb-0 cosmic-code"><code class="language-bash">!astro cc create echo "You said: {params.all}"</code></pre>
+        <div class="copy-btn" onclick="copyCode(this)">
+            <i class="bi bi-clipboard"></i>
+        </div>
+    </div>
+</section>
+            
+<section>
+    <h2 id="embeds" class="mb-4">Creating Rich Embeds</h2>
+    
+    <div class="row mb-5">
+        <div class="col-lg-7">
+            <p>
+                Custom commands can create rich embeds with multiple fields, colors, images, and more. These visually appealing messages help organize information and make your commands stand out.
+            </p>
+            
+            <div class="glass-card p-4 mb-4 position-relative">
+                <div class="cosmic-dust"></div>
+                <h5 class="mb-3"><i class="bi bi-stars me-2 text-cosmic-purple"></i> Embed Features</h5>
+                <ul class="mb-0 ps-3">
+                    <li>Customizable colors and titles</li>
+                    <li>Images, thumbnails, and author icons</li>
+                    <li>Multiple fields with inline formatting</li>
+                    <li>Dynamic content with variables</li>
+                    <li>Footers with timestamps</li>
+                    <li>Hyperlinks and mentions</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="glass-card p-4 position-relative embed-preview">
+                <div class="cosmic-dust"></div>
+                <div class="embed-preview-card">
+                    <div class="embed-preview-accent"></div>
+                    <div class="embed-preview-content">
+                        <div class="embed-preview-title">AstroFrame Server Information</div>
+                        <div class="embed-preview-description">Here's some information about our server!</div>
+                        <div class="embed-preview-thumbnail">
+                            <div class="placeholder-img">
+                                <i class="bi bi-discord"></i>
+                            </div>
+                        </div>
+                        <div class="embed-preview-fields">
+                            <div class="embed-preview-field">
+                                <div class="field-name">Member Count</div>
+                                <div class="field-value">1,250</div>
+                            </div>
+                            <div class="embed-preview-field">
+                                <div class="field-name">Server Created</div>
+                                <div class="field-value">May 8, 2025</div>
+                            </div>
+                            <div class="embed-preview-field">
+                                <div class="field-name">Owner</div>
+                                <div class="field-value">@AstroAdmin</div>
+                            </div>
+                        </div>
+                        <div class="embed-preview-footer">
+                            <div class="footer-icon">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                            <div class="footer-text">Requested by SpaceExplorer</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="glass-card p-4 mb-4 position-relative code-block">
+        <div class="cosmic-dust"></div>
+        <div class="cosmic-gradient-overlay"></div>
+        <pre class="mb-0 cosmic-code"><code class="language-json">!astro cc create server-info {% raw %}{{
+  "embed": {
+    "title": "{server.name} Information",
+    "description": "Here's some information about our server!",
+    "color": "5865F2",
+    "thumbnail": "{server.icon_url}",
+    "fields": [
+      {
+        "name": "Member Count",
+        "value": "{server.member_count}",
+        "inline": true
+      },
+      {
+        "name": "Server Created",
+        "value": "{server.created_at:date}",
+        "inline": true
+      },
+      {
+        "name": "Owner",
+        "value": "{server.owner.mention}",
+        "inline": true
+      }
+    ],
+    "footer": {
+      "text": "Requested by {user.name}",
+      "icon_url": "{user.avatar_url}"
+    }
+  }
+}}{% endraw %}</code></pre>
+        <div class="copy-btn" onclick="copyCode(this)">
+            <i class="bi bi-clipboard"></i>
+        </div>
+    </div>
+    
+    <div class="glass-card p-4 mb-4 position-relative">
+        <div class="cosmic-dust"></div>
+        <div class="d-flex">
+            <div class="me-3 fs-3 text-cosmic-purple">
+                <i class="bi bi-braces"></i>
+            </div>
+            <div>
+                <h5 class="fw-bold">JSON Syntax</h5>
+                <p class="mb-0">
+                    Note the use of double curly braces <code class="cosmic-inline-code">{% raw %}{{ }}{% endraw %}</code> to define a JSON object for the embed. Within this JSON, you can use AstroBot's variables in single curly braces <code class="cosmic-inline-code">{% raw %}{ }{% endraw %}</code>.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+            
+<section>
+    <h2 id="variables" class="mb-4">Available Variables</h2>
+    
+    <p>
+        AstroBot provides many variables you can use in your custom commands. These dynamic placeholders are replaced with actual values when the command is executed.
+    </p>
+    
+    <div class="glass-card p-0 mb-5 position-relative cosmic-shimmer">
+        <div class="cosmic-dust"></div>
+        <div class="table-responsive">
+            <table class="table cosmic-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="border-0">Variable</th>
+                        <th class="border-0">Description</th>
+                        <th class="border-0">Examples</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="variable-name"><code class="cosmic-inline-code">{user}</code></td>
+                        <td>The user who triggered the command</td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="variable-example"><code class="cosmic-inline-code">{user.name}</code></span>
+                                <span class="variable-example"><code class="cosmic-inline-code">{user.id}</code></span>
+                                <span class="variable-example"><code class="cosmic-inline-code">{user.mention}</code></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="variable-name"><code class="cosmic-inline-code">{server}</code></td>
+                        <td>The Discord server (guild)</td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="variable-example"><code class="cosmic-inline-code">{server.name}</code></span>
+                                <span class="variable-example"><code class="cosmic-inline-code">{server.member_count}</code></span>
+                                <span class="variable-example"><code class="cosmic-inline-code">{server.icon_url}</code></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="variable-name"><code class="cosmic-inline-code">{channel}</code></td>
+                        <td>The channel where the command was used</td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="variable-example"><code class="cosmic-inline-code">{channel.name}</code></span>
+                                <span class="variable-example"><code class="cosmic-inline-code">{channel.mention}</code></span>
+                                <span class="variable-example"><code class="cosmic-inline-code">{channel.id}</code></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="variable-name"><code class="cosmic-inline-code">{params}</code></td>
+                        <td>Command parameters</td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="variable-example"><code class="cosmic-inline-code">{params.0}</code></span>
+                                <span class="variable-example"><code class="cosmic-inline-code">{params.1}</code></span>
+                                <span class="variable-example"><code class="cosmic-inline-code">{params.all}</code></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="variable-name"><code class="cosmic-inline-code">{target}</code></td>
+                        <td>Mentioned user (if any)</td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="variable-example"><code class="cosmic-inline-code">{target.name}</code></span>
+                                <span class="variable-example"><code class="cosmic-inline-code">{target.mention}</code></span>
+                                <span class="variable-example"><code class="cosmic-inline-code">{target.avatar_url}</code></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="variable-name"><code class="cosmic-inline-code">{time}</code></td>
+                        <td>Current time information</td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="variable-example"><code class="cosmic-inline-code">{time.now}</code></span>
+                                <span class="variable-example"><code class="cosmic-inline-code">{time.utc}</code></span>
+                                <span class="variable-example"><code class="cosmic-inline-code">{time.unix}</code></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="variable-name"><code class="cosmic-inline-code">{random}</code></td>
+                        <td>Random value generators</td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="variable-example"><code class="cosmic-inline-code">{random.number:1,100}</code></span>
+                                <span class="variable-example"><code class="cosmic-inline-code">{random.choice:A,B,C}</code></span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="row gy-4 mb-4">
+        <div class="col-md-6">
+            <div class="glass-card h-100 p-4 position-relative cosmic-shimmer">
+                <div class="cosmic-dust"></div>
+                <h5 class="mb-3"><i class="bi bi-gear-wide-connected me-2 text-cosmic-blue"></i> Variable Formatting</h5>
+                <p>
+                    Format variables with additional options using the colon syntax:
+                </p>
+                <div class="mt-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="var-format-dot bg-cosmic-blue me-2"></div>
+                        <code class="cosmic-inline-code">{time.now:date}</code> <span class="ms-2">→ May 10, 2025</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="var-format-dot bg-cosmic-purple me-2"></div>
+                        <code class="cosmic-inline-code">{time.now:time}</code> <span class="ms-2">→ 14:22:30</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="var-format-dot bg-cosmic-green me-2"></div>
+                        <code class="cosmic-inline-code">{user.joined_at:relative}</code> <span class="ms-2">→ 3 days ago</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="var-format-dot bg-cosmic-gold me-2"></div>
+                        <code class="cosmic-inline-code">{number:comma}</code> <span class="ms-2">→ 1,234,567</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="glass-card h-100 p-4 position-relative cosmic-shimmer">
+                <div class="cosmic-dust"></div>
+                <h5 class="mb-3"><i class="bi bi-magic me-2 text-cosmic-purple"></i> Advanced Usage</h5>
+                <p>
+                    Variables can be nested and used with modifiers for more complex outputs:
+                </p>
+                <pre class="mt-3 mb-0 cosmic-code"><code class="language-bash">// Combine variables with text
+"{user.name}'s rank is #{user.rank}"
+
+// Access nested properties
+"{server.roles.0.name}"
+
+// Use conditionals with variables
+"{if:{user.has_role:Moderator},Yes,No}"
+
+// Transform content
+"{uppercase:{server.name}}"</code></pre>
+            </div>
+        </div>
+    </div>
+</section>
+            
+<section>
+    <h2 id="conditional-logic" class="mb-4">Conditional Logic</h2>
+    
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <p>
+                Custom commands can include conditional logic to create different responses based on various factors. This turns your commands from simple text responses into dynamic, context-aware tools.
+            </p>
+            
+            <div class="glass-card p-4 mb-4 position-relative">
+                <div class="cosmic-dust"></div>
+                <h5 class="mb-3"><i class="bi bi-code-slash me-2 text-cosmic-blue"></i> Condition Types</h5>
+                <ul class="mb-0 ps-3">
+                    <li>User role checks</li>
+                    <li>Permission verifications</li>
+                    <li>Time-based conditions</li>
+                    <li>Numerical comparisons</li>
+                    <li>Text matching</li>
+                    <li>Server status checks</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="glass-card p-4 position-relative workflow-diagram">
+                <div class="cosmic-dust"></div>
+                <h5 class="mb-3 text-center">Conditional Flow</h5>
+                <div class="workflow-chart">
+                    <div class="workflow-node start-node">
+                        <i class="bi bi-play-fill"></i>
+                        <span>Command Triggered</span>
+                    </div>
+                    <div class="workflow-connector"></div>
+                    <div class="workflow-node condition-node">
+                        <i class="bi bi-question-diamond-fill"></i>
+                        <span>Check Condition</span>
+                    </div>
+                    <div class="workflow-branches">
+                        <div class="workflow-branch">
+                            <div class="branch-label">True</div>
+                            <div class="workflow-connector"></div>
+                            <div class="workflow-node true-node">
+                                <i class="bi bi-check-lg"></i>
+                                <span>"Then" Response</span>
+                            </div>
+                        </div>
+                        <div class="workflow-branch">
+                            <div class="branch-label">False</div>
+                            <div class="workflow-connector"></div>
+                            <div class="workflow-node false-node">
+                                <i class="bi bi-x-lg"></i>
+                                <span>"Else" Response</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <h4 class="mb-3">Basic Conditional Example</h4>
+    
+    <div class="glass-card p-4 mb-4 position-relative code-block">
+        <div class="cosmic-dust"></div>
+        <div class="cosmic-gradient-overlay"></div>
+        <pre class="mb-0 cosmic-code"><code class="language-json">!astro cc create role-check {% raw %}{{
+  "if": "{user.has_role:Moderator}",
+  "then": "You are a moderator. You can access the staff commands.",
+  "else": "You are not a moderator. You don't have access to staff commands."
+}}{% endraw %}</code></pre>
+        <div class="copy-btn" onclick="copyCode(this)">
+            <i class="bi bi-clipboard"></i>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <div class="glass-card p-4 position-relative example-card h-100">
+                <div class="cosmic-dust"></div>
+                <h6 class="fw-bold mb-3 text-cosmic-blue">
+                    <i class="bi bi-person-badge me-2"></i> 
+                    User with Moderator Role
+                </h6>
+                <div class="example-result">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="example-avatar me-2">
+                            <img src="https://via.placeholder.com/40" alt="User Avatar" class="rounded-circle">
+                        </div>
+                        <div class="example-name">ModUser</div>
+                    </div>
+                    <div class="example-command mb-2">
+                        <code class="cosmic-inline-code">!astro role-check</code>
+                    </div>
+                    <div class="example-response">
+                        <div class="bot-response">
+                            <div class="bot-avatar me-2">
+                                <i class="bi bi-robot"></i>
+                            </div>
+                            <div class="response-text text-cosmic-green">
+                                You are a moderator. You can access the staff commands.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="glass-card p-4 position-relative example-card h-100">
+                <div class="cosmic-dust"></div>
+                <h6 class="fw-bold mb-3 text-cosmic-blue">
+                    <i class="bi bi-person me-2"></i> 
+                    Regular User
+                </h6>
+                <div class="example-result">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="example-avatar me-2">
+                            <img src="https://via.placeholder.com/40" alt="User Avatar" class="rounded-circle">
+                        </div>
+                        <div class="example-name">RegularUser</div>
+                    </div>
+                    <div class="example-command mb-2">
+                        <code class="cosmic-inline-code">!astro role-check</code>
+                    </div>
+                    <div class="example-response">
+                        <div class="bot-response">
+                            <div class="bot-avatar me-2">
+                                <i class="bi bi-robot"></i>
+                            </div>
+                            <div class="response-text text-cosmic-red">
+                                You are not a moderator. You don't have access to staff commands.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <h4 class="mb-3">Nested Conditions Example</h4>
+    
+    <p>
+        You can also use nested conditions for more complex decision trees:
+    </p>
+    
+    <div class="glass-card p-4 mb-4 position-relative code-block">
+        <div class="cosmic-dust"></div>
+        <div class="cosmic-gradient-overlay"></div>
+        <pre class="mb-0 cosmic-code"><code class="language-json">!astro cc create member-status {% raw %}{{
+  "if": "{user.join_date:days} < 7",
+  "then": "Welcome, new member! You joined {user.join_date:relative}.",
+  "else": {
+    "if": "{user.has_role:Regular}",
+    "then": "Thanks for being a regular member!",
+    "else": "You've been around for a while, consider getting more involved!"
+  }
+}}{% endraw %}</code></pre>
+        <div class="copy-btn" onclick="copyCode(this)">
+            <i class="bi bi-clipboard"></i>
+        </div>
+    </div>
+    
+    <div class="glass-card p-4 mb-4 position-relative">
+        <div class="cosmic-dust"></div>
+        <div class="d-flex">
+            <div class="me-3 fs-3 text-cosmic-gold">
+                <i class="bi bi-lightbulb"></i>
+            </div>
+            <div>
+                <h5 class="fw-bold">Pro Tip: Comparison Operators</h5>
+                <p class="mb-0">
+                    Use standard comparison operators in your conditions: <code class="cosmic-inline-code">==</code> (equals), <code class="cosmic-inline-code">!=</code> (not equals), <code class="cosmic-inline-code"><</code> (less than), <code class="cosmic-inline-code">></code> (greater than), <code class="cosmic-inline-code"><=</code> (less than or equal), <code class="cosmic-inline-code">>=</code> (greater than or equal).
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+            
+<section>
+    <h2 id="data-storage" class="mb-4">Data Storage and Retrieval</h2>
+    
+    <div class="row mb-5">
+        <div class="col-lg-7">
+            <p>
+                AstroBot's custom commands can store and retrieve data, allowing you to create commands with persistent state and memory. This powerful feature enables things like counters, user inventories, economy systems, and more.
+            </p>
+            
+            <div class="glass-card p-4 mb-4 position-relative">
+                <div class="cosmic-dust"></div>
+                <h5 class="mb-3"><i class="bi bi-database me-2 text-cosmic-purple"></i> Data Operations</h5>
+                <div class="mb-3">
+                    <div class="data-op mb-2">
+                        <span class="data-op-badge">set</span>
+                        <span class="data-op-desc">Store a value</span>
+                    </div>
+                    <div class="data-op mb-2">
+                        <span class="data-op-badge">get</span>
+                        <span class="data-op-desc">Retrieve a stored value</span>
+                    </div>
+                    <div class="data-op mb-2">
+                        <span class="data-op-badge">increment</span>
+                        <span class="data-op-desc">Increase a numeric value</span>
+                    </div>
+                    <div class="data-op mb-2">
+                        <span class="data-op-badge">decrement</span>
+                        <span class="data-op-desc">Decrease a numeric value</span>
+                    </div>
+                    <div class="data-op mb-2">
+                        <span class="data-op-badge">delete</span>
+                        <span class="data-op-desc">Remove stored data</span>
+                    </div>
+                </div>
+                <div class="callout callout-info p-3 mb-0">
+                    <p class="mb-0 small">
+                        <i class="bi bi-info-circle me-2"></i> Data is stored per server. Each Discord server has its own isolated data storage.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-5">
+            <div class="glass-card p-0 position-relative h-100 cosmic-shimmer">
+                <div class="cosmic-dust"></div>
+                <div class="storage-visual p-4">
+                    <h5 class="text-center mb-4">Data Storage Visualization</h5>
+                    <div class="storage-container">
+                        <div class="storage-item">
+                            <div class="storage-key">counter</div>
+                            <div class="storage-value">42</div>
+                        </div>
+                        <div class="storage-item">
+                            <div class="storage-key">cookies:123456789</div>
+                            <div class="storage-value">15</div>
+                        </div>
+                        <div class="storage-item">
+                            <div class="storage-key">cookies:987654321</div>
+                            <div class="storage-value">3</div>
+                        </div>
+                        <div class="storage-item">
+                            <div class="storage-key">last_winner</div>
+                            <div class="storage-value">"SpaceExplorer"</div>
+                        </div>
+                        <div class="storage-item">
+                            <div class="storage-key">high_score</div>
+                            <div class="storage-value">1250</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <h4 class="mb-3">Command Usage Counter Example</h4>
+    
+    <div class="glass-card p-4 mb-4 position-relative code-block">
+        <div class="cosmic-dust"></div>
+        <div class="cosmic-gradient-overlay"></div>
+        <pre class="mb-0 cosmic-code"><code class="language-json">// Create a counter command
+!astro cc create count {% raw %}{{
+  "data": {
+    "op": "increment",
+    "key": "counter",
+    "default": 0
+  },
+  "response": "This command has been used {data:counter} times."
+}}{% endraw %}</code></pre>
+        <div class="copy-btn" onclick="copyCode(this)">
+            <i class="bi bi-clipboard"></i>
+        </div>
+    </div>
+    
+    <div class="glass-card p-3 mb-5 position-relative example-card">
+        <div class="cosmic-dust"></div>
+        <div class="d-flex align-items-center">
+            <div class="example-icon me-3">
+                <i class="bi bi-graph-up-arrow cosmic-glow-text"></i>
+            </div>
+            <div>
+                <p class="mb-2 fw-bold">Execution Flow:</p>
+                <ol class="mb-0 ps-3">
+                    <li>Command retrieves the current "counter" value (defaulting to 0 if it doesn't exist)</li>
+                    <li>The value is incremented by 1</li>
+                    <li>The updated value is stored back in the database</li>
+                    <li>The response message includes the current counter value</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    
+    <h4 class="mb-3">User-Specific Data Example</h4>
+    
+    <p>
+        You can also store data per user, which is perfect for creating user-based economies, reputation systems, or inventories:
+    </p>
+    
+    <div class="glass-card p-4 mb-4 position-relative code-block">
+        <div class="cosmic-dust"></div>
+        <div class="cosmic-gradient-overlay"></div>
+        <pre class="mb-0 cosmic-code"><code class="language-json">// Create a cookie command that gives cookies to users
+!astro cc create cookie {% raw %}{{
+  "if": "{params.0}",
+  "then": {
+    "data": {
+      "op": "increment",
+      "key": "cookies:{target.id}",
+      "default": 0,
+      "amount": 1
+    },
+    "response": "{user.name} gave a cookie to {target.name}! They now have {data:cookies:{target.id}} cookies."
+  },
+  "else": {
+    "data": {
+      "op": "get",
+      "key": "cookies:{user.id}",
+      "default": 0
+    },
+    "response": "{user.name}, you have {data:cookies:{user.id}} cookies."
+  }
+}}{% endraw %}</code></pre>
+        <div class="copy-btn" onclick="copyCode(this)">
+            <i class="bi bi-clipboard"></i>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="glass-card p-4 position-relative example-card h-100">
+                <div class="cosmic-dust"></div>
+                <h6 class="fw-bold mb-3 text-cosmic-blue">
+                    <i class="bi bi-gift me-2"></i> 
+                    Giving a Cookie
+                </h6>
+                <div class="example-command mb-2">
+                    <code class="cosmic-inline-code">!astro cookie @SpaceFriend</code>
+                </div>
+                <div class="example-response">
+                    <div class="bot-response">
+                        <div class="bot-avatar me-2">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                        <div class="response-text">
+                            SpaceExplorer gave a cookie to SpaceFriend! They now have 7 cookies.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="glass-card p-4 position-relative example-card h-100">
+                <div class="cosmic-dust"></div>
+                <h6 class="fw-bold mb-3 text-cosmic-blue">
+                    <i class="bi bi-person-lines-fill me-2"></i> 
+                    Checking Your Cookies
+                </h6>
+                <div class="example-command mb-2">
+                    <code class="cosmic-inline-code">!astro cookie</code>
+                </div>
+                <div class="example-response">
+                    <div class="bot-response">
+                        <div class="bot-avatar me-2">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                        <div class="response-text">
+                            SpaceExplorer, you have 12 cookies.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+            
+<section>
+    <h2 id="api-integration" class="mb-4">API Integration</h2>
+    
+    <div class="row mb-5">
+        <div class="col-lg-6">
+            <p>
+                One of the most powerful features of AstroBot's custom commands is the ability to integrate with external APIs. This lets your commands access real-time data from countless services across the web.
+            </p>
+            
+            <div class="glass-card p-4 mb-4 position-relative">
+                <div class="cosmic-dust"></div>
+                <h5 class="mb-3"><i class="bi bi-cloud me-2 text-cosmic-blue"></i> API Integration Use Cases</h5>
+                <ul class="mb-0 ps-3">
+                    <li>Weather forecasts and conditions</li>
+                    <li>Game statistics and server status</li>
+                    <li>Cryptocurrency and stock prices</li>
+                    <li>Translation services</li>
+                    <li>Urban Dictionary lookups</li>
+                    <li>Movie and TV show information</li>
+                    <li>News headlines and summaries</li>
+                    <li>Sports scores and schedules</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="glass-card p-4 position-relative api-flow">
+                <div class="cosmic-dust"></div>
+                <h5 class="mb-3 text-center">API Request Flow</h5>
+                <div class="api-flow-diagram">
+                    <div class="api-flow-step">
+                        <div class="api-flow-icon discord-icon">
+                            <i class="bi bi-discord"></i>
+                        </div>
+                        <div class="api-flow-label">User triggers command</div>
+                    </div>
+                    <div class="api-flow-arrow">
+                        <i class="bi bi-arrow-down"></i>
+                    </div>
+                    <div class="api-flow-step">
+                        <div class="api-flow-icon bot-icon">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                        <div class="api-flow-label">AstroBot makes API request</div>
+                    </div>
+                    <div class="api-flow-arrow">
+                        <i class="bi bi-arrow-down"></i>
+                    </div>
+                    <div class="api-flow-step">
+                        <div class="api-flow-icon api-icon">
+                            <i class="bi bi-cloud-arrow-down"></i>
+                        </div>
+                        <div class="api-flow-label">API returns data</div>
+                    </div>
+                    <div class="api-flow-arrow">
+                        <i class="bi bi-arrow-down"></i>
+                    </div>
+                    <div class="api-flow-step">
+                        <div class="api-flow-icon response-icon">
+                            <i class="bi bi-chat-square-text"></i>
+                        </div>
+                        <div class="api-flow-label">Bot displays formatted response</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <h4 class="mb-3">Weather API Example</h4>
+    
+    <div class="glass-card p-4 mb-4 position-relative code-block">
+        <div class="cosmic-dust"></div>
+        <div class="cosmic-gradient-overlay"></div>
+        <pre class="mb-0 cosmic-code"><code class="language-json">!astro cc create weather {% raw %}{{
+  "api": {
+    "url": "https://api.weatherapi.com/v1/current.json?key=YOUR_API_KEY&q={urlencode:{params.all}}&aqi=no",
+    "method": "GET"
+  },
+  "response": {
+    "embed": {
+      "title": "Weather for {api.location.name}, {api.location.country}",
+      "description": "Current conditions: {api.current.condition.text}",
+      "thumbnail": "https:{api.current.condition.icon}",
+      "fields": [
+        {
+          "name": "Temperature",
+          "value": "{api.current.temp_c}°C / {api.current.temp_f}°F",
+          "inline": true
+        },
+        {
+          "name": "Feels Like",
+          "value": "{api.current.feelslike_c}°C / {api.current.feelslike_f}°F",
+          "inline": true
+        },
+        {
+          "name": "Humidity",
+          "value": "{api.current.humidity}%",
+          "inline": true
+        },
+        {
+          "name": "Wind",
+          "value": "{api.current.wind_kph} km/h {api.current.wind_dir}",
+          "inline": true
+        }
+      ],
+      "footer": {
+        "text": "Last updated: {api.current.last_updated}"
+      }
+    }
+  }
+}}{% endraw %}</code></pre>
+        <div class="copy-btn" onclick="copyCode(this)">
+            <i class="bi bi-clipboard"></i>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-lg-7">
+            <div class="glass-card p-4 position-relative">
+                <div class="cosmic-dust"></div>
+                <h5 class="mb-3"><i class="bi bi-code-slash me-2 text-cosmic-green"></i> How The API Integration Works</h5>
+                <ol class="mb-0 ps-3">
+                    <li class="mb-2">The <code class="cosmic-inline-code">api</code> object defines the external API endpoint to call</li>
+                    <li class="mb-2">Parameters from the command are inserted into the URL with <code class="cosmic-inline-code">{urlencode:{params.all}}</code></li>
+                    <li class="mb-2">AstroBot makes the HTTP request to the API and receives JSON data</li>
+                    <li class="mb-2">The response is accessed with the <code class="cosmic-inline-code">{api.path.to.value}</code> syntax</li>
+                    <li>All response fields are automatically available through the <code class="cosmic-inline-code">{api}</code> variable</li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="col-lg-5">
+            <div class="glass-card p-4 position-relative example-card h-100">
+                <div class="cosmic-dust"></div>
+                <h6 class="fw-bold mb-3 text-cosmic-blue">
+                    <i class="bi bi-cloud-sun me-2"></i> 
+                    Example Usage
+                </h6>
+                <div class="example-command mb-3">
+                    <code class="cosmic-inline-code">!astro weather New York</code>
+                </div>
+                <div class="api-response-preview">
+                    <div class="response-embed">
+                        <div class="embed-header">
+                            <div class="embed-title">Weather for New York, United States</div>
+                        </div>
+                        <div class="embed-description">Current conditions: Partly cloudy</div>
+                        <div class="embed-thumbnail">
+                            <i class="bi bi-cloud-sun"></i>
+                        </div>
+                        <div class="embed-fields">
+                            <div class="embed-field">
+                                <div class="field-name">Temperature</div>
+                                <div class="field-value">18.3°C / 65.0°F</div>
+                            </div>
+                            <div class="embed-field">
+                                <div class="field-name">Feels Like</div>
+                                <div class="field-value">17.8°C / 64.1°F</div>
+                            </div>
+                            <div class="embed-field">
+                                <div class="field-name">Humidity</div>
+                                <div class="field-value">62%</div>
+                            </div>
+                            <div class="embed-field">
+                                <div class="field-name">Wind</div>
+                                <div class="field-value">8.6 km/h SW</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="glass-card p-4 mb-5 position-relative">
+        <div class="cosmic-dust"></div>
+        <div class="d-flex">
+            <div class="me-3 fs-3 text-cosmic-orange">
+                <i class="bi bi-shield-lock"></i>
+            </div>
+            <div>
+                <h5 class="fw-bold">API Keys Security</h5>
+                <p class="mb-0">
+                    For API integrations that require authentication, you'll need to add the API key to your bot settings or include it in the URL (as shown in the example). <strong>Never share commands with your API keys publicly</strong>. You can use the AstroBot dashboard to securely manage API keys.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <h4 class="mb-3">Additional API Options</h4>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="glass-card h-100 p-4 position-relative cosmic-shimmer">
+                <div class="cosmic-dust"></div>
+                <h5 class="mb-3"><i class="bi bi-gear-wide-connected me-2 text-cosmic-purple"></i> Request Options</h5>
+                <div class="mt-3">
+                    <div class="d-flex align-items-start mb-2">
+                        <div class="api-option-dot bg-cosmic-blue me-2 mt-1"></div>
+                        <div>
+                            <code class="cosmic-inline-code">method</code>
+                            <p class="small mt-1 mb-0">HTTP method (GET, POST, PUT, etc.)</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-2">
+                        <div class="api-option-dot bg-cosmic-purple me-2 mt-1"></div>
+                        <div>
+                            <code class="cosmic-inline-code">headers</code>
+                            <p class="small mt-1 mb-0">Custom HTTP headers for the request</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-2">
+                        <div class="api-option-dot bg-cosmic-green me-2 mt-1"></div>
+                        <div>
+                            <code class="cosmic-inline-code">body</code>
+                            <p class="small mt-1 mb-0">Request body for POST/PUT requests</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start">
+                        <div class="api-option-dot bg-cosmic-gold me-2 mt-1"></div>
+                        <div>
+                            <code class="cosmic-inline-code">timeout</code>
+                            <p class="small mt-1 mb-0">Request timeout in seconds</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="glass-card h-100 p-4 position-relative cosmic-shimmer">
+                <div class="cosmic-dust"></div>
+                <h5 class="mb-3"><i class="bi bi-sliders me-2 text-cosmic-blue"></i> Response Handling</h5>
+                <pre class="mt-3 mb-0 cosmic-code"><code class="language-json">// Error handling
+"fallback": "Weather service unavailable",
+
+// Transform JSON
+"transform": "api.current.temp_c * 9/5 + 32",
+
+// Filter results
+"filter": "api.items[?(@.type == 'movie')]",
+
+// Cache responses
+"cache": "1800" // seconds</code></pre>
+            </div>
+        </div>
+    </div>
+</section>
+            
+<section>
+    <h2 id="command-management" class="mb-4">Managing Custom Commands</h2>
+    
+    <div class="row mb-5">
+        <div class="col-lg-7">
+            <p>
+                AstroBot provides a comprehensive set of tools for managing your custom commands, both through Discord and the web dashboard. This makes it easy to create, edit, organize, and monitor your server's command collection.
+            </p>
+            
+            <div class="glass-card p-4 mb-4 position-relative">
+                <div class="cosmic-dust"></div>
+                <h5 class="mb-3"><i class="bi bi-terminal me-2 text-cosmic-blue"></i> Command Management Features</h5>
+                <ul class="mb-0 ps-3">
+                    <li>Create and edit commands in Discord or via web dashboard</li>
+                    <li>Enable and disable commands temporarily</li>
+                    <li>Organize commands with categories and tags</li>
+                    <li>Control command permissions and cooldowns</li>
+                    <li>View command usage statistics</li>
+                    <li>Import and export commands between servers</li>
+                    <li>Version history and rollback options</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="col-lg-5">
+            <div class="glass-card p-0 position-relative h-100 dashboard-preview cosmic-shimmer">
+                <div class="cosmic-dust"></div>
+                <div class="dashboard-header p-3">
+                    <h6 class="mb-0"><i class="bi bi-stars me-2"></i> AstroBot Dashboard</h6>
+                </div>
+                <div class="dashboard-content p-3">
+                    <div class="dashboard-title">Custom Commands</div>
+                    <div class="dashboard-search mb-3">
+                        <div class="search-icon">
+                            <i class="bi bi-search"></i>
+                        </div>
+                        <div class="search-placeholder">Search commands...</div>
+                    </div>
+                    <div class="dashboard-commands">
+                        <div class="dashboard-command active">
+                            <div class="command-name">weather</div>
+                            <div class="command-action">
+                                <i class="bi bi-pencil-square"></i>
+                            </div>
+                        </div>
+                        <div class="dashboard-command">
+                            <div class="command-name">serverinfo</div>
+                            <div class="command-action">
+                                <i class="bi bi-pencil-square"></i>
+                            </div>
+                        </div>
+                        <div class="dashboard-command">
+                            <div class="command-name">welcome</div>
+                            <div class="command-action">
+                                <i class="bi bi-pencil-square"></i>
+                            </div>
+                        </div>
+                        <div class="dashboard-command">
+                            <div class="command-name">role-check</div>
+                            <div class="command-action">
+                                <i class="bi bi-pencil-square"></i>
+                            </div>
+                        </div>
+                        <div class="dashboard-command">
+                            <div class="command-name">count</div>
+                            <div class="command-action">
+                                <i class="bi bi-pencil-square"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-actions mt-3">
+                        <div class="dashboard-button">
+                            <i class="bi bi-plus-lg me-1"></i> Create Command
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <h4 class="mb-3">Discord Command Reference</h4>
+    
+    <div class="glass-card p-0 mb-5 position-relative cosmic-shimmer">
+        <div class="cosmic-dust"></div>
+        <div class="table-responsive">
+            <table class="table cosmic-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="border-0">Command</th>
+                        <th class="border-0">Description</th>
+                        <th class="border-0">Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="command-syntax"><code class="cosmic-inline-code">!astro cc create &lt;name&gt; &lt;response&gt;</code></td>
+                        <td>Create a new custom command</td>
+                        <td class="command-example"><code class="cosmic-inline-code">!astro cc create hello "Hello, {user.mention}!"</code></td>
+                    </tr>
+                    <tr>
+                        <td class="command-syntax"><code class="cosmic-inline-code">!astro cc edit &lt;name&gt; &lt;new_response&gt;</code></td>
+                        <td>Edit an existing custom command</td>
+                        <td class="command-example"><code class="cosmic-inline-code">!astro cc edit hello "Greetings, {user.mention}!"</code></td>
+                    </tr>
+                    <tr>
+                        <td class="command-syntax"><code class="cosmic-inline-code">!astro cc list</code></td>
+                        <td>List all custom commands on the server</td>
+                        <td class="command-example"><code class="cosmic-inline-code">!astro cc list</code></td>
+                    </tr>
+                    <tr>
+                        <td class="command-syntax"><code class="cosmic-inline-code">!astro cc info &lt;name&gt;</code></td>
+                        <td>View information about a specific command</td>
+                        <td class="command-example"><code class="cosmic-inline-code">!astro cc info weather</code></td>
+                    </tr>
+                    <tr>
+                        <td class="command-syntax"><code class="cosmic-inline-code">!astro cc delete &lt;name&gt;</code></td>
+                        <td>Delete a custom command</td>
+                        <td class="command-example"><code class="cosmic-inline-code">!astro cc delete hello</code></td>
+                    </tr>
+                    <tr>
+                        <td class="command-syntax"><code class="cosmic-inline-code">!astro cc export</code></td>
+                        <td>Export commands as JSON file</td>
+                        <td class="command-example"><code class="cosmic-inline-code">!astro cc export</code></td>
+                    </tr>
+                    <tr>
+                        <td class="command-syntax"><code class="cosmic-inline-code">!astro cc import</code></td>
+                        <td>Import commands from JSON file</td>
+                        <td class="command-example"><code class="cosmic-inline-code">!astro cc import</code> (with attached JSON file)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2 id="permissions" class="mb-4">Command Permissions</h2>
+    
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <p>
+                You can restrict who can use your custom commands and in which channels they can be used. This gives you fine-grained control over your server's functionality.
+            </p>
+            
+            <div class="glass-card p-4 mb-4 position-relative code-block">
+                <div class="cosmic-dust"></div>
+                <div class="cosmic-gradient-overlay"></div>
+                <pre class="mb-0 cosmic-code"><code class="language-bash">// Require a specific role to use a command
+!astro cc permission add admin-info require-role Administrator
+
+// Restrict a command from being used in certain channels
+!astro cc permission add fun-command deny-channel #serious-discussion</code></pre>
+                <div class="copy-btn" onclick="copyCode(this)">
+                    <i class="bi bi-clipboard"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="glass-card p-4 position-relative">
+                <div class="cosmic-dust"></div>
+                <h5 class="mb-3"><i class="bi bi-shield-lock me-2 text-cosmic-purple"></i> Permission Types</h5>
+                <div class="permission-list">
+                    <div class="permission-item">
+                        <div class="permission-name">require-role</div>
+                        <div class="permission-desc">Restricts command usage to members with specific roles</div>
+                    </div>
+                    <div class="permission-item">
+                        <div class="permission-name">deny-role</div>
+                        <div class="permission-desc">Prevents members with specific roles from using the command</div>
+                    </div>
+                    <div class="permission-item">
+                        <div class="permission-name">allow-channel</div>
+                        <div class="permission-desc">Command can only be used in specified channels</div>
+                    </div>
+                    <div class="permission-item">
+                        <div class="permission-name">deny-channel</div>
+                        <div class="permission-desc">Command cannot be used in specified channels</div>
+                    </div>
+                    <div class="permission-item">
+                        <div class="permission-name">cooldown</div>
+                        <div class="permission-desc">Sets a time limit between command uses</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2 id="advanced-examples" class="mb-4">Advanced Command Examples</h2>
+    
+    <h3 id="poll-system" class="mb-4"><i class="bi bi-bar-chart-fill me-2"></i> Poll System</h3>
+    
+    <div class="row mb-5">
+        <div class="col-lg-7">
+            <div class="glass-card p-4 mb-4 position-relative code-block">
+                <div class="cosmic-dust"></div>
+                <div class="cosmic-gradient-overlay"></div>
+                <pre class="mb-0 cosmic-code"><code class="language-json">!astro cc create poll {% raw %}{{
+  "if": "{params.all}",
+  "then": {
+    "embed": {
+      "title": "📊 Poll: {params.all}",
+      "description": "React with 👍 for Yes or 👎 for No",
+      "footer": {
+        "text": "Poll created by {user.name}"
+      }
+    },
+    "reactions": ["👍", "👎"]
+  },
+  "else": "Please provide a poll question. Example: !astro poll Should we add a new channel?"
+}}{% endraw %}</code></pre>
+                <div class="copy-btn" onclick="copyCode(this)">
+                    <i class="bi bi-clipboard"></i>
+                </div>
+            </div>
+            
+            <p>
+                This command creates a simple yes/no poll. Users can vote by adding reactions to the message. The poll is presented as an embed with the question as the title.
+            </p>
+        </div>
+        
+        <div class="col-lg-5">
+            <div class="glass-card p-4 position-relative example-card h-100">
+                <div class="cosmic-dust"></div>
+                <h6 class="fw-bold mb-3 text-cosmic-blue">
+                    <i class="bi bi-chat-right-quote me-2"></i> 
+                    Poll Example
+                </h6>
+                <div class="poll-preview">
+                    <div class="poll-embed">
+                        <div class="poll-title">📊 Poll: Should we add a new channel?</div>
+                        <div class="poll-description">React with 👍 for Yes or 👎 for No</div>
+                        <div class="poll-footer">
+                            Poll created by SpaceExplorer
+                        </div>
+                    </div>
+                    <div class="poll-votes">
+                        <div class="poll-vote">
+                            <div class="vote-emoji">👍</div>
+                            <div class="vote-count">15</div>
+                        </div>
+                        <div class="poll-vote">
+                            <div class="vote-emoji">👎</div>
+                            <div class="vote-count">3</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <h3 id="reminder-system" class="mb-4"><i class="bi bi-alarm me-2"></i> Reminder System</h3>
+    
+    <div class="row mb-5">
+        <div class="col-lg-7">
+            <div class="glass-card p-4 mb-4 position-relative code-block">
+                <div class="cosmic-dust"></div>
+                <div class="cosmic-gradient-overlay"></div>
+                <pre class="mb-0 cosmic-code"><code class="language-json">!astro cc create remind {% raw %}{{
+  "if": "{params.0} && {params.1}",
+  "then": {
+    "schedule": {
+      "delay": "{params.0}",
+      "message": "{user.mention}, reminder: {params.1:rest}"
+    },
+    "response": "I'll remind you about '{params.1:rest}' in {params.0}."
+  },
+  "else": "Please specify a time and message. Example: !astro remind 1h Check on the event"
+}}{% endraw %}</code></pre>
+                <div class="copy-btn" onclick="copyCode(this)">
+                    <i class="bi bi-clipboard"></i>
+                </div>
+            </div>
+            
+            <div class="glass-card p-4 position-relative">
+                <div class="cosmic-dust"></div>
+                <h5 class="mb-3"><i class="bi bi-info-circle me-2 text-cosmic-blue"></i> How It Works</h5>
+                <ol class="mb-0 ps-3">
+                    <li class="mb-2">User specifies a time duration and a message</li>
+                    <li class="mb-2">Command schedules a delayed message using the <code class="cosmic-inline-code">schedule</code> feature</li>
+                    <li class="mb-2">After the specified time elapses, the bot sends a reminder message</li>
+                    <li>Supports time formats like <code class="cosmic-inline-code">5m</code> (5 minutes), <code class="cosmic-inline-code">2h</code> (2 hours), <code class="cosmic-inline-code">1d</code> (1 day)</li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="col-lg-5">
+            <div class="glass-card p-4 position-relative example-card h-100">
+                <div class="cosmic-dust"></div>
+                <div class="reminder-example">
+                    <div class="time-display">
+                        <div class="time-header">
+                            <i class="bi bi-clock-history me-2"></i>
+                            <span>Reminder Timeline</span>
+                        </div>
+                        <div class="time-now">
+                            <div class="time-label">Now (3:00 PM)</div>
+                            <div class="time-message">
+                                <div class="message-user">SpaceExplorer</div>
+                                <div class="message-content">!astro remind 1h Check on the server update</div>
+                            </div>
+                            <div class="time-response">
+                                <div class="response-bot">AstroBot</div>
+                                <div class="response-content">I'll remind you about 'Check on the server update' in 1h.</div>
+                            </div>
+                        </div>
+                        <div class="time-arrow">
+                            <i class="bi bi-arrow-down"></i>
+                            <span>1 hour later</span>
+                        </div>
+                        <div class="time-later">
+                            <div class="time-label">Later (4:00 PM)</div>
+                            <div class="time-reminder">
+                                <div class="reminder-bot">AstroBot</div>
+                                <div class="reminder-content">@SpaceExplorer, reminder: Check on the server update</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <h3 id="minecraft-server-status" class="mb-4"><i class="bi bi-controller me-2"></i> Minecraft Server Status</h3>
+    
+    <div class="row mb-5">
+        <div class="col-lg-7">
+            <div class="glass-card p-4 mb-4 position-relative code-block">
+                <div class="cosmic-dust"></div>
+                <div class="cosmic-gradient-overlay"></div>
+                <pre class="mb-0 cosmic-code"><code class="language-json">!astro cc create mc-status {% raw %}{{
+  "api": {
+    "url": "https://api.mcsrvstat.us/2/{params.0:minecraft.example.com}",
+    "method": "GET"
+  },
+  "if": "{api.online}",
+  "then": {
+    "embed": {
+      "title": "✅ Minecraft Server Status",
+      "description": "Server is online! 🎮",
+      "thumbnail": "https://eu.mc-api.net/v3/server/favicon/{params.0:minecraft.example.com}",
+      "fields": [
+        {
+          "name": "Address",
+          "value": "{api.hostname} ({api.ip}:{api.port})",
+          "inline": true
+        },
+        {
+          "name": "Players",
+          "value": "{api.players.online}/{api.players.max}",
+          "inline": true
+        },
+        {
+          "name": "Version",
+          "value": "{api.version}",
+          "inline": true
+        },
+        {
+          "name": "MOTD",
+          "value": "{api.motd.clean:0}"
+        }{% endraw %}
+      ]
+    }
+  },
+  "else": {
+    "embed": {
+      "title": "❌ Minecraft Server Status",
+      "description": "Server is offline or unreachable",
+      "color": "ff0000"
+    }
+  }
+}}{% endraw %}</code></pre>
+                <div class="copy-btn" onclick="copyCode(this)">
+                    <i class="bi bi-clipboard"></i>
+                </div>
+            </div>
+            
+            <div class="glass-card p-4 position-relative">
+                <div class="cosmic-dust"></div>
+                <h5 class="mb-3"><i class="bi bi-info-circle me-2 text-cosmic-blue"></i> API Integration Features</h5>
+                <p class="mb-3">
+                    This command uses the mcSrvStatus API to check a Minecraft server's status, showing:
+                </p>
+                <ul class="mb-0 ps-3">
+                    <li class="mb-2">Server online/offline status</li>
+                    <li class="mb-2">Current player count and capacity</li>
+                    <li class="mb-2">Server version and address details</li>
+                    <li>Custom MOTD (Message of the Day)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="col-lg-5">
+            <div class="glass-card p-4 position-relative example-card h-100">
+                <div class="cosmic-dust"></div>
+                <div class="mc-status-preview">
+                    <div class="mc-server-status">
+                        <div class="mc-status-title">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Minecraft Server Status
+                        </div>
+                        <div class="mc-status-desc">
+                            Server is online! 🎮
+                        </div>
+                        <div class="mc-status-details">
+                            <div class="mc-status-row">
+                                <div class="mc-status-label">Address</div>
+                                <div class="mc-status-value">mc.astroframe.net (192.168.1.100:25565)</div>
+                            </div>
+                            <div class="mc-status-row">
+                                <div class="mc-status-label">Players</div>
+                                <div class="mc-status-value">24/100</div>
+                            </div>
+                            <div class="mc-status-row">
+                                <div class="mc-status-label">Version</div>
+                                <div class="mc-status-value">1.19.2 (Paper)</div>
+                            </div>
+                            <div class="mc-status-row">
+                                <div class="mc-status-label">MOTD</div>
+                                <div class="mc-status-value">Welcome to AstroFrame Minecraft! Creative mode enabled.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="documentation-feedback glass-card p-4 mb-5">
+        <div class="cosmic-dust"></div>
+        <h5 class="mb-3"><i class="bi bi-chat-square-text me-2"></i> Documentation Feedback</h5>
+        <p class="mb-3">Was this documentation helpful? Let us know how we can improve it!</p>
+        <div class="d-flex gap-2">
+            <button class="cosmic-btn cosmic-btn-sm cosmic-btn-outline" id="feedback-helpful">
+                <i class="bi bi-hand-thumbs-up me-1"></i> Helpful
+            </button>
+            <button class="cosmic-btn cosmic-btn-sm cosmic-btn-outline" id="feedback-needs-work">
+                <i class="bi bi-hand-thumbs-down me-1"></i> Needs Work
+            </button>
+            <button class="cosmic-btn cosmic-btn-sm cosmic-btn-outline" id="feedback-suggest">
+                <i class="bi bi-lightbulb me-1"></i> Suggest Edit
+            </button>
+        </div>
+    </div>
+    
+    <div class="doc-content-nav">
+        <div class="doc-nav-prev">
+            <a href="{{ url_for('documentation_page', page_type='features', page_name='moderation') }}" class="text-decoration-none cosmic-link">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-arrow-left-circle me-2"></i>
+                    <div>
+                        <div class="doc-nav-direction">Previous</div>
+                        <div class="doc-nav-title">Moderation System</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="doc-nav-next">
+            <a href="{{ url_for('documentation_page', page_type='features', page_name='ai_features') }}" class="text-decoration-none cosmic-link">
+                <div class="d-flex align-items-center">
+                    <div class="text-end">
+                        <div class="doc-nav-direction">Next</div>
+                        <div class="doc-nav-title">AI Features</div>
+                    </div>
+                    <i class="bi bi-arrow-right-circle ms-2"></i>
+                </div>
+            </a>
+        </div>
+    </div>
+        </main>
+        
+        <!-- Right sidebar - Table of Contents -->
+        <div class="d-none d-lg-block col-lg-2">
+            <div class="doc-toc">
+                <div class="doc-toc-title">On This Page</div>
+                <ul>
+                    <li><a href="#overview">Overview</a></li>
+                    <li><a href="#basic-commands">Basic Custom Commands</a>
+                        <ul>
+                            <li><a href="#command-parameters">Command Parameters</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#embeds">Creating Rich Embeds</a></li>
+                    <li><a href="#variables">Available Variables</a></li>
+                    <li><a href="#conditional-logic">Conditional Logic</a></li>
+                    <li><a href="#data-storage">Data Storage</a></li>
+                    <li><a href="#api-integration">API Integration</a></li>
+                    <li><a href="#command-management">Managing Commands</a></li>
+                    <li><a href="#permissions">Command Permissions</a></li>
+                    <li><a href="#advanced-examples">Advanced Examples</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle sidebar on mobile
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.querySelector('.doc-sidebar');
+        
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+        }
+        
+        // Documentation feedback system
+        const helpfulBtn = document.querySelector('.feedback-helpful');
+        const notHelpfulBtn = document.querySelector('.feedback-not-helpful');
+        const feedbackComment = document.querySelector('.doc-feedback-comment');
+        const submitFeedback = document.querySelector('.submit-feedback');
+        
+        helpfulBtn.addEventListener('click', function() {
+            helpfulBtn.classList.add('active');
+            notHelpfulBtn.classList.remove('active');
+            
+            // Submit positive feedback immediately
+            const pagePath = this.dataset.page;
+            submitDocFeedback(pagePath, true, '');
+        });
+        
+        notHelpfulBtn.addEventListener('click', function() {
+            notHelpfulBtn.classList.add('active');
+            helpfulBtn.classList.remove('active');
+            feedbackComment.classList.remove('d-none');
+        });
+        
+        submitFeedback.addEventListener('click', function() {
+            const pagePath = notHelpfulBtn.dataset.page;
+            const comment = feedbackComment.querySelector('textarea').value;
+            
+            if (comment.trim() !== '') {
+                submitDocFeedback(pagePath, false, comment);
+                feedbackComment.innerHTML = '<div class="alert alert-success">Thank you for your feedback!</div>';
+            }
+        });
+        
+        function submitDocFeedback(pagePath, helpful, comment) {
+            fetch('/api/documentation/feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    page: pagePath,
+                    helpful: helpful,
+                    comment: comment
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.querySelector('.doc-feedback-buttons').innerHTML = 
+                        '<div class="alert alert-success py-2 mb-0">Thank you for your feedback!</div>';
+                    feedbackComment.classList.add('d-none');
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting feedback:', error);
+            });
+        }
+        
+        // Add smooth scrolling to TOC links
+        document.querySelectorAll('.doc-toc a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 70,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Highlight current section based on scroll position
+        const headings = document.querySelectorAll('h2[id], h3[id]');
+        const tocLinks = document.querySelectorAll('.doc-toc a');
+        
+        function highlightTOC() {
+            let currentSection = '';
+            
+            headings.forEach(heading => {
+                const top = heading.getBoundingClientRect().top;
+                
+                if (top < 100) {
+                    currentSection = '#' + heading.id;
+                }
+            });
+            
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === currentSection) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', highlightTOC);
+        highlightTOC(); // Initial call
+    });
+</script>
+{% endblock %}

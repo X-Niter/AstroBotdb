@@ -1,0 +1,392 @@
+/**
+ * AstroBot AI - Enhanced Cosmic Theme
+ * 
+ * A complete space-themed design system with consistent colors,
+ * sleek gradients, and subtle animations for an immersive cosmic experience
+ */
+
+/* ===== Color Variables ===== */
+:root {
+  /* Primary Space Colors */
+  --space-black: #0c0e18;
+  --space-dark-blue: #0f172a;
+  --space-medium-blue: #1e293b;
+  --space-light-blue: #334155;
+  
+  /* Accent Colors */
+  --nebula-purple: #8b5cf6;
+  --nebula-blue: #3b82f6;
+  --nebula-pink: #ec4899;
+  --cosmic-green: #10b981;
+  --star-white: #f1f5f9;
+  --silver-accent: #cbd5e1;
+  
+  /* Gradient Colors */
+  --cosmic-gradient-start: #1e1b4b;
+  --cosmic-gradient-middle: #312e81;
+  --cosmic-gradient-end: #4f46e5;
+  
+  /* Functional Colors */
+  --success-green: #10b981;
+  --warning-yellow: #f59e0b;
+  --error-red: #ef4444;
+  --info-blue: #3b82f6;
+  
+  /* Transparency Levels */
+  --glass-opacity: 0.7;
+  --card-opacity: 0.8;
+  --tooltip-opacity: 0.9;
+  
+  /* Shadows & Glows */
+  --cosmic-glow: 0 0 15px rgba(59, 130, 246, 0.5);
+  --nebula-glow: 0 0 20px rgba(139, 92, 246, 0.4);
+  --subtle-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --strong-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  
+  /* Animation Speeds */
+  --animation-slow: 8s;
+  --animation-medium: 4s;
+  --animation-fast: 2s;
+  
+  /* Border Radius */
+  --radius-small: 4px;
+  --radius-medium: 8px;
+  --radius-large: 12px;
+  --radius-rounded: 9999px;
+}
+
+/* ===== Base Theme Styling ===== */
+/* Background and Surface Colors */
+body.theme-space {
+  background-color: var(--space-black);
+  color: var(--star-white);
+  font-family: 'Poppins', 'Roboto', sans-serif;
+}
+
+/* Typography Enhancement */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Space Grotesk', 'Poppins', sans-serif;
+  letter-spacing: -0.025em;
+}
+
+.cosmic-title {
+  background: linear-gradient(to right, var(--nebula-blue), var(--nebula-purple));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding: 0.05em 0.25em 0.05em 0.05em; /* Critical for preventing clipping */
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+  font-weight: 700;
+}
+
+.cosmic-subtitle {
+  color: var(--silver-accent);
+  font-weight: 500;
+  letter-spacing: 0.025em;
+}
+
+/* ===== Enhanced Components ===== */
+/* Space-Themed Cards */
+.cosmic-card {
+  background-color: rgba(15, 23, 42, var(--card-opacity));
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--subtle-shadow);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cosmic-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--strong-shadow);
+}
+
+.cosmic-card-premium {
+  background: linear-gradient(135deg, 
+    rgba(30, 27, 75, 0.8), 
+    rgba(49, 46, 129, 0.8));
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: var(--nebula-glow);
+}
+
+/* Glossy Buttons */
+.btn-cosmic {
+  background: linear-gradient(to right, var(--nebula-blue), var(--nebula-purple));
+  color: white;
+  border-radius: var(--radius-medium);
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border: none;
+  box-shadow: var(--subtle-shadow);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-cosmic:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--cosmic-glow);
+}
+
+.btn-cosmic:active {
+  transform: translateY(0);
+}
+
+.btn-cosmic::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.btn-cosmic:hover::after {
+  transform: translateX(100%);
+}
+
+/* Cosmic Glass Surfaces */
+.cosmic-glass {
+  background-color: rgba(15, 23, 42, var(--glass-opacity));
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-medium);
+}
+
+/* ===== Interactive Elements ===== */
+/* Premium Feature Badges */
+.premium-badge {
+  background: linear-gradient(to right, var(--nebula-purple), var(--nebula-pink));
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-rounded);
+  box-shadow: var(--nebula-glow);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.premium-badge::before {
+  content: '✦';
+  font-size: 0.875rem;
+}
+
+/* Status Indicators */
+.cosmic-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-online {
+  background-color: var(--success-green);
+  box-shadow: 0 0 8px var(--success-green);
+  animation: pulse 2s infinite;
+}
+
+.status-offline {
+  background-color: var(--error-red);
+}
+
+.status-idle {
+  background-color: var(--warning-yellow);
+}
+
+/* Cosmic Form Elements */
+.cosmic-input {
+  background-color: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-medium);
+  color: var(--star-white);
+  padding: 0.75rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.cosmic-input:focus {
+  border-color: var(--nebula-blue);
+  box-shadow: var(--cosmic-glow);
+  outline: none;
+}
+
+.cosmic-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ===== Animations ===== */
+/* Pulsing Star */
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+.animate-pulse-star {
+  animation: pulse var(--animation-slow) infinite;
+}
+
+/* Floating Animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float var(--animation-medium) ease-in-out infinite;
+}
+
+/* Twinkling Stars */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+.animate-twinkle {
+  animation: twinkle var(--animation-medium) ease-in-out infinite;
+}
+
+/* Gradient Shift */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift var(--animation-slow) ease infinite;
+}
+
+/* ===== Layout Utilities ===== */
+/* Cosmic Grid */
+.cosmic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 100%;
+  padding: 1rem;
+}
+
+/* Spacing System */
+.cosmic-space-y > * + * {
+  margin-top: 1rem;
+}
+
+.cosmic-space-x > * + * {
+  margin-left: 1rem;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+  .cosmic-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    padding: 0.75rem;
+  }
+  
+  .btn-cosmic {
+    padding: 0.625rem 1.25rem;
+  }
+  
+  .cosmic-card {
+    padding: 1rem;
+  }
+}
+
+/* ===== Special Backgrounds ===== */
+/* Nebula Background */
+.bg-nebula {
+  background: linear-gradient(135deg, 
+    rgba(15, 23, 42, 0.9), 
+    rgba(30, 41, 59, 0.9)), 
+    url('/static/img/nebula-bg.svg');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.bg-nebula::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, 
+    rgba(59, 130, 246, 0.1), 
+    transparent 60%);
+}
+
+/* Galaxy Background */
+.bg-galaxy {
+  background: linear-gradient(to bottom, 
+    var(--space-black), 
+    var(--space-dark-blue));
+  overflow: hidden;
+  position: relative;
+}
+
+/* ===== Premium Elements ===== */
+/* Premium Feature Highlight */
+.premium-highlight {
+  position: relative;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  border-radius: var(--radius-medium);
+  overflow: hidden;
+}
+
+.premium-highlight::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
+  background: linear-gradient(135deg, var(--nebula-purple), var(--nebula-blue), var(--nebula-pink));
+  z-index: -1;
+  border-radius: calc(var(--radius-medium) + 1px);
+  animation: gradient-shift var(--animation-slow) ease infinite;
+  background-size: 300% 300%;
+}
+
+/* ===== Accessibility Enhancements ===== */
+/* Focus States */
+*:focus-visible {
+  outline: 2px solid var(--nebula-blue);
+  outline-offset: 2px;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  :root {
+    --silver-accent: #ffffff;
+    --glass-opacity: 1;
+    --card-opacity: 1;
+  }
+}
+
+/* Disable Animations */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

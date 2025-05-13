@@ -1,0 +1,920 @@
+{% extends "base.html" %}
+
+{% block title %}AI Onboarding Wizard{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .wizard-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .wizard-step {
+        display: none;
+    }
+    
+    .wizard-step.active {
+        display: block;
+    }
+    
+    .wizard-nav {
+        padding: 1rem 0;
+    }
+    
+    .step-indicator {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+    }
+    
+    .step-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background-color: #dee2e6;
+        margin: 0 8px;
+        position: relative;
+    }
+    
+    .step-dot.active {
+        background-color: var(--primary-color);
+    }
+    
+    .step-dot.completed {
+        background-color: var(--success-color);
+    }
+    
+    .step-dot::after {
+        content: '';
+        position: absolute;
+        width: 16px;
+        height: 2px;
+        background-color: #dee2e6;
+        right: -16px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    
+    .step-dot:last-child::after {
+        display: none;
+    }
+    
+    .step-dot.completed::after {
+        background-color: var(--success-color);
+    }
+    
+    .feature-card {
+        border: 2px solid #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    
+    .feature-card:hover {
+        border-color: var(--primary-color);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .feature-card.selected {
+        border-color: var(--primary-color);
+        background-color: rgba(var(--primary-rgb), 0.05);
+    }
+    
+    .feature-card .feature-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .feature-card .feature-icon {
+        font-size: 1.5rem;
+        margin-right: 0.75rem;
+    }
+    
+    .feature-card .feature-description {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    .wizard-summary {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+    }
+    
+    .summary-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .summary-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+    
+    .chat-bubble {
+        background-color: #f8f9fa;
+        border-radius: 18px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        max-width: 80%;
+    }
+    
+    .chat-bubble::before {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 24px;
+        border-width: 10px 10px 0;
+        border-style: solid;
+        border-color: #f8f9fa transparent transparent;
+    }
+    
+    .chat-bubble.bot {
+        background-color: #e9f5ff;
+        margin-right: auto;
+    }
+    
+    .chat-bubble.bot::before {
+        left: 24px;
+        border-color: #e9f5ff transparent transparent;
+    }
+    
+    .chat-bubble.user {
+        background-color: #f0f7f0;
+        margin-left: auto;
+    }
+    
+    .chat-bubble.user::before {
+        left: auto;
+        right: 24px;
+        border-color: #f0f7f0 transparent transparent;
+    }
+    
+    .bot-thinking {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .bot-thinking .dot {
+        width: 8px;
+        height: 8px;
+        background-color: #6c757d;
+        border-radius: 50%;
+        margin: 0 2px;
+        opacity: 0.6;
+        animation: dotPulse 1.4s infinite ease-in-out;
+    }
+    
+    .bot-thinking .dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    
+    .bot-thinking .dot:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    
+    @keyframes dotPulse {
+        0%, 100% {
+            transform: scale(0.7);
+            opacity: 0.5;
+        }
+        50% {
+            transform: scale(1.2);
+            opacity: 1;
+        }
+    }
+    
+    .ai-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+    }
+    
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--success-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .chat-message {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+    }
+    
+    .chat-content {
+        flex: 1;
+    }
+    
+    #aiChatInput {
+        border-radius: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h3">AstroBot AI Onboarding Wizard</h1>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="wizard-container">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <div class="step-dot active" data-step="1"></div>
+            <div class="step-dot" data-step="2"></div>
+            <div class="step-dot" data-step="3"></div>
+            <div class="step-dot" data-step="4"></div>
+            <div class="step-dot" data-step="5"></div>
+        </div>
+        
+        <!-- Introduction Step -->
+        <div class="wizard-step active" id="step1">
+            <div class="card">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <div class="mb-3">
+                            <i class="bi bi-stars text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h2>Welcome to the AstroBot AI Setup Wizard</h2>
+                        <p class="lead">Let's personalize your bot experience with advanced AI assistance</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p>This wizard will help you configure your AstroBot with personalized settings and features that best match your community's needs. Our AI assistant will guide you through the process and make recommendations based on your preferences.</p>
+                        
+                        <div class="alert alert-info d-flex align-items-center mt-4">
+                            <i class="bi bi-info-circle-fill me-3" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <strong>What to expect:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li>Select the key features you want to enable</li>
+                                    <li>Configure advanced settings with AI assistance</li>
+                                    <li>Personalize moderation, commands, and integrations</li>
+                                    <li>Get a complete configuration summary at the end</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-bubble bot">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="ai-avatar me-2">
+                                <i class="bi bi-robot"></i>
+                            </div>
+                            <strong>AstroBot AI</strong>
+                        </div>
+                        Hi there! I'm your AstroBot AI assistant. I'll help you set up and configure your bot with features that best match your community's needs. Ready to get started?
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary" disabled><i class="bi bi-arrow-left"></i> Previous</button>
+                        <button type="button" class="btn btn-primary next-step" data-next="2">Continue <i class="bi bi-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Features Selection Step -->
+        <div class="wizard-step" id="step2">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2 class="mb-4">Select Your Core Features</h2>
+                    <p class="mb-4">Choose the primary features you want to enable for your AstroBot. You can always change these later.</p>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="feature-card selected" data-feature="moderation">
+                                <div class="feature-title">
+                                    <span class="feature-icon text-danger"><i class="bi bi-shield-check"></i></span>
+                                    <span>AI-Enhanced Moderation</span>
+                                </div>
+                                <div class="feature-description">
+                                    Smart content filtering, auto-moderation, and context-aware rule enforcement
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="feature-card selected" data-feature="minecraft">
+                                <div class="feature-title">
+                                    <span class="feature-icon text-success"><i class="bi bi-box"></i></span>
+                                    <span>Minecraft Integration</span>
+                                </div>
+                                <div class="feature-description">
+                                    Server management, whitelist control, and mod installation assistance
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="feature-card" data-feature="ai">
+                                <div class="feature-title">
+                                    <span class="feature-icon text-primary"><i class="bi bi-cpu"></i></span>
+                                    <span>AI Assistant & Generator</span>
+                                </div>
+                                <div class="feature-description">
+                                    Claude 3.5 & GPT-4o powered assistance for modding, Q&A, and content generation
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="feature-card" data-feature="commands">
+                                <div class="feature-title">
+                                    <span class="feature-icon text-info"><i class="bi bi-terminal"></i></span>
+                                    <span>Custom Commands</span>
+                                </div>
+                                <div class="feature-description">
+                                    Create and manage custom commands, reactions, and automated responses
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="feature-card" data-feature="twitch">
+                                <div class="feature-title">
+                                    <span class="feature-icon text-purple"><i class="bi bi-twitch"></i></span>
+                                    <span>Twitch StreamSync</span>
+                                </div>
+                                <div class="feature-description">
+                                    Stream notifications, chat integration, and community point system
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="feature-card" data-feature="analytics">
+                                <div class="feature-title">
+                                    <span class="feature-icon text-warning"><i class="bi bi-graph-up"></i></span>
+                                    <span>Advanced Analytics</span>
+                                </div>
+                                <div class="feature-description">
+                                    Detailed insights, usage stats, and community engagement metrics
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary prev-step" data-prev="1"><i class="bi bi-arrow-left"></i> Previous</button>
+                        <button type="button" class="btn btn-primary next-step" data-next="3">Continue <i class="bi bi-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- AI Configuration Chat Step -->
+        <div class="wizard-step" id="step3">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2 class="mb-4">AI-Assisted Setup</h2>
+                    <p class="mb-4">Chat with our AI assistant to configure your bot's features and preferences.</p>
+                    
+                    <div class="chat-area" id="chatArea">
+                        <div class="chat-message">
+                            <div class="ai-avatar">
+                                <i class="bi bi-robot"></i>
+                            </div>
+                            <div class="chat-content">
+                                <div class="chat-bubble bot">
+                                    Great! I see you've selected <span id="selectedFeaturesSummary">AI-Enhanced Moderation and Minecraft Integration</span>. Let's configure these features specifically for your needs.
+                                    
+                                    <p class="mt-2 mb-0">Tell me about your community: What kind of Minecraft server do you run? How many members do you have? What types of moderation challenges do you face?</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chat messages will be dynamically added here -->
+                        
+                        <div id="typingIndicator" style="display: none;">
+                            <div class="chat-message">
+                                <div class="ai-avatar">
+                                    <i class="bi bi-robot"></i>
+                                </div>
+                                <div class="bot-thinking">
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input mt-4">
+                        <form id="aiChatForm">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="aiChatInput" placeholder="Type your response here...">
+                                <button class="btn btn-primary" type="submit"><i class="bi bi-send"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary prev-step" data-prev="2"><i class="bi bi-arrow-left"></i> Previous</button>
+                        <button type="button" class="btn btn-primary next-step" data-next="4" id="aiChatNextBtn" disabled>Continue <i class="bi bi-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Configuration Details Step -->
+        <div class="wizard-step" id="step4">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2 class="mb-4">Configuration Summary</h2>
+                    <p class="mb-4">Review your bot configuration before finalizing.</p>
+                    
+                    <div class="wizard-summary">
+                        <h5>Enabled Features</h5>
+                        <div class="summary-item">
+                            <div id="enabledFeaturesSummary">
+                                <!-- This will be populated by JavaScript -->
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>AI-Enhanced Moderation</span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Minecraft Integration</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h5>Feature Settings</h5>
+                        <div class="summary-item">
+                            <h6><i class="bi bi-shield-check text-danger me-2"></i> Moderation Configuration</h6>
+                            <div id="moderationSettings" class="ps-4 pt-2">
+                                <!-- Will be populated by JavaScript -->
+                                <div class="mb-2">
+                                    <strong>Sensitivity Level:</strong> <span data-value="sensitivity">Medium (Balanced approach)</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Auto-moderation:</strong> <span data-value="autoModeration">Enabled</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Warning System:</strong> <span data-value="warningSystem">3-strike system</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <h6><i class="bi bi-box text-success me-2"></i> Minecraft Configuration</h6>
+                            <div id="minecraftSettings" class="ps-4 pt-2">
+                                <!-- Will be populated by JavaScript -->
+                                <div class="mb-2">
+                                    <strong>Server Type:</strong> <span data-value="serverType">SMP with mods</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Whitelist Management:</strong> <span data-value="whitelist">Enabled</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Server Monitoring:</strong> <span data-value="monitoring">Enabled</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="additionalConfigSections">
+                            <!-- Other configuration sections will be added here based on selected features -->
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary prev-step" data-prev="3"><i class="bi bi-arrow-left"></i> Previous</button>
+                        <button type="button" class="btn btn-primary" onclick="submitConfiguration()">Confirm & Complete <i class="bi bi-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Completion Step -->
+        <div class="wizard-step" id="step5">
+            <div class="card">
+                <div class="card-body p-4 text-center">
+                    <div class="mb-4">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h2 class="mb-3">Setup Complete!</h2>
+                    <p class="lead mb-4">Your AstroBot has been successfully configured with your preferred settings.</p>
+                    
+                    <div class="alert alert-success d-inline-block mb-4">
+                        <i class="bi bi-stars me-2"></i>
+                        Configuration has been saved and applied to your bot.
+                    </div>
+                    
+                    <div class="row justify-content-center mt-4">
+                        <div class="col-md-8">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5>Next Steps</h5>
+                                    <ul class="text-start">
+                                        <li>Invite AstroBot to your Discord server</li>
+                                        <li>Connect your Minecraft server for management</li>
+                                        <li>Explore additional features in the dashboard</li>
+                                        <li>Check out the documentation for advanced configurations</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary" onclick="window.location.href='{{ url_for('documentation_index') }}'"><i class="bi bi-book"></i> View Documentation</button>
+                        <button type="button" class="btn btn-primary" onclick="window.location.href='{{ url_for('index') }}'">Go to Dashboard <i class="bi bi-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Feature selection logic
+        const featureCards = document.querySelectorAll('.feature-card');
+        featureCards.forEach(card => {
+            card.addEventListener('click', function() {
+                this.classList.toggle('selected');
+                updateSelectedFeaturesSummary();
+            });
+        });
+        
+        // Step navigation
+        const nextButtons = document.querySelectorAll('.next-step');
+        const prevButtons = document.querySelectorAll('.prev-step');
+        const stepDots = document.querySelectorAll('.step-dot');
+        
+        nextButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const currentStep = document.querySelector('.wizard-step.active');
+                const nextStepNum = this.getAttribute('data-next');
+                const nextStep = document.getElementById('step' + nextStepNum);
+                
+                currentStep.classList.remove('active');
+                nextStep.classList.add('active');
+                
+                // Update step dots
+                updateStepDots(nextStepNum);
+                
+                // Scroll to top
+                window.scrollTo({top: 0, behavior: 'smooth'});
+                
+                // If moving to step 3, update the selected features text
+                if (nextStepNum === '3') {
+                    updateSelectedFeaturesSummary();
+                }
+                
+                // If moving to step 4, update the summary
+                if (nextStepNum === '4') {
+                    updateConfigurationSummary();
+                }
+            });
+        });
+        
+        prevButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const currentStep = document.querySelector('.wizard-step.active');
+                const prevStepNum = this.getAttribute('data-prev');
+                const prevStep = document.getElementById('step' + prevStepNum);
+                
+                currentStep.classList.remove('active');
+                prevStep.classList.add('active');
+                
+                // Update step dots
+                updateStepDots(prevStepNum);
+                
+                // Scroll to top
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            });
+        });
+        
+        function updateStepDots(activeStep) {
+            stepDots.forEach(dot => {
+                const stepNum = dot.getAttribute('data-step');
+                dot.classList.remove('active', 'completed');
+                
+                if (stepNum < activeStep) {
+                    dot.classList.add('completed');
+                } else if (stepNum === activeStep) {
+                    dot.classList.add('active');
+                }
+            });
+        }
+        
+        // Chat input logic
+        const chatForm = document.getElementById('aiChatForm');
+        const chatInput = document.getElementById('aiChatInput');
+        const chatArea = document.getElementById('chatArea');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const aiChatNextBtn = document.getElementById('aiChatNextBtn');
+        
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userMessage = chatInput.value.trim();
+            if (userMessage) {
+                addUserMessage(userMessage);
+                chatInput.value = '';
+                
+                // Show typing indicator
+                typingIndicator.style.display = 'block';
+                
+                // Simulate AI response (in a real app, this would be an API call)
+                setTimeout(() => {
+                    typingIndicator.style.display = 'none';
+                    
+                    // Get selected features
+                    const selectedFeatures = Array.from(document.querySelectorAll('.feature-card.selected'))
+                        .map(card => card.getAttribute('data-feature'));
+                    
+                    // Simulate AI response based on context
+                    let botResponse = '';
+                    if (userMessage.toLowerCase().includes('minecraft') || userMessage.toLowerCase().includes('server')) {
+                        botResponse = generateMinecraftResponse(userMessage);
+                    } else if (userMessage.toLowerCase().includes('moderation') || userMessage.toLowerCase().includes('filter')) {
+                        botResponse = generateModerationResponse(userMessage);
+                    } else {
+                        botResponse = 'Thanks for sharing! Based on what you\'ve told me, I\'ve created a customized configuration for your bot. Let\'s review the settings on the next screen.';
+                    }
+                    
+                    addBotMessage(botResponse);
+                    
+                    // Enable the next button after at least one exchange
+                    aiChatNextBtn.disabled = false;
+                }, 1500);
+            }
+        });
+        
+        function addUserMessage(message) {
+            const messageHTML = `
+                <div class="chat-message justify-content-end">
+                    <div class="chat-content text-end">
+                        <div class="chat-bubble user">
+                            ${message}
+                        </div>
+                    </div>
+                    <div class="user-avatar ms-2">
+                        <i class="bi bi-person"></i>
+                    </div>
+                </div>
+            `;
+            
+            // Insert before typing indicator
+            typingIndicator.insertAdjacentHTML('beforebegin', messageHTML);
+            
+            // Scroll to bottom
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+        
+        function addBotMessage(message) {
+            const messageHTML = `
+                <div class="chat-message">
+                    <div class="ai-avatar">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <div class="chat-content">
+                        <div class="chat-bubble bot">
+                            ${message}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Insert before typing indicator
+            typingIndicator.insertAdjacentHTML('beforebegin', messageHTML);
+            
+            // Scroll to bottom
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+        
+        function generateMinecraftResponse(userMessage) {
+            // A simple response generator for Minecraft-related inputs
+            let response = 'I understand you\'re running a Minecraft server. ';
+            
+            if (userMessage.toLowerCase().includes('smp')) {
+                response += 'For your SMP server, I recommend enabling whitelist management, automated backups, and server status monitoring. ';
+            } else if (userMessage.toLowerCase().includes('mod')) {
+                response += 'For your modded server, I\'ve configured mod management tools, crash reporting, and update notifications. ';
+            } else {
+                response += 'I\'ve set up basic server management features including console access, player management, and status monitoring. ';
+            }
+            
+            response += 'Is there anything specific about your Minecraft setup you\'d like to tell me more about?';
+            return response;
+        }
+        
+        function generateModerationResponse(userMessage) {
+            // A simple response generator for moderation-related inputs
+            let response = 'Regarding moderation, ';
+            
+            if (userMessage.toLowerCase().includes('strict') || userMessage.toLowerCase().includes('strong')) {
+                response += 'I\'ve configured a strict moderation policy with automatic filtering for profanity, spam, and potentially harmful content. ';
+            } else if (userMessage.toLowerCase().includes('light') || userMessage.toLowerCase().includes('minimal')) {
+                response += 'I\'ve set up a lighter touch moderation approach that mainly focuses on spam prevention and filtering extreme content. ';
+            } else {
+                response += 'I\'ve configured a balanced moderation approach that handles common issues like spam and excessive profanity while allowing casual conversation. ';
+            }
+            
+            response += 'I\'ve also set up a warning system and audit logs for tracking moderation actions. Does this align with what you need?';
+            return response;
+        }
+        
+        function updateSelectedFeaturesSummary() {
+            const selectedFeatures = Array.from(document.querySelectorAll('.feature-card.selected'));
+            const featureNames = selectedFeatures.map(card => {
+                const titleEl = card.querySelector('.feature-title span:last-child');
+                return titleEl.textContent;
+            });
+            
+            let summaryText = '';
+            if (featureNames.length === 1) {
+                summaryText = featureNames[0];
+            } else if (featureNames.length === 2) {
+                summaryText = `${featureNames[0]} and ${featureNames[1]}`;
+            } else {
+                const lastFeature = featureNames.pop();
+                summaryText = `${featureNames.join(', ')}, and ${lastFeature}`;
+            }
+            
+            document.getElementById('selectedFeaturesSummary').textContent = summaryText || 'no features';
+        }
+        
+        function updateConfigurationSummary() {
+            // Update enabled features list
+            const selectedFeatures = Array.from(document.querySelectorAll('.feature-card.selected'));
+            const featuresHTML = selectedFeatures.map(card => {
+                const titleEl = card.querySelector('.feature-title span:last-child');
+                return `
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <span>${titleEl.textContent}</span>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('enabledFeaturesSummary').innerHTML = featuresHTML || '<p>No features selected</p>';
+            
+            // For a real application, this would pull data from the AI chat
+            // and build a more detailed configuration based on the conversation
+        }
+        
+        // Initialize the summary of selected features
+        updateSelectedFeaturesSummary();
+    });
+    
+    // Function to handle the final submission
+    function submitConfiguration() {
+        // Collect data from the wizard
+        const selectedFeatures = Array.from(document.querySelectorAll('.feature-card.selected'))
+            .map(card => card.getAttribute('data-feature'));
+        
+        // Get chat data from the conversation
+        const chatMessages = document.querySelectorAll('.chat-message');
+        let serverInfo = {};
+        
+        // Analyze the chat messages to extract server information
+        // In a real implementation, this would be done more systematically
+        // using AI to analyze the conversation
+        
+        if (selectedFeatures.includes('moderation')) {
+            serverInfo.moderation = {
+                sensitivity: document.getElementById('moderationSettings')?.querySelector('[data-value="sensitivity"]')?.textContent || 'medium',
+                autoModeration: true,
+                warningSystem: '3-strike'
+            };
+        }
+        
+        if (selectedFeatures.includes('minecraft')) {
+            serverInfo.minecraft = {
+                serverType: document.getElementById('minecraftSettings')?.querySelector('[data-value="serverType"]')?.textContent || 'smp',
+                whitelist: true,
+                monitoring: true
+            };
+        }
+        
+        if (selectedFeatures.includes('ai')) {
+            serverInfo.ai = {
+                enableClaude: true,
+                enableGPT4o: true,
+                enableImageGeneration: true
+            };
+        }
+        
+        if (selectedFeatures.includes('commands')) {
+            serverInfo.commands = {
+                enableCustomCommands: true,
+                commandPrefix: '!'
+            };
+        }
+        
+        if (selectedFeatures.includes('twitch')) {
+            serverInfo.twitch = {
+                enableStreamNotifications: true,
+                enablePointsSystem: true
+            };
+        }
+        
+        if (selectedFeatures.includes('analytics')) {
+            serverInfo.analytics = {
+                enableCommandTracking: true,
+                enableUserStats: true
+            };
+        }
+        
+        // Create the configuration data
+        const configData = {
+            name: 'AstroBot Configuration',
+            server_purpose: 'community',
+            server_size: 'medium',
+            activity_level: 'medium',
+            moderation_needs: 'medium',
+            features: selectedFeatures,
+            server_info: serverInfo,
+            additional_requirements: '',
+        };
+        
+        console.log('Sending configuration:', configData);
+        
+        // Send to the server
+        fetch('/api/onboarding/configure', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify(configData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Configuration saved:', data);
+            
+            // Move to the final step
+            const currentStep = document.querySelector('.wizard-step.active');
+            const finalStep = document.getElementById('step5');
+            
+            currentStep.classList.remove('active');
+            finalStep.classList.add('active');
+            
+            // Update step dots
+            updateStepDots(5);
+        })
+        .catch(error => {
+            console.error('Error saving configuration:', error);
+            alert('There was an error saving your configuration. Please try again.');
+        });
+    }
+    
+    // Helper function to get CSRF token
+    function getCsrfToken() {
+        // Try to get the token from the meta tag
+        const tokenMeta = document.querySelector('meta[name="csrf-token"]');
+        if (tokenMeta) {
+            return tokenMeta.getAttribute('content');
+        }
+        
+        // If no meta tag, try to get from cookie
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith('csrf_token=')) {
+                return cookie.substring('csrf_token='.length, cookie.length);
+            }
+        }
+        
+        return '';
+    }
+</script>
+{% endblock %}

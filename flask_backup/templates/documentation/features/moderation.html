@@ -1,0 +1,590 @@
+{% extends "base.html" %}
+
+{% block title %}Moderation System{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/documentation.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block doc-sidebar">
+            <div class="doc-nav">
+                <a href="{{ url_for('documentation_index') }}" class="nav-link">
+                    Getting Started
+                </a>
+                
+                <div class="nav-heading">Discord Bot</div>
+                <a href="{{ url_for('documentation_page', page_type='features', page_name='moderation') }}" class="nav-link active">
+                    Moderation System
+                </a>
+                <a href="{{ url_for('documentation_page', page_type='features', page_name='custom_commands') }}" class="nav-link">
+                    Custom Commands
+                </a>
+                <a href="{{ url_for('documentation_page', page_type='features', page_name='ai_features') }}" class="nav-link">
+                    AI Features
+                </a>
+                
+                <div class="nav-heading">Minecraft</div>
+                <a href="{{ url_for('documentation_page', page_type='features', page_name='server_management') }}" class="nav-link">
+                    Server Management
+                </a>
+                <a href="{{ url_for('documentation_page', page_type='features', page_name='whitelist') }}" class="nav-link">
+                    Whitelist System
+                </a>
+                <a href="{{ url_for('documentation_page', page_type='features', page_name='mod_integration') }}" class="nav-link">
+                    Mod Integration
+                </a>
+                
+                <div class="nav-heading">Twitch</div>
+                <a href="{{ url_for('documentation_page', page_type='features', page_name='twitch_integration') }}" class="nav-link">
+                    Twitch Integration
+                </a>
+                <a href="{{ url_for('documentation_page', page_type='features', page_name='points_system') }}" class="nav-link">
+                    Points System
+                </a>
+                
+                <div class="nav-heading">API</div>
+                <a href="{{ url_for('documentation_page', page_type='api', page_name='overview') }}" class="nav-link">
+                    API Overview
+                </a>
+                <a href="{{ url_for('documentation_page', page_type='api', page_name='authentication') }}" class="nav-link">
+                    Authentication
+                </a>
+                <a href="{{ url_for('documentation_page', page_type='api', page_name='endpoints') }}" class="nav-link">
+                    Endpoints
+                </a>
+                
+                <div class="nav-heading">Guides</div>
+                <a href="{{ url_for('documentation_page', page_type='guides', page_name='setup') }}" class="nav-link">
+                    Setup Guide
+                </a>
+                <a href="{{ url_for('documentation_page', page_type='guides', page_name='permissions') }}" class="nav-link">
+                    Permissions Guide
+                </a>
+                <a href="{{ url_for('documentation_page', page_type='guides', page_name='advanced_commands') }}" class="nav-link">
+                    Advanced Commands
+                </a>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="col-md-9 col-lg-8 doc-content">
+            <div class="d-block d-md-none mb-3">
+                <button class="btn btn-primary" id="sidebar-toggle" type="button">
+                    <i class="bi bi-list"></i> Menu
+                </button>
+            </div>
+            
+            <h1>Moderation System</h1>
+            
+            <p class="lead">
+                AstroBot's advanced moderation system helps you keep your Discord server safe and friendly with AI-powered tools, multi-stage warnings, and comprehensive logs.
+            </p>
+            
+            <h2 id="overview">Overview</h2>
+            
+            <p>
+                The moderation system in AstroBot is designed to be both powerful and easy to use. It includes:
+            </p>
+            
+            <ul>
+                <li>AI-powered context analysis for automatic moderation</li>
+                <li>Multi-stage warning system with configurable thresholds</li>
+                <li>Detailed moderation logs with actionable insights</li>
+                <li>User behavior analytics to detect patterns</li>
+                <li>Context-sensitive rule enforcement</li>
+                <li>Temporary and permanent punishment options</li>
+                <li>Anti-spam, anti-raid, and anti-phishing protection</li>
+            </ul>
+            
+            <div class="callout callout-info">
+                <h5>Administrator Permissions Required</h5>
+                <p>Most moderation commands require <strong>Administrator</strong> or <strong>Manage Server</strong> permissions. Some commands are available to users with the <strong>Moderator</strong> role or <strong>Manage Messages</strong> permission.</p>
+            </div>
+            
+            <h2 id="setup">Setting Up Moderation</h2>
+            
+            <p>
+                To set up the moderation system, run the following command:
+            </p>
+            
+            <div class="doc-example">
+                <pre class="doc-example-code"><code>!astro mod setup</code></pre>
+            </div>
+            
+            <p>
+                This will guide you through the basic moderation setup process, including:
+            </p>
+            
+            <ol>
+                <li>Setting up a moderation log channel</li>
+                <li>Configuring auto-moderation features</li>
+                <li>Setting punishment thresholds</li>
+                <li>Configuring moderation roles</li>
+            </ol>
+            
+            <p>
+                You can also configure individual aspects of the moderation system:
+            </p>
+            
+            <div class="doc-example">
+                <pre class="doc-example-code"><code>!astro mod logchannel #mod-logs
+!astro mod automod setup
+!astro mod punishments setup
+!astro mod roles setup</code></pre>
+            </div>
+            
+            <h2 id="commands">Moderation Commands</h2>
+            
+            <p>
+                Here are the main moderation commands available:
+            </p>
+            
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>Description</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>!astro mod warn @user [reason]</code></td>
+                            <td>Issue a warning to a user</td>
+                            <td>Mod role or Manage Messages</td>
+                        </tr>
+                        <tr>
+                            <td><code>!astro mod mute @user [duration] [reason]</code></td>
+                            <td>Temporarily mute a user</td>
+                            <td>Mod role or Manage Messages</td>
+                        </tr>
+                        <tr>
+                            <td><code>!astro mod unmute @user</code></td>
+                            <td>Remove a mute from a user</td>
+                            <td>Mod role or Manage Messages</td>
+                        </tr>
+                        <tr>
+                            <td><code>!astro mod kick @user [reason]</code></td>
+                            <td>Kick a user from the server</td>
+                            <td>Mod role or Kick Members</td>
+                        </tr>
+                        <tr>
+                            <td><code>!astro mod ban @user [duration] [reason]</code></td>
+                            <td>Ban a user from the server</td>
+                            <td>Mod role or Ban Members</td>
+                        </tr>
+                        <tr>
+                            <td><code>!astro mod unban @user</code></td>
+                            <td>Unban a user</td>
+                            <td>Mod role or Ban Members</td>
+                        </tr>
+                        <tr>
+                            <td><code>!astro mod clear [count] [filter]</code></td>
+                            <td>Clear messages in a channel</td>
+                            <td>Mod role or Manage Messages</td>
+                        </tr>
+                        <tr>
+                            <td><code>!astro mod userinfo @user</code></td>
+                            <td>View moderation info about a user</td>
+                            <td>Mod role or Manage Messages</td>
+                        </tr>
+                        <tr>
+                            <td><code>!astro mod case [case ID]</code></td>
+                            <td>View details about a moderation case</td>
+                            <td>Mod role or Manage Messages</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h3 id="example-usage">Example Usage</h3>
+            
+            <div class="doc-example">
+                <div class="doc-example-preview">
+                    <div class="card bg-dark text-light">
+                        <div class="card-header">Warning a user</div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong>Moderator:</strong> !astro mod warn @UserName Posting inappropriate content<br>
+                                <strong>AstroBot:</strong> <em>Warning issued to UserName (Case #123)<br>
+                                Reason: Posting inappropriate content<br>
+                                Current warning level: 1/3</em>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <pre class="doc-example-code"><code>// Warning a user
+!astro mod warn @UserName Posting inappropriate content
+
+// Muting a user for 1 hour
+!astro mod mute @UserName 1h Spamming in general chat
+
+// Banning a user permanently
+!astro mod ban @UserName Repeated violations of server rules</code></pre>
+            </div>
+            
+            <h2 id="automod">Auto-Moderation</h2>
+            
+            <p>
+                AstroBot's auto-moderation system uses AI to detect and handle content that violates your server rules. It can automatically:
+            </p>
+            
+            <ul>
+                <li>Delete messages containing inappropriate content</li>
+                <li>Issue warnings to users</li>
+                <li>Mute users for spam or excessive rule violations</li>
+                <li>Apply escalating punishments for repeat offenders</li>
+                <li>Notify moderators about potential issues</li>
+            </ul>
+            
+            <h3 id="automod-configuration">Configuring Auto-Moderation</h3>
+            
+            <p>
+                To configure auto-moderation, use the following commands:
+            </p>
+            
+            <div class="doc-example">
+                <pre class="doc-example-code"><code>// Enable auto-moderation
+!astro mod automod enable
+
+// Configure specific automod features
+!astro mod automod links enable/disable
+!astro mod automod spam enable/disable
+!astro mod automod offensive enable/disable
+!astro mod automod mentions enable/disable
+!astro mod automod invites enable/disable
+
+// Configure AI-powered content moderation
+!astro mod automod ai enable/disable</code></pre>
+            </div>
+            
+            <div class="callout callout-warning">
+                <h5>AI Moderation Uses Tokens</h5>
+                <p>The AI-powered moderation features use Claude 3.5 and GPT-4o, which consume tokens from your quota. You can set usage limits in the bot settings.</p>
+            </div>
+            
+            <h3 id="exemptions">Auto-Moderation Exemptions</h3>
+            
+            <p>
+                You can exempt certain channels, roles, or users from auto-moderation:
+            </p>
+            
+            <div class="doc-example">
+                <pre class="doc-example-code"><code>// Exempt a channel from auto-moderation
+!astro mod automod exempt channel #channel-name
+
+// Exempt a role from auto-moderation
+!astro mod automod exempt role @role-name
+
+// Exempt a user from auto-moderation
+!astro mod automod exempt user @user-name</code></pre>
+            </div>
+            
+            <h2 id="trust-system">Trust System</h2>
+            
+            <p>
+                AstroBot's trust system allows the bot to learn which users are trustworthy and which may require more moderation attention. The trust system assigns each user a score based on their behavior in the server.
+            </p>
+            
+            <p>
+                Trust scores affect:
+            </p>
+            
+            <ul>
+                <li>How strictly auto-moderation rules are applied to a user</li>
+                <li>Whether warnings are issued automatically for borderline content</li>
+                <li>How quickly punishment escalation occurs</li>
+                <li>What level of permissions users can get from automatic role assignment</li>
+            </ul>
+            
+            <p>
+                Users build trust through:
+            </p>
+            
+            <ul>
+                <li>Time spent in the server</li>
+                <li>Positive interactions</li>
+                <li>Regular activity without rule violations</li>
+                <li>Contributing valuable content (as detected by AI)</li>
+            </ul>
+            
+            <p>
+                Users lose trust through:
+            </p>
+            
+            <ul>
+                <li>Receiving warnings or other punishments</li>
+                <li>Having messages deleted by moderators</li>
+                <li>Being reported by other users</li>
+                <li>Posting content that requires moderation</li>
+            </ul>
+            
+            <h3 id="trust-commands">Trust System Commands</h3>
+            
+            <div class="doc-example">
+                <pre class="doc-example-code"><code>// View a user's trust score
+!astro mod trust @user
+
+// Manually adjust a user's trust score
+!astro mod trust @user +10 "Helpful to new members"
+!astro mod trust @user -5 "Minor rule violation"</code></pre>
+            </div>
+            
+            <h2 id="logging">Moderation Logs</h2>
+            
+            <p>
+                AstroBot maintains detailed logs of all moderation actions in your designated logging channel. Log entries include:
+            </p>
+            
+            <ul>
+                <li>The action taken</li>
+                <li>The moderator who took the action</li>
+                <li>The target user</li>
+                <li>The reason provided</li>
+                <li>Timestamp and case ID</li>
+                <li>For message deletions, a copy of the deleted content</li>
+            </ul>
+            
+            <p>
+                You can search and filter logs using:
+            </p>
+            
+            <div class="doc-example">
+                <pre class="doc-example-code"><code>// Search logs for actions against a specific user
+!astro mod logs user @user
+
+// Search logs for actions taken by a specific moderator
+!astro mod logs mod @moderator
+
+// Search logs by action type
+!astro mod logs type warn/mute/kick/ban
+
+// Search logs by date range
+!astro mod logs time 7d</code></pre>
+            </div>
+            
+            <h2 id="analytics">Moderation Analytics</h2>
+            
+            <p>
+                AstroBot provides analytics about moderation activities in your server through the web dashboard and in-Discord commands:
+            </p>
+            
+            <ul>
+                <li>Moderation action trends over time</li>
+                <li>Most common rule violations</li>
+                <li>Most active moderators</li>
+                <li>User behavior patterns</li>
+                <li>Auto-moderation effectiveness</li>
+            </ul>
+            
+            <p>
+                Access moderation analytics with:
+            </p>
+            
+            <div class="doc-example">
+                <pre class="doc-example-code"><code>// View moderation analytics in Discord
+!astro mod analytics
+
+// For more detailed analytics, visit the web dashboard
+!astro dashboard</code></pre>
+            </div>
+            
+            <div class="callout callout-info">
+                <h5>Web Dashboard Access</h5>
+                <p>More detailed analytics are available on the web dashboard. Server administrators can access this by linking their Discord account to the dashboard.</p>
+            </div>
+            
+            <div class="doc-content-nav">
+                <div class="doc-nav-prev">
+                    <a href="{{ url_for('documentation_index') }}" class="text-decoration-none">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-arrow-left-circle me-2"></i>
+                            <div>
+                                <div class="doc-nav-direction">Previous</div>
+                                <div class="doc-nav-title">Getting Started</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="doc-nav-next">
+                    <a href="{{ url_for('documentation_page', page_type='features', page_name='custom_commands') }}" class="text-decoration-none">
+                        <div class="d-flex align-items-center">
+                            <div class="text-end">
+                                <div class="doc-nav-direction">Next</div>
+                                <div class="doc-nav-title">Custom Commands</div>
+                            </div>
+                            <i class="bi bi-arrow-right-circle ms-2"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Documentation Feedback -->
+            <div class="doc-feedback">
+                <div class="doc-feedback-title">Was this page helpful?</div>
+                <div class="doc-feedback-buttons">
+                    <button class="btn btn-sm btn-outline-success feedback-helpful" data-page="{{ request.path }}">
+                        <i class="bi bi-hand-thumbs-up"></i> Yes
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger feedback-not-helpful" data-page="{{ request.path }}">
+                        <i class="bi bi-hand-thumbs-down"></i> No
+                    </button>
+                </div>
+                <div class="doc-feedback-comment d-none">
+                    <textarea class="form-control mb-2" rows="3" placeholder="How can we improve this page?"></textarea>
+                    <button class="btn btn-primary btn-sm submit-feedback">Submit Feedback</button>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Right sidebar - Table of Contents -->
+        <div class="d-none d-lg-block col-lg-2">
+            <div class="doc-toc">
+                <div class="doc-toc-title">On This Page</div>
+                <ul>
+                    <li><a href="#overview">Overview</a></li>
+                    <li><a href="#setup">Setting Up Moderation</a></li>
+                    <li><a href="#commands">Moderation Commands</a>
+                        <ul>
+                            <li><a href="#example-usage">Example Usage</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#automod">Auto-Moderation</a>
+                        <ul>
+                            <li><a href="#automod-configuration">Configuration</a></li>
+                            <li><a href="#exemptions">Exemptions</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#trust-system">Trust System</a>
+                        <ul>
+                            <li><a href="#trust-commands">Trust Commands</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#logging">Moderation Logs</a></li>
+                    <li><a href="#analytics">Moderation Analytics</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle sidebar on mobile
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.querySelector('.doc-sidebar');
+        
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+        }
+        
+        // Documentation feedback system
+        const helpfulBtn = document.querySelector('.feedback-helpful');
+        const notHelpfulBtn = document.querySelector('.feedback-not-helpful');
+        const feedbackComment = document.querySelector('.doc-feedback-comment');
+        const submitFeedback = document.querySelector('.submit-feedback');
+        
+        helpfulBtn.addEventListener('click', function() {
+            helpfulBtn.classList.add('active');
+            notHelpfulBtn.classList.remove('active');
+            
+            // Submit positive feedback immediately
+            const pagePath = this.dataset.page;
+            submitDocFeedback(pagePath, true, '');
+        });
+        
+        notHelpfulBtn.addEventListener('click', function() {
+            notHelpfulBtn.classList.add('active');
+            helpfulBtn.classList.remove('active');
+            feedbackComment.classList.remove('d-none');
+        });
+        
+        submitFeedback.addEventListener('click', function() {
+            const pagePath = notHelpfulBtn.dataset.page;
+            const comment = feedbackComment.querySelector('textarea').value;
+            
+            if (comment.trim() !== '') {
+                submitDocFeedback(pagePath, false, comment);
+                feedbackComment.innerHTML = '<div class="alert alert-success">Thank you for your feedback!</div>';
+            }
+        });
+        
+        function submitDocFeedback(pagePath, helpful, comment) {
+            fetch('/api/documentation/feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    page: pagePath,
+                    helpful: helpful,
+                    comment: comment
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.querySelector('.doc-feedback-buttons').innerHTML = 
+                        '<div class="alert alert-success py-2 mb-0">Thank you for your feedback!</div>';
+                    feedbackComment.classList.add('d-none');
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting feedback:', error);
+            });
+        }
+        
+        // Add smooth scrolling to TOC links and highlight current section
+        document.querySelectorAll('.doc-toc a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 70,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Highlight current section based on scroll position
+        const headings = document.querySelectorAll('h2[id], h3[id]');
+        const tocLinks = document.querySelectorAll('.doc-toc a');
+        
+        function highlightTOC() {
+            let currentSection = '';
+            
+            headings.forEach(heading => {
+                const top = heading.getBoundingClientRect().top;
+                
+                if (top < 100) {
+                    currentSection = '#' + heading.id;
+                }
+            });
+            
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === currentSection) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', highlightTOC);
+        highlightTOC(); // Initial call
+    });
+</script>
+{% endblock %}

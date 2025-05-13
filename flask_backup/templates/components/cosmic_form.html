@@ -1,0 +1,260 @@
+{% macro form_container(title=None, icon=None, classes='') %}
+<div class="cosmic-form {{ classes }}">
+    {% if title %}
+    <div class="cosmic-form-section-title mb-4">
+        {% if icon %}<i class="bi {{ icon }}"></i>{% endif %}
+        {{ title }}
+    </div>
+    {% endif %}
+    {{ caller() }}
+</div>
+{% endmacro %}
+
+{% macro form_section(title, icon=None) %}
+<div class="cosmic-form-section">
+    <div class="cosmic-form-section-title">
+        {% if icon %}<i class="bi {{ icon }}"></i>{% endif %}
+        {{ title }}
+    </div>
+    {{ caller() }}
+</div>
+{% endmacro %}
+
+{% macro form_group(label=None, for_id=None, required=False, help_text=None) %}
+<div class="cosmic-form-group">
+    {% if label %}
+    <label for="{{ for_id }}" class="cosmic-form-label {% if required %}cosmic-form-label-required{% endif %}">
+        {{ label }}
+    </label>
+    {% endif %}
+    {{ caller() }}
+    {% if help_text %}
+    <div class="cosmic-form-help-text">{{ help_text }}</div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% macro input(type='text', name=None, id=None, value='', placeholder='', required=False, disabled=False, classes='', attributes={}) %}
+<input 
+    type="{{ type }}" 
+    class="cosmic-input {{ classes }}" 
+    id="{{ id }}" 
+    name="{{ name }}" 
+    value="{{ value }}" 
+    placeholder="{{ placeholder }}" 
+    {% if required %}required{% endif %} 
+    {% if disabled %}disabled{% endif %}
+    {% for attr_name, attr_value in attributes.items() %}
+        {{ attr_name }}="{{ attr_value }}"
+    {% endfor %}
+>
+{% endmacro %}
+
+{% macro input_with_icon(type='text', name=None, id=None, value='', placeholder='', icon='', required=False, disabled=False, classes='', attributes={}) %}
+<div class="cosmic-input-with-icon">
+    <i class="bi {{ icon }} cosmic-input-icon"></i>
+    <input 
+        type="{{ type }}" 
+        class="cosmic-input {{ classes }}" 
+        id="{{ id }}" 
+        name="{{ name }}" 
+        value="{{ value }}" 
+        placeholder="{{ placeholder }}" 
+        {% if required %}required{% endif %} 
+        {% if disabled %}disabled{% endif %}
+        {% for attr_name, attr_value in attributes.items() %}
+            {{ attr_name }}="{{ attr_value }}"
+        {% endfor %}
+    >
+</div>
+{% endmacro %}
+
+{% macro textarea(name=None, id=None, value='', placeholder='', rows=5, required=False, disabled=False, classes='', attributes={}) %}
+<textarea 
+    class="cosmic-textarea {{ classes }}" 
+    id="{{ id }}" 
+    name="{{ name }}" 
+    rows="{{ rows }}" 
+    placeholder="{{ placeholder }}" 
+    {% if required %}required{% endif %} 
+    {% if disabled %}disabled{% endif %}
+    {% for attr_name, attr_value in attributes.items() %}
+        {{ attr_name }}="{{ attr_value }}"
+    {% endfor %}
+>{{ value }}</textarea>
+{% endmacro %}
+
+{% macro select(name=None, id=None, required=False, disabled=False, classes='', attributes={}) %}
+<div class="cosmic-select-wrapper">
+    <select 
+        class="cosmic-select {{ classes }}" 
+        id="{{ id }}" 
+        name="{{ name }}" 
+        {% if required %}required{% endif %} 
+        {% if disabled %}disabled{% endif %}
+        {% for attr_name, attr_value in attributes.items() %}
+            {{ attr_name }}="{{ attr_value }}"
+        {% endfor %}
+    >
+        {{ caller() }}
+    </select>
+    <i class="bi bi-chevron-down cosmic-select-icon"></i>
+</div>
+{% endmacro %}
+
+{% macro checkbox(name=None, id=None, value='', label='', checked=False, disabled=False, classes='') %}
+<div class="cosmic-checkbox-wrapper {{ classes }}">
+    <input 
+        type="checkbox" 
+        class="cosmic-checkbox" 
+        id="{{ id }}" 
+        name="{{ name }}" 
+        value="{{ value }}" 
+        {% if checked %}checked{% endif %} 
+        {% if disabled %}disabled{% endif %}
+    >
+    <label for="{{ id }}" class="cosmic-checkbox-label">
+        <span class="cosmic-checkbox-custom"></span>
+        {{ label }}
+    </label>
+</div>
+{% endmacro %}
+
+{% macro radio(name=None, id=None, value='', label='', checked=False, disabled=False, classes='') %}
+<div class="cosmic-radio-wrapper {{ classes }}">
+    <input 
+        type="radio" 
+        class="cosmic-radio" 
+        id="{{ id }}" 
+        name="{{ name }}" 
+        value="{{ value }}" 
+        {% if checked %}checked{% endif %} 
+        {% if disabled %}disabled{% endif %}
+    >
+    <label for="{{ id }}" class="cosmic-radio-label">
+        <span class="cosmic-radio-custom"></span>
+        {{ label }}
+    </label>
+</div>
+{% endmacro %}
+
+{% macro toggle(name=None, id=None, checked=False, disabled=False, classes='') %}
+<label class="cosmic-toggle {{ classes }}">
+    <input 
+        type="checkbox" 
+        id="{{ id }}" 
+        name="{{ name }}" 
+        {% if checked %}checked{% endif %} 
+        {% if disabled %}disabled{% endif %}
+    >
+    <span class="cosmic-toggle-slider"></span>
+</label>
+{% endmacro %}
+
+{% macro night_toggle(name=None, id=None, checked=False, disabled=False, classes='') %}
+<label class="cosmic-night-toggle {{ classes }}">
+    <input 
+        type="checkbox" 
+        id="{{ id }}" 
+        name="{{ name }}" 
+        {% if checked %}checked{% endif %} 
+        {% if disabled %}disabled{% endif %}
+    >
+    <span class="cosmic-night-slider">
+        <span class="cosmic-night-sky"></span>
+        <span class="cosmic-night-star"></span>
+        <span class="cosmic-night-star"></span>
+        <span class="cosmic-night-star"></span>
+        <span class="cosmic-night-star"></span>
+    </span>
+</label>
+{% endmacro %}
+
+{% macro validation_message(message, type='error') %}
+<div class="cosmic-validation-message {{ type }}">
+    {{ message }}
+</div>
+{% endmacro %}
+
+{% macro form_actions(align='left') %}
+<div class="cosmic-form-actions" style="justify-content: {% if align == 'right' %}flex-end{% elif align == 'center' %}center{% else %}flex-start{% endif %};">
+    {{ caller() }}
+</div>
+{% endmacro %}
+
+{% macro color_picker(name=None, id=None, value='#4f46e5', label=None, disabled=False, classes='') %}
+<div class="cosmic-color-picker {{ classes }}">
+    {% if label %}
+    <label for="{{ id }}" class="cosmic-form-label mb-2">{{ label }}</label>
+    {% endif %}
+    <div class="cosmic-color-preview">
+        <div class="cosmic-color-preview-inner" style="background-color: {{ value }};"></div>
+    </div>
+    <input 
+        type="color" 
+        id="{{ id }}" 
+        name="{{ name }}" 
+        value="{{ value }}" 
+        {% if disabled %}disabled{% endif %}
+        onchange="this.previousElementSibling.querySelector('.cosmic-color-preview-inner').style.backgroundColor = this.value;"
+    >
+</div>
+{% endmacro %}
+
+{% macro range_slider(name=None, id=None, min=0, max=100, step=1, value=50, label=None, disabled=False, classes='') %}
+<div class="cosmic-range-wrapper {{ classes }}">
+    {% if label %}
+    <label for="{{ id }}" class="cosmic-form-label mb-2">{{ label }}</label>
+    {% endif %}
+    <input 
+        type="range" 
+        class="cosmic-range" 
+        id="{{ id }}" 
+        name="{{ name }}" 
+        min="{{ min }}" 
+        max="{{ max }}" 
+        step="{{ step }}" 
+        value="{{ value }}" 
+        {% if disabled %}disabled{% endif %}
+        oninput="this.nextElementSibling.textContent = this.value + (this.dataset.unit || '')"
+        {% if unit %}data-unit="{{ unit }}"{% endif %}
+    >
+    <div class="cosmic-range-value">{{ value }}{% if unit %}{{ unit }}{% endif %}</div>
+</div>
+{% endmacro %}
+
+{% macro file_upload(name=None, id=None, accept=None, multiple=False, classes='', label='Upload file', hint='Drag and drop files here or click to browse') %}
+<div class="cosmic-file-upload {{ classes }}">
+    <input 
+        type="file" 
+        class="cosmic-file-upload-input" 
+        id="{{ id }}" 
+        name="{{ name }}" 
+        {% if accept %}accept="{{ accept }}"{% endif %} 
+        {% if multiple %}multiple{% endif %}
+    >
+    <label for="{{ id }}" class="cosmic-file-upload-label">
+        <i class="bi bi-cloud-arrow-up cosmic-file-upload-icon"></i>
+        <div class="cosmic-file-upload-text">{{ label }}</div>
+        <div class="cosmic-file-upload-hint">{{ hint }}</div>
+    </label>
+    <div class="cosmic-file-preview" id="{{ id }}-preview"></div>
+</div>
+{% endmacro %}
+
+{% macro search_input(name=None, id=None, placeholder='Search...', value='', classes='') %}
+<div class="cosmic-search {{ classes }}">
+    <i class="bi bi-search cosmic-search-icon"></i>
+    <input 
+        type="text" 
+        class="cosmic-search-input" 
+        id="{{ id }}" 
+        name="{{ name }}" 
+        placeholder="{{ placeholder }}" 
+        value="{{ value }}"
+    >
+    {% if value %}
+    <i class="bi bi-x cosmic-search-clear" onclick="document.getElementById('{{ id }}').value = ''; this.style.display = 'none';"></i>
+    {% endif %}
+</div>
+{% endmacro %}

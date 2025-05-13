@@ -1,0 +1,884 @@
+{% extends "layouts/clean.html" %}
+
+{% block title %}AI Mod Generator{% endblock %}
+
+{% block styles %}
+<style>
+    .ai-generator-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .input-card {
+        background: rgba(30, 41, 59, 0.5);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid rgba(55, 65, 81, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .input-card:hover {
+        border-color: rgba(79, 70, 229, 0.4);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    
+    .output-card {
+        background: rgba(30, 41, 59, 0.5);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid rgba(55, 65, 81, 0.3);
+        min-height: 300px;
+        height: 100%;
+    }
+    
+    .output-header {
+        border-bottom: 1px solid rgba(55, 65, 81, 0.5);
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .generator-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .option-btn {
+        padding: 0.5rem 1rem;
+        background: rgba(55, 65, 81, 0.3);
+        color: #e2e8f0;
+        border: 1px solid rgba(55, 65, 81, 0.5);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.875rem;
+    }
+    
+    .option-btn:hover {
+        background: rgba(79, 70, 229, 0.2);
+        border-color: rgba(79, 70, 229, 0.5);
+    }
+    
+    .option-btn.active {
+        background: rgba(79, 70, 229, 0.3);
+        border-color: rgba(79, 70, 229, 0.7);
+    }
+    
+    .pre-code {
+        background: rgba(17, 24, 39, 0.6);
+        border-radius: 8px;
+        padding: 1rem;
+        overflow-x: auto;
+        position: relative;
+    }
+    
+    .copy-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        padding: 0.25rem 0.5rem;
+        background: rgba(55, 65, 81, 0.5);
+        border: 1px solid rgba(55, 65, 81, 0.7);
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.75rem;
+    }
+    
+    .copy-btn:hover {
+        background: rgba(79, 70, 229, 0.3);
+        border-color: rgba(79, 70, 229, 0.5);
+    }
+    
+    .mc-tab-header {
+        padding: 0.5rem 1rem;
+        background: rgba(17, 24, 39, 0.8);
+        border-radius: 8px 8px 0 0;
+        font-family: monospace;
+        font-size: 0.875rem;
+        color: #e2e8f0;
+    }
+    
+    .output-content {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+    
+    .mod-form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-header {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-header i {
+        margin-right: 0.5rem;
+    }
+    
+    .info-tooltip {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background: rgba(79, 70, 229, 0.3);
+        border-radius: 50%;
+        text-align: center;
+        line-height: 16px;
+        font-size: 10px;
+        margin-left: 6px;
+        cursor: help;
+    }
+    
+    .code-line {
+        display: block;
+        line-height: 1.5;
+    }
+    
+    .indented {
+        padding-left: 2rem;
+    }
+    
+    .type-keyword {
+        color: #ff79c6;
+    }
+    
+    .function-name {
+        color: #50fa7b;
+    }
+    
+    .string-literal {
+        color: #f1fa8c;
+    }
+    
+    .comment {
+        color: #6272a4;
+    }
+    
+    .class-name {
+        color: #8be9fd;
+    }
+    
+    .directive {
+        color: #bd93f9;
+    }
+    
+    .method-name {
+        color: #50fa7b;
+    }
+    
+    .code-placeholder {
+        height: 300px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(17, 24, 39, 0.6);
+        border-radius: 8px;
+        text-align: center;
+        color: #94a3b8;
+    }
+    
+    .example-btn {
+        font-size: 0.875rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        background: rgba(55, 65, 81, 0.3);
+        border: 1px solid rgba(55, 65, 81, 0.5);
+        margin-right: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .example-btn:hover {
+        background: rgba(79, 70, 229, 0.2);
+        border-color: rgba(79, 70, 229, 0.5);
+    }
+    
+    .premium-badge {
+        background: linear-gradient(90deg, #f59e0b, #d97706);
+        color: white;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        margin-left: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .ai-thinking {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 300px;
+    }
+    
+    .ai-dots {
+        display: flex;
+        margin-top: 1rem;
+    }
+    
+    .ai-dot {
+        width: 12px;
+        height: 12px;
+        background: #6366f1;
+        border-radius: 50%;
+        margin: 0 4px;
+        animation: ai-dot-pulse 1.5s infinite ease-in-out;
+    }
+    
+    .ai-dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    
+    .ai-dot:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    
+    @keyframes ai-dot-pulse {
+        0%, 100% { transform: scale(0.7); opacity: 0.5; }
+        50% { transform: scale(1); opacity: 1; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container ai-generator-container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-1 fw-bold">AI Mod Generator</h1>
+            <p class="text-muted mb-0">Generate custom Minecraft mods using AI</p>
+        </div>
+        
+        <div>
+            {% if current_user.is_premium %}
+            <span class="badge bg-success">
+                <i class="bi bi-stars me-1"></i>Premium Access
+            </span>
+            {% else %}
+            <a href="{{ url_for('premium_plans') }}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-stars me-1"></i>Upgrade to Premium
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <!-- Input Card -->
+        <div class="col-lg-5">
+            <div class="input-card">
+                <form id="modGeneratorForm">
+                    <div class="mod-form-group">
+                        <div class="form-header">
+                            <i class="bi bi-lightbulb"></i> Describe Your Mod
+                            <span class="info-tooltip" title="Provide a detailed description of your mod. The more specific you are, the better the results will be.">?</span>
+                        </div>
+                        <textarea 
+                            class="form-control" 
+                            id="modDescription" 
+                            rows="4" 
+                            placeholder="I want a mod that adds magical wands that can transform blocks into different materials and creatures."
+                        ></textarea>
+                        <div class="mt-2">
+                            <span class="example-btn" onclick="fillExample(1)">Magical Items</span>
+                            <span class="example-btn" onclick="fillExample(2)">New Mobs</span>
+                            <span class="example-btn" onclick="fillExample(3)">Game Mechanics</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mod-form-group">
+                        <div class="form-header">
+                            <i class="bi bi-code-slash"></i> Mod Framework
+                        </div>
+                        <div class="generator-options">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="modFramework" id="framework1" value="Forge" checked>
+                                <label class="form-check-label" for="framework1">Forge</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="modFramework" id="framework2" value="Fabric">
+                                <label class="form-check-label" for="framework2">Fabric</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="modFramework" id="framework3" value="Spigot">
+                                <label class="form-check-label" for="framework3">Spigot/Paper</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mod-form-group">
+                        <div class="form-header">
+                            <i class="bi bi-arrows-angle-contract"></i> Minecraft Version
+                        </div>
+                        <select class="form-select" id="mcVersion">
+                            <option value="1.20.4">1.20.4 (Latest)</option>
+                            <option value="1.19.4">1.19.4</option>
+                            <option value="1.18.2">1.18.2</option>
+                            <option value="1.16.5">1.16.5</option>
+                            <option value="1.12.2">1.12.2</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mod-form-group">
+                        <div class="form-header">
+                            <i class="bi bi-gear"></i> Additional Options
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="includeComments" checked>
+                            <label class="form-check-label" for="includeComments">
+                                Include detailed comments
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="generateConfig">
+                            <label class="form-check-label" for="generateConfig">
+                                Generate config file
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="extendedClasses" {% if not current_user.is_premium %}disabled{% endif %}>
+                            <label class="form-check-label" for="extendedClasses">
+                                Advanced implementation with extended classes
+                                {% if not current_user.is_premium %}
+                                <span class="premium-badge">Premium</span>
+                                {% endif %}
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-primary" id="generateBtn" onclick="generateMod()">
+                            <i class="bi bi-magic me-2"></i>Generate Mod
+                        </button>
+                        {% if not current_user.is_premium %}
+                        <div class="text-center text-muted small mt-2">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Free users limited to 3 generations per day. <a href="{{ url_for('premium_plans') }}">Upgrade</a> for unlimited access.
+                        </div>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Output Card -->
+        <div class="col-lg-7">
+            <div class="output-card d-flex flex-column">
+                <div class="output-header d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <h5 class="mb-0">Generated Code</h5>
+                        <div class="btn-group ms-3">
+                            <button type="button" class="btn btn-sm btn-outline-secondary active" onclick="switchTab('main')" id="mainTab">Main Class</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="switchTab('item')" id="itemTab">Item Class</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="switchTab('registry')" id="registryTab">Registry</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary" onclick="downloadCode()">
+                        <i class="bi bi-download me-1"></i>Download
+                    </button>
+                </div>
+                
+                <div class="output-content flex-grow-1" id="outputContent">
+                    <div class="code-placeholder">
+                        <div>
+                            <i class="bi bi-code-square" style="font-size: 3rem;"></i>
+                            <p class="mt-3">Generated code will appear here</p>
+                            <p class="small">Describe your mod and click "Generate Mod" to get started</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="alert alert-info" role="alert">
+                <div class="d-flex">
+                    <div class="me-3">
+                        <i class="bi bi-info-circle-fill fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="alert-heading">How to Use Generated Code</h5>
+                        <p>AI-generated code provides a starting point for your Minecraft mod. Follow these steps:</p>
+                        <ol class="mb-0">
+                            <li>Download the generated code files</li>
+                            <li>Set up your development environment for the selected framework (Forge/Fabric/Spigot)</li>
+                            <li>Add the files to your project structure</li>
+                            <li>Review and test the code - you may need to make adjustments</li>
+                            <li>Build your mod using the appropriate build tools</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let currentTab = 'main';
+    let generatedCode = {
+        main: null,
+        item: null,
+        registry: null
+    };
+    
+    function switchTab(tab) {
+        // Update active tab
+        currentTab = tab;
+        
+        // Update tab buttons
+        document.querySelectorAll('.btn-group .btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.getElementById(tab + 'Tab').classList.add('active');
+        
+        // Update content
+        updateCodeDisplay();
+    }
+    
+    function updateCodeDisplay() {
+        const outputContent = document.getElementById('outputContent');
+        
+        if (!generatedCode[currentTab]) {
+            outputContent.innerHTML = `
+                <div class="code-placeholder">
+                    <div>
+                        <i class="bi bi-code-square" style="font-size: 3rem;"></i>
+                        <p class="mt-3">No code generated yet</p>
+                        <p class="small">Generate a mod first or switch to another tab</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        // Display code
+        outputContent.innerHTML = generatedCode[currentTab];
+    }
+    
+    function generateMod() {
+        const description = document.getElementById('modDescription').value.trim();
+        
+        if (!description) {
+            alert('Please describe your mod before generating.');
+            return;
+        }
+        
+        // Get form values
+        const framework = document.querySelector('input[name="modFramework"]:checked').value;
+        const mcVersion = document.getElementById('mcVersion').value;
+        const includeComments = document.getElementById('includeComments').checked;
+        const generateConfig = document.getElementById('generateConfig').checked;
+        const extendedClasses = document.getElementById('extendedClasses').checked;
+        
+        // Show loading state
+        document.getElementById('outputContent').innerHTML = `
+            <div class="ai-thinking">
+                <div class="text-center">
+                    <i class="bi bi-cpu" style="font-size: 3rem; color: #6366f1;"></i>
+                    <h5 class="mt-3">AI is processing your request</h5>
+                    <p class="text-muted">Generating mod code with ${framework} for Minecraft ${mcVersion}...</p>
+                </div>
+                <div class="ai-dots">
+                    <div class="ai-dot"></div>
+                    <div class="ai-dot"></div>
+                    <div class="ai-dot"></div>
+                </div>
+            </div>
+        `;
+        
+        // Simulate AI generation (for demo purposes)
+        setTimeout(() => {
+            // Example code for a magical wands mod (simplified)
+            if (framework === 'Forge') {
+                generatedCode.main = generateForgeMainClass(description, mcVersion, includeComments);
+                generatedCode.item = generateForgeItemClass(mcVersion, includeComments);
+                generatedCode.registry = generateForgeRegistry(mcVersion, includeComments);
+            } else if (framework === 'Fabric') {
+                generatedCode.main = generateFabricMainClass(description, mcVersion, includeComments);
+                generatedCode.item = generateFabricItemClass(mcVersion, includeComments);
+                generatedCode.registry = generateFabricRegistry(mcVersion, includeComments);
+            } else {
+                generatedCode.main = generateSpigotMainClass(description, mcVersion, includeComments);
+                generatedCode.item = generateSpigotItemClass(mcVersion, includeComments);
+                generatedCode.registry = generateSpigotRegistry(mcVersion, includeComments);
+            }
+            
+            // Update display
+            updateCodeDisplay();
+        }, 3000);
+    }
+    
+    function fillExample(exampleNum) {
+        const exampleTexts = [
+            "",
+            "Create a mod that adds magical wands with different powers. Each wand should have a unique effect like fire, ice, lightning, or teleportation. The wands should have durability and can be crafted using rare materials.",
+            "I want a mod that adds three new hostile mobs that spawn in the Nether. They should drop unique items that can be used to craft special armor with set bonuses.",
+            "Create a mod that adds a skill tree system where players can earn experience points to unlock new abilities and passive effects. Skills should be organized into different categories like combat, mining, and farming."
+        ];
+        
+        document.getElementById('modDescription').value = exampleTexts[exampleNum];
+    }
+    
+    function downloadCode() {
+        if (!generatedCode.main) {
+            alert('Please generate code first before downloading.');
+            return;
+        }
+        
+        alert('Download functionality would be implemented in the production version.');
+        // In a real implementation, this would create and download a ZIP file with all generated code files
+    }
+    
+    // Code generation templates (simplified for demo)
+    function generateForgeMainClass(description, version, comments) {
+        const className = "MagicalWandsMod";
+        const modId = "magicalwands";
+        
+        let commentBlock = '';
+        if (comments) {
+            commentBlock = `
+                <span class="code-line comment">/**</span>
+                <span class="code-line comment"> * Magical Wands Mod - Adds various magical wands to Minecraft</span>
+                <span class="code-line comment"> * </span>
+                <span class="code-line comment"> * This mod implements the following features:</span>
+                <span class="code-line comment"> * - Custom wand items with unique effects</span>
+                <span class="code-line comment"> * - Special crafting recipes for wands</span>
+                <span class="code-line comment"> * - Particle effects for each wand type</span>
+                <span class="code-line comment"> * - Configuration options for wand properties</span>
+                <span class="code-line comment"> */</span>
+            `;
+        }
+        
+        return `
+            <div class="mc-tab-header">MagicalWandsMod.java</div>
+            <div class="pre-code">
+                <button class="copy-btn" onclick="navigator.clipboard.writeText(document.querySelector('.pre-code').textContent)">Copy</button>
+                <span class="code-line directive">package com.example.${modId};</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line directive">import net.minecraft.world.item.Item;</span>
+                <span class="code-line directive">import net.minecraftforge.common.MinecraftForge;</span>
+                <span class="code-line directive">import net.minecraftforge.eventbus.api.IEventBus;</span>
+                <span class="code-line directive">import net.minecraftforge.fml.common.Mod;</span>
+                <span class="code-line directive">import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;</span>
+                <span class="code-line">&nbsp;</span>
+                ${commentBlock}
+                <span class="code-line directive">@Mod("${modId}")</span>
+                <span class="code-line">public class <span class="class-name">${className}</span> {</span>
+                <span class="code-line indented">public static final String MOD_ID = "${modId}";</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line indented">public <span class="function-name">${className}</span>() {</span>
+                <span class="code-line indented indented">IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line indented indented">// Register item and block registries</span>
+                <span class="code-line indented indented">ItemRegistry.register(modEventBus);</span>
+                <span class="code-line indented indented">BlockRegistry.register(modEventBus);</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line indented indented">// Register ourselves for server and other game events</span>
+                <span class="code-line indented indented">MinecraftForge.EVENT_BUS.register(this);</span>
+                <span class="code-line indented">}</span>
+                <span class="code-line">}</span>
+            </div>
+        `;
+    }
+    
+    function generateForgeItemClass(version, comments) {
+        let commentBlock = '';
+        if (comments) {
+            commentBlock = `
+                <span class="code-line comment">/**</span>
+                <span class="code-line comment"> * Wand Item class - Base class for all magical wands</span>
+                <span class="code-line comment"> * </span>
+                <span class="code-line comment"> * Each wand has properties for:</span>
+                <span class="code-line comment"> * - Magic type (fire, ice, etc.)</span>
+                <span class="code-line comment"> * - Mana cost per use</span>
+                <span class="code-line comment"> * - Cooldown period</span>
+                <span class="code-line comment"> * - Special effects</span>
+                <span class="code-line comment"> */</span>
+            `;
+        }
+        
+        return `
+            <div class="mc-tab-header">WandItem.java</div>
+            <div class="pre-code">
+                <button class="copy-btn" onclick="navigator.clipboard.writeText(document.querySelector('.pre-code').textContent)">Copy</button>
+                <span class="code-line directive">package com.example.magicalwands.item;</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line directive">import net.minecraft.world.InteractionHand;</span>
+                <span class="code-line directive">import net.minecraft.world.InteractionResultHolder;</span>
+                <span class="code-line directive">import net.minecraft.world.entity.player.Player;</span>
+                <span class="code-line directive">import net.minecraft.world.item.Item;</span>
+                <span class="code-line directive">import net.minecraft.world.item.ItemStack;</span>
+                <span class="code-line directive">import net.minecraft.world.level.Level;</span>
+                <span class="code-line">&nbsp;</span>
+                ${commentBlock}
+                <span class="code-line">public class <span class="class-name">WandItem</span> extends <span class="class-name">Item</span> {</span>
+                <span class="code-line indented">private final WandType type;</span>
+                <span class="code-line indented">private final int manaCost;</span>
+                <span class="code-line indented">private final int cooldown;</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line indented">public <span class="function-name">WandItem</span>(WandType type, int manaCost, int cooldown, Properties properties) {</span>
+                <span class="code-line indented indented">super(properties.durability(100));</span>
+                <span class="code-line indented indented">this.type = type;</span>
+                <span class="code-line indented indented">this.manaCost = manaCost;</span>
+                <span class="code-line indented indented">this.cooldown = cooldown;</span>
+                <span class="code-line indented">}</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line indented">@Override</span>
+                <span class="code-line indented">public <span class="type-keyword">InteractionResultHolder<ItemStack></span> <span class="method-name">use</span>(Level level, Player player, InteractionHand hand) {</span>
+                <span class="code-line indented indented">ItemStack itemStack = player.getItemInHand(hand);</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line indented indented">if (!level.isClientSide) {</span>
+                <span class="code-line indented indented indented">// Apply wand effect based on type</span>
+                <span class="code-line indented indented indented">switch (type) {</span>
+                <span class="code-line indented indented indented indented">case FIRE:</span>
+                <span class="code-line indented indented indented indented indented">applyFireEffect(level, player);</span>
+                <span class="code-line indented indented indented indented indented">break;</span>
+                <span class="code-line indented indented indented indented">case ICE:</span>
+                <span class="code-line indented indented indented indented indented">applyIceEffect(level, player);</span>
+                <span class="code-line indented indented indented indented indented">break;</span>
+                <span class="code-line indented indented indented indented">case LIGHTNING:</span>
+                <span class="code-line indented indented indented indented indented">applyLightningEffect(level, player);</span>
+                <span class="code-line indented indented indented indented indented">break;</span>
+                <span class="code-line indented indented indented">}</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line indented indented indented">// Apply cooldown and durability damage</span>
+                <span class="code-line indented indented indented">player.getCooldowns().addCooldown(this, cooldown);</span>
+                <span class="code-line indented indented indented">itemStack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));</span>
+                <span class="code-line indented indented">}</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line indented indented">return InteractionResultHolder.success(itemStack);</span>
+                <span class="code-line indented">}</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line indented">// Effect methods would be implemented here</span>
+                <span class="code-line indented">private void <span class="method-name">applyFireEffect</span>(Level level, Player player) { /* implementation */ }</span>
+                <span class="code-line indented">private void <span class="method-name">applyIceEffect</span>(Level level, Player player) { /* implementation */ }</span>
+                <span class="code-line indented">private void <span class="method-name">applyLightningEffect</span>(Level level, Player player) { /* implementation */ }</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line indented">public enum <span class="class-name">WandType</span> {</span>
+                <span class="code-line indented indented">FIRE, ICE, LIGHTNING, TELEPORTATION</span>
+                <span class="code-line indented">}</span>
+                <span class="code-line">}</span>
+            </div>
+        `;
+    }
+    
+    function generateForgeRegistry(version, comments) {
+        let commentBlock = '';
+        if (comments) {
+            commentBlock = `
+                <span class="code-line comment">/**</span>
+                <span class="code-line comment"> * Registry for all mod items</span>
+                <span class="code-line comment"> * </span>
+                <span class="code-line comment"> * This class handles the registration of all items added by the mod</span>
+                <span class="code-line comment"> * New items should be added to the ITEMS registry</span>
+                <span class="code-line comment"> */</span>
+            `;
+        }
+        
+        return `
+            <div class="mc-tab-header">ItemRegistry.java</div>
+            <div class="pre-code">
+                <button class="copy-btn" onclick="navigator.clipboard.writeText(document.querySelector('.pre-code').textContent)">Copy</button>
+                <span class="code-line directive">package com.example.magicalwands.registry;</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line directive">import com.example.magicalwands.MagicalWandsMod;</span>
+                <span class="code-line directive">import com.example.magicalwands.item.WandItem;</span>
+                <span class="code-line directive">import net.minecraft.world.item.Item;</span>
+                <span class="code-line directive">import net.minecraftforge.eventbus.api.IEventBus;</span>
+                <span class="code-line directive">import net.minecraftforge.registries.DeferredRegister;</span>
+                <span class="code-line directive">import net.minecraftforge.registries.ForgeRegistries;</span>
+                <span class="code-line directive">import net.minecraftforge.registries.RegistryObject;</span>
+                <span class="code-line">&nbsp;</span>
+                ${commentBlock}
+                <span class="code-line">public class <span class="class-name">ItemRegistry</span> {</span>
+                <span class="code-line indented">public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(</span>
+                <span class="code-line indented indented">ForgeRegistries.ITEMS, MagicalWandsMod.MOD_ID);</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line indented">// Register wand items</span>
+                <span class="code-line indented">public static final RegistryObject<Item> FIRE_WAND = ITEMS.register("fire_wand",</span>
+                <span class="code-line indented indented">() -> new WandItem(</span>
+                <span class="code-line indented indented indented">WandItem.WandType.FIRE,</span>
+                <span class="code-line indented indented indented">10, // mana cost</span>
+                <span class="code-line indented indented indented">40, // cooldown (in ticks)</span>
+                <span class="code-line indented indented indented">new Item.Properties().tab(MagicalWandsMod.CREATIVE_TAB)</span>
+                <span class="code-line indented indented">));</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line indented">public static final RegistryObject<Item> ICE_WAND = ITEMS.register("ice_wand",</span>
+                <span class="code-line indented indented">() -> new WandItem(</span>
+                <span class="code-line indented indented indented">WandItem.WandType.ICE,</span>
+                <span class="code-line indented indented indented">15, // mana cost</span>
+                <span class="code-line indented indented indented">60, // cooldown (in ticks)</span>
+                <span class="code-line indented indented indented">new Item.Properties().tab(MagicalWandsMod.CREATIVE_TAB)</span>
+                <span class="code-line indented indented">));</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line indented">public static final RegistryObject<Item> LIGHTNING_WAND = ITEMS.register("lightning_wand",</span>
+                <span class="code-line indented indented">() -> new WandItem(</span>
+                <span class="code-line indented indented indented">WandItem.WandType.LIGHTNING,</span>
+                <span class="code-line indented indented indented">20, // mana cost</span>
+                <span class="code-line indented indented indented">80, // cooldown (in ticks)</span>
+                <span class="code-line indented indented indented">new Item.Properties().tab(MagicalWandsMod.CREATIVE_TAB)</span>
+                <span class="code-line indented indented">));</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line indented">public static void <span class="method-name">register</span>(IEventBus eventBus) {</span>
+                <span class="code-line indented indented">ITEMS.register(eventBus);</span>
+                <span class="code-line indented">}</span>
+                <span class="code-line">}</span>
+            </div>
+        `;
+    }
+    
+    function generateFabricMainClass(description, version, comments) {
+        // Similar implementation for Fabric
+        return `
+            <div class="mc-tab-header">MagicalWandsMod.java (Fabric)</div>
+            <div class="pre-code">
+                <button class="copy-btn" onclick="navigator.clipboard.writeText(document.querySelector('.pre-code').textContent)">Copy</button>
+                <span class="code-line directive">package com.example.magicalwands;</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line directive">import net.fabricmc.api.ModInitializer;</span>
+                <span class="code-line directive">import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;</span>
+                <span class="code-line directive">import net.minecraft.item.ItemGroup;</span>
+                <span class="code-line directive">import net.minecraft.item.ItemStack;</span>
+                <span class="code-line directive">import net.minecraft.util.Identifier;</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line">public class <span class="class-name">MagicalWandsMod</span> implements <span class="class-name">ModInitializer</span> {</span>
+                <span class="code-line indented">public static final String MOD_ID = "magicalwands";</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line indented">// Create creative tab/item group</span>
+                <span class="code-line indented">public static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(</span>
+                <span class="code-line indented indented">new Identifier(MOD_ID, "general"),</span>
+                <span class="code-line indented indented">() -> new ItemStack(ModItems.FIRE_WAND));</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line indented">@Override</span>
+                <span class="code-line indented">public void <span class="method-name">onInitialize</span>() {</span>
+                <span class="code-line indented indented">// Register mod items</span>
+                <span class="code-line indented indented">ModItems.registerItems();</span>
+                <span class="code-line indented indented">// Register mod blocks</span>
+                <span class="code-line indented indented">ModBlocks.registerBlocks();</span>
+                <span class="code-line indented">}</span>
+                <span class="code-line">}</span>
+            </div>
+        `;
+    }
+    
+    function generateFabricItemClass(version, comments) {
+        // Simplified Fabric item implementation
+        return `
+            <div class="mc-tab-header">WandItem.java (Fabric)</div>
+            <div class="pre-code">
+                <button class="copy-btn" onclick="navigator.clipboard.writeText(document.querySelector('.pre-code').textContent)">Copy</button>
+                <span class="code-line directive">package com.example.magicalwands.item;</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line directive">import net.minecraft.entity.player.PlayerEntity;</span>
+                <span class="code-line directive">import net.minecraft.item.Item;</span>
+                <span class="code-line directive">import net.minecraft.item.ItemStack;</span>
+                <span class="code-line directive">import net.minecraft.util.Hand;</span>
+                <span class="code-line directive">import net.minecraft.util.TypedActionResult;</span>
+                <span class="code-line directive">import net.minecraft.world.World;</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line">public class <span class="class-name">WandItem</span> extends <span class="class-name">Item</span> {</span>
+                <span class="code-line indented">// Fabric implementation...</span>
+                <span class="code-line">}</span>
+            </div>
+        `;
+    }
+    
+    function generateFabricRegistry(version, comments) {
+        // Simplified Fabric registry
+        return `
+            <div class="mc-tab-header">ModItems.java (Fabric)</div>
+            <div class="pre-code">
+                <button class="copy-btn" onclick="navigator.clipboard.writeText(document.querySelector('.pre-code').textContent)">Copy</button>
+                <span class="code-line directive">package com.example.magicalwands;</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line directive">import net.minecraft.util.Identifier;</span>
+                <span class="code-line directive">import net.minecraft.util.registry.Registry;</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line">public class <span class="class-name">ModItems</span> {</span>
+                <span class="code-line indented">// Fabric registry implementation...</span>
+                <span class="code-line">}</span>
+            </div>
+        `;
+    }
+    
+    function generateSpigotMainClass(description, version, comments) {
+        // Simplified Spigot plugin implementation
+        return `
+            <div class="mc-tab-header">MagicalWandsPlugin.java (Spigot)</div>
+            <div class="pre-code">
+                <button class="copy-btn" onclick="navigator.clipboard.writeText(document.querySelector('.pre-code').textContent)">Copy</button>
+                <span class="code-line directive">package com.example.magicalwands;</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line directive">import org.bukkit.plugin.java.JavaPlugin;</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line">public class <span class="class-name">MagicalWandsPlugin</span> extends <span class="class-name">JavaPlugin</span> {</span>
+                <span class="code-line indented">@Override</span>
+                <span class="code-line indented">public void <span class="method-name">onEnable</span>() {</span>
+                <span class="code-line indented indented">// Plugin startup logic</span>
+                <span class="code-line indented indented">getLogger().info("MagicalWands plugin enabled!");</span>
+                <span class="code-line indented indented">// Register commands</span>
+                <span class="code-line indented indented">getCommand("wand").setExecutor(new WandCommand());</span>
+                <span class="code-line indented indented">// Register events</span>
+                <span class="code-line indented indented">getServer().getPluginManager().registerEvents(new WandListener(), this);</span>
+                <span class="code-line indented">}</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line indented">@Override</span>
+                <span class="code-line indented">public void <span class="method-name">onDisable</span>() {</span>
+                <span class="code-line indented indented">// Plugin shutdown logic</span>
+                <span class="code-line indented indented">getLogger().info("MagicalWands plugin disabled!");</span>
+                <span class="code-line indented">}</span>
+                <span class="code-line">}</span>
+            </div>
+        `;
+    }
+    
+    function generateSpigotItemClass(version, comments) {
+        // Simplified Spigot item implementation
+        return `
+            <div class="mc-tab-header">WandItem.java (Spigot)</div>
+            <div class="pre-code">
+                <button class="copy-btn" onclick="navigator.clipboard.writeText(document.querySelector('.pre-code').textContent)">Copy</button>
+                <span class="code-line directive">package com.example.magicalwands.item;</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line directive">import org.bukkit.Material;</span>
+                <span class="code-line directive">import org.bukkit.inventory.ItemStack;</span>
+                <span class="code-line directive">import org.bukkit.inventory.meta.ItemMeta;</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line">public class <span class="class-name">WandItem</span> {</span>
+                <span class="code-line indented">// Spigot implementation...</span>
+                <span class="code-line">}</span>
+            </div>
+        `;
+    }
+    
+    function generateSpigotRegistry(version, comments) {
+        // Simplified Spigot registry equivalent
+        return `
+            <div class="mc-tab-header">WandManager.java (Spigot)</div>
+            <div class="pre-code">
+                <button class="copy-btn" onclick="navigator.clipboard.writeText(document.querySelector('.pre-code').textContent)">Copy</button>
+                <span class="code-line directive">package com.example.magicalwands;</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line directive">import java.util.HashMap;</span>
+                <span class="code-line directive">import java.util.Map;</span>
+                <span class="code-line directive">import org.bukkit.inventory.ItemStack;</span>
+                <span class="code-line">&nbsp;</span>
+                <span class="code-line">public class <span class="class-name">WandManager</span> {</span>
+                <span class="code-line indented">// Spigot implementation...</span>
+                <span class="code-line">}</span>
+            </div>
+        `;
+    }
+    
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+        // Nothing special needed at init
+    });
+</script>
+{% endblock %}

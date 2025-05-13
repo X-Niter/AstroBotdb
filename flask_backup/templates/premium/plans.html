@@ -1,0 +1,528 @@
+{% extends 'layouts/clean.html' %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="d-flex align-items-center mb-4">
+        <div class="me-auto">
+            <h1 class="mt-4 text-gradient-blue-purple">Premium Plans</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-decoration-none text-primary-light">Dashboard</a></li>
+                    <li class="breadcrumb-item active text-light-50">Premium Plans</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="robot-animation small"></div>
+    </div>
+    
+    <!-- Premium Plan Header -->
+    <div class="text-center mb-5">
+        <h2 class="h4 text-light mb-2">Unlock the Full Potential of AstroBot AI</h2>
+        <p class="text-light-75 mb-0">Choose the plan that fits your community's needs</p>
+    </div>
+    
+    <div class="row g-4">
+        <!-- Standard Plan -->
+        <div class="col-lg-4">
+            <div class="glass-card cosmic-card-glow h-100" style="background: linear-gradient(45deg, rgba(15, 23, 42, 0.6), rgba(30, 41, 59, 0.6));">
+                <!-- Plan header -->
+                <div class="position-relative p-4 text-center border-bottom border-slate-700">
+                    <div class="cosmic-icon-circle bg-slate-800 mx-auto mb-3">
+                        <i class="bi bi-rocket text-light"></i>
+                    </div>
+                    <h3 class="h5 mb-0 text-light">Standard</h3>
+                </div>
+                
+                <!-- Plan pricing -->
+                <div class="p-4 text-center">
+                    <div class="pricing-value mb-3">
+                        <span class="display-6 fw-bold text-light">Free</span>
+                        <span class="text-light-50">/month</span>
+                    </div>
+                    <p class="text-light-75 small mb-0">Perfect for small communities</p>
+                </div>
+                
+                <!-- Plan features -->
+                <div class="p-4">
+                    <ul class="list-unstyled mb-4 cosmic-feature-list">
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span>Access to basic commands</span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span>Minecraft server status monitoring</span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span>Basic moderation tools</span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span>Community polls and feedback</span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3 text-light-50">
+                            <div class="cosmic-x-icon me-3">
+                                <i class="bi bi-x-lg"></i>
+                            </div>
+                            <span><s>Custom bot appearance</s></span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3 text-light-50">
+                            <div class="cosmic-x-icon me-3">
+                                <i class="bi bi-x-lg"></i>
+                            </div>
+                            <span><s>Advanced AI features</s></span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3 text-light-50">
+                            <div class="cosmic-x-icon me-3">
+                                <i class="bi bi-x-lg"></i>
+                            </div>
+                            <span><s>Unlimited AI responses</s></span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3 text-light-50">
+                            <div class="cosmic-x-icon me-3">
+                                <i class="bi bi-x-lg"></i>
+                            </div>
+                            <span><s>Custom prefix</s></span>
+                        </li>
+                    </ul>
+                    
+                    <div class="text-center mt-4">
+                        <a href="#" class="cosmic-button cosmic-button-secondary">
+                            Current Plan
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Premium Plan (highlighted) -->
+        <div class="col-lg-4">
+            <div class="glass-card cosmic-card-glow premium-card-highlight h-100" style="background: linear-gradient(45deg, rgba(30, 64, 175, 0.4), rgba(79, 70, 229, 0.4)); border: 1px solid rgba(147, 197, 253, 0.3);">
+                <!-- Popular badge -->
+                <div class="position-absolute top-0 start-50 translate-middle">
+                    <div class="badge bg-gradient-purple-blue px-3 py-2 rounded-pill">
+                        Most Popular
+                    </div>
+                </div>
+                
+                <!-- Plan header -->
+                <div class="position-relative p-4 text-center border-bottom border-indigo-800">
+                    <div class="cosmic-icon-circle bg-indigo-900 mx-auto mb-3">
+                        <i class="bi bi-stars text-primary-light"></i>
+                    </div>
+                    <h3 class="h5 mb-0 text-light">Premium</h3>
+                </div>
+                
+                <!-- Plan pricing -->
+                <div class="p-4 text-center">
+                    <div class="pricing-value mb-3">
+                        <span class="display-6 fw-bold text-light">$4.99</span>
+                        <span class="text-light-50">/month</span>
+                    </div>
+                    <p class="text-light-75 small mb-0">Ideal for active communities</p>
+                </div>
+                
+                <!-- Plan features -->
+                <div class="p-4">
+                    <ul class="list-unstyled mb-4 cosmic-feature-list">
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span><strong>All Standard features</strong></span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span><strong>Custom bot appearance</strong></span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span>Custom command prefix</span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span>500 AI responses per month</span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span>Advanced moderation tools</span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span>Auto-moderation with AI</span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span>Custom reaction roles</span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3 text-light-50">
+                            <div class="cosmic-x-icon me-3">
+                                <i class="bi bi-x-lg"></i>
+                            </div>
+                            <span><s>Unlimited AI responses</s></span>
+                        </li>
+                    </ul>
+                    
+                    <div class="text-center mt-4">
+                        {% if current_user.is_authenticated %}
+                            {% if current_user.is_premium %}
+                            <div class="mb-2">
+                                <span class="badge bg-primary-soft px-3 py-2">
+                                    <i class="bi bi-gem me-1"></i> Your Current Plan
+                                </span>
+                            </div>
+                            <button type="button" class="cosmic-button cosmic-button-outline cosmic-button-primary" disabled>
+                                Active Subscription
+                            </button>
+                            {% else %}
+                            <button type="button" class="cosmic-button cosmic-button-primary">
+                                <i class="bi bi-gem me-2"></i> Subscribe Now
+                            </button>
+                            {% endif %}
+                        {% else %}
+                        <a href="{{ url_for('login') }}" class="cosmic-button cosmic-button-primary">
+                            <i class="bi bi-box-arrow-in-right me-2"></i> Login to Subscribe
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Enterprise Plan -->
+        <div class="col-lg-4">
+            <div class="glass-card cosmic-card-glow h-100" style="background: linear-gradient(45deg, rgba(76, 29, 149, 0.4), rgba(124, 58, 237, 0.4));">
+                <!-- Plan header -->
+                <div class="position-relative p-4 text-center border-bottom border-purple-700">
+                    <div class="cosmic-icon-circle bg-purple-900 mx-auto mb-3">
+                        <i class="bi bi-infinity text-purple-300"></i>
+                    </div>
+                    <h3 class="h5 mb-0 text-light">Enterprise</h3>
+                </div>
+                
+                <!-- Plan pricing -->
+                <div class="p-4 text-center">
+                    <div class="pricing-value mb-3">
+                        <span class="display-6 fw-bold text-light">$9.99</span>
+                        <span class="text-light-50">/month</span>
+                    </div>
+                    <p class="text-light-75 small mb-0">For power users and large servers</p>
+                </div>
+                
+                <!-- Plan features -->
+                <div class="p-4">
+                    <ul class="list-unstyled mb-4 cosmic-feature-list">
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span><strong>All Premium features</strong></span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span><strong>Unlimited AI responses</strong></span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span>Advanced Twitch integration</span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span>Custom commands with AI</span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span>Priority support</span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span>Advanced analytics</span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span>Multiple server management</span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <div class="cosmic-check-icon me-3">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <span>Custom plugin integration</span>
+                        </li>
+                    </ul>
+                    
+                    <div class="text-center mt-4">
+                        {% if current_user.is_authenticated %}
+                            <button type="button" class="cosmic-button cosmic-button-purple">
+                                <i class="bi bi-lightning-charge me-2"></i> Upgrade to Enterprise
+                            </button>
+                        {% else %}
+                        <a href="{{ url_for('login') }}" class="cosmic-button cosmic-button-purple">
+                            <i class="bi bi-box-arrow-in-right me-2"></i> Login to Subscribe
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- FAQ Section -->
+    <div class="row mt-5 mb-4">
+        <div class="col-12">
+            <div class="glass-card cosmic-card-glow">
+                <div class="cosmic-card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="cosmic-icon-circle bg-info-soft me-3">
+                            <i class="bi bi-question-lg text-info"></i>
+                        </div>
+                        <h5 class="cosmic-card-title mb-0">Frequently Asked Questions</h5>
+                    </div>
+                    
+                    <div class="cosmic-accordion" id="premiumFAQ">
+                        <div class="cosmic-accordion-item mb-3">
+                            <div class="cosmic-accordion-header" id="headingOne">
+                                <button class="cosmic-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    <span class="me-3"><i class="bi bi-palette"></i></span>
+                                    How do I customize my bot's appearance?
+                                </button>
+                            </div>
+                            <div id="collapseOne" class="collapse show cosmic-accordion-collapse" aria-labelledby="headingOne" data-bs-parent="#premiumFAQ">
+                                <div class="cosmic-accordion-body">
+                                    After upgrading to Premium, go to Bot Settings and select the server you want to customize. Click on the "Customize" button to access appearance settings. You can change the bot's name, avatar, status, and even set a custom theme color for all embed messages.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="cosmic-accordion-item mb-3">
+                            <div class="cosmic-accordion-header" id="headingTwo">
+                                <button class="cosmic-accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <span class="me-3"><i class="bi bi-arrow-left-right"></i></span>
+                                    Can I change plans later?
+                                </button>
+                            </div>
+                            <div id="collapseTwo" class="collapse cosmic-accordion-collapse" aria-labelledby="headingTwo" data-bs-parent="#premiumFAQ">
+                                <div class="cosmic-accordion-body">
+                                    Yes, you can upgrade or downgrade your plan at any time. When upgrading, the new features will be available immediately. When downgrading, your premium features will remain until the end of your current billing period.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="cosmic-accordion-item mb-3">
+                            <div class="cosmic-accordion-header" id="headingThree">
+                                <button class="cosmic-accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    <span class="me-3"><i class="bi bi-robot"></i></span>
+                                    What AI models does AstroBot use?
+                                </button>
+                            </div>
+                            <div id="collapseThree" class="collapse cosmic-accordion-collapse" aria-labelledby="headingThree" data-bs-parent="#premiumFAQ">
+                                <div class="cosmic-accordion-body">
+                                    AstroBot AI uses cutting-edge AI models including Claude 3.5 by Anthropic and GPT-4o by OpenAI to provide intelligent responses and generate creative content. Premium users get more AI responses per month, while Enterprise users get unlimited access to these powerful AI capabilities.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="cosmic-accordion-item mb-3">
+                            <div class="cosmic-accordion-header" id="headingFour">
+                                <button class="cosmic-accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    <span class="me-3"><i class="bi bi-credit-card"></i></span>
+                                    What payment methods do you accept?
+                                </button>
+                            </div>
+                            <div id="collapseFour" class="collapse cosmic-accordion-collapse" aria-labelledby="headingFour" data-bs-parent="#premiumFAQ">
+                                <div class="cosmic-accordion-body">
+                                    We accept all major credit cards, PayPal, and multiple cryptocurrency options. All transactions are securely processed and we don't store your payment information.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+/* Premium plans specific styling */
+.cosmic-feature-list li {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+}
+
+.cosmic-check-icon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(16, 185, 129, 0.2);
+    color: rgb(16, 185, 129);
+    border-radius: 50%;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.cosmic-x-icon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(239, 68, 68, 0.1);
+    color: rgba(239, 68, 68, 0.6);
+    border-radius: 50%;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.pricing-value {
+    position: relative;
+}
+
+.premium-card-highlight {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 0 20px rgba(79, 70, 229, 0.2);
+    position: relative;
+    z-index: 2;
+}
+
+/* Cosmic accordion styles */
+.cosmic-accordion-item {
+    background: rgba(15, 23, 42, 0.3);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid rgba(100, 116, 139, 0.2);
+}
+
+.cosmic-accordion-button {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: rgba(15, 23, 42, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+    padding: 1rem 1.5rem;
+    font-weight: 500;
+    font-size: 1rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.cosmic-accordion-button:not(.collapsed)::after {
+    transform: rotate(180deg);
+}
+
+.cosmic-accordion-button::after {
+    content: "\F282";
+    font-family: "bootstrap-icons";
+    position: absolute;
+    right: 1.5rem;
+    transition: transform 0.3s ease;
+    color: rgba(148, 163, 184, 0.7);
+}
+
+.cosmic-accordion-button:hover,
+.cosmic-accordion-button:focus {
+    background: rgba(30, 41, 59, 0.5);
+    text-decoration: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.cosmic-accordion-body {
+    padding: 1rem 1.5rem 1.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(15, 23, 42, 0.2);
+    line-height: 1.6;
+    border-top: 1px solid rgba(100, 116, 139, 0.1);
+}
+
+/* Badge animation */
+.badge.bg-gradient-purple-blue {
+    background: linear-gradient(45deg, #4f46e5, #60a5fa);
+    box-shadow: 0 0 10px rgba(79, 70, 229, 0.5);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(79, 70, 229, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+    }
+}
+
+/* Button variants */
+.cosmic-button-purple {
+    background: linear-gradient(45deg, rgba(126, 34, 206, 0.9), rgba(139, 92, 246, 0.9));
+    color: white;
+    border: 1px solid rgba(167, 139, 250, 0.3);
+}
+
+.cosmic-button-purple:hover {
+    background: linear-gradient(45deg, rgba(139, 92, 246, 0.9), rgba(167, 139, 250, 0.9));
+    box-shadow: 0 0 15px rgba(167, 139, 250, 0.5);
+    color: white;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add cosmic shimmering effect to premium card
+    const premiumCard = document.querySelector('.premium-card-highlight');
+    if (premiumCard) {
+        premiumCard.classList.add('cosmic-shimmer');
+    }
+    
+    // Initialize accordions with Bootstrap
+    var accordionButtons = document.querySelectorAll('.cosmic-accordion-button');
+    accordionButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            // Toggle 'collapsed' class based on the current state
+            this.classList.toggle('collapsed', !this.classList.contains('collapsed'));
+        });
+    });
+});
+</script>
+{% endblock %}

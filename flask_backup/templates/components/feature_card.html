@@ -1,0 +1,25 @@
+{% macro feature_card(title, description, icon_class, icon_color, learn_more_url='#', is_premium=False) %}
+<div class="card feature-card h-100 cosmic-card">
+    <div class="card-body position-relative">
+        {% if is_premium %}
+        <div class="premium-badge">
+            <span class="badge bg-gradient-premium"><i class="fas fa-crown me-1"></i> Premium</span>
+        </div>
+        {% endif %}
+        
+        <div class="feature-icon-wrapper mb-3">
+            <div class="feature-icon" style="background: linear-gradient(135deg, {{ icon_color }}30, {{ icon_color }}10);">
+                <i class="{{ icon_class }}" style="color: {{ icon_color }}"></i>
+            </div>
+        </div>
+        
+        <h5 class="card-title fw-bold mb-3">{{ title }}</h5>
+        <p class="card-text mb-4">{{ description }}</p>
+        
+        <a href="{{ learn_more_url }}" class="btn cosmic-btn-outline stretched-link" style="--btn-color: {{ icon_color }}">
+            Learn More
+            <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+    </div>
+</div>
+{% endmacro %}

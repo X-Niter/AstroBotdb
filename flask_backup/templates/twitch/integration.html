@@ -1,0 +1,544 @@
+{% extends "layouts/clean.html" %}
+
+{% block title %}Twitch Integration{% endblock %}
+
+{% block styles %}
+<style>
+    .twitch-card {
+        background: rgba(145, 70, 255, 0.1);
+        border: 1px solid rgba(145, 70, 255, 0.3);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .twitch-header {
+        border-bottom: 1px solid rgba(145, 70, 255, 0.3);
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .twitch-header h2 {
+        color: #9146FF;
+        margin-bottom: 0.5rem;
+    }
+    
+    .feature-card {
+        background: rgba(30, 41, 59, 0.5);
+        border-radius: 12px;
+        padding: 1.5rem;
+        height: 100%;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(145, 70, 255, 0.2);
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(145, 70, 255, 0.15);
+        border-color: rgba(145, 70, 255, 0.4);
+    }
+    
+    .feature-card h3 {
+        color: #9146FF;
+        margin-bottom: 1rem;
+        font-size: 1.25rem;
+    }
+    
+    .feature-card i {
+        font-size: 2rem;
+        color: #9146FF;
+        margin-bottom: 1rem;
+    }
+    
+    .connection-status {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+    
+    .status-connected {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10B981;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    .status-disconnected {
+        background: rgba(239, 68, 68, 0.1);
+        color: #EF4444;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+    }
+    
+    .dot-connected {
+        background-color: #10B981;
+    }
+    
+    .dot-disconnected {
+        background-color: #EF4444;
+    }
+    
+    .settings-form {
+        margin-top: 1.5rem;
+    }
+    
+    .streaming-graph {
+        height: 200px;
+        margin-top: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .stats-card {
+        background: rgba(30, 41, 59, 0.5);
+        border-radius: 12px;
+        padding: 1.25rem;
+        text-align: center;
+        border: 1px solid rgba(145, 70, 255, 0.2);
+    }
+    
+    .stats-icon {
+        font-size: 1.5rem;
+        color: #9146FF;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stats-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stats-label {
+        color: #94A3B8;
+        font-size: 0.875rem;
+    }
+    
+    .tab-content {
+        background: rgba(30, 41, 59, 0.5);
+        border-radius: 0 0 12px 12px;
+        padding: 1.5rem;
+        border: 1px solid rgba(71, 85, 105, 0.3);
+        border-top: none;
+    }
+    
+    .nav-tabs {
+        border-bottom: none;
+    }
+    
+    .nav-tabs .nav-link {
+        color: #94A3B8;
+        border: 1px solid rgba(71, 85, 105, 0.3);
+        border-bottom: none;
+        border-radius: 12px 12px 0 0;
+        padding: 0.75rem 1.25rem;
+        margin-right: 0.25rem;
+        background: rgba(30, 41, 59, 0.3);
+    }
+    
+    .nav-tabs .nav-link:hover {
+        color: white;
+        background: rgba(30, 41, 59, 0.7);
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: white;
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(71, 85, 105, 0.3);
+        border-bottom: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="twitch-card">
+        <div class="twitch-header d-flex justify-content-between align-items-center">
+            <div>
+                <h2>
+                    <i class="bi bi-twitch me-2"></i>Twitch Integration
+                </h2>
+                <p class="text-muted">Connect your Discord server with Twitch to enable streaming features.</p>
+            </div>
+            
+            <div class="connection-status status-disconnected">
+                <div class="status-dot dot-disconnected"></div>
+                <span>Not Connected</span>
+            </div>
+        </div>
+        
+        {% if not current_user.is_authenticated %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            Please log in to manage your Twitch integration.
+            <a href="{{ url_for('login') }}" class="alert-link">Login</a>
+        </div>
+        {% else %}
+        <!-- Connect Twitch Button -->
+        <div class="text-center mb-4">
+            <a href="#" class="btn btn-lg" style="background-color: #9146FF; color: white;">
+                <i class="bi bi-twitch me-2"></i>Connect Twitch Account
+            </a>
+            <p class="text-muted mt-2">Connect your Twitch account to enable all streaming features.</p>
+        </div>
+        
+        <!-- Feature Tabs -->
+        <ul class="nav nav-tabs" id="twitchTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="stream-tab" data-bs-toggle="tab" data-bs-target="#stream" type="button" role="tab">
+                    Stream Sync
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="points-tab" data-bs-toggle="tab" data-bs-target="#points" type="button" role="tab">
+                    Points System
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="commands-tab" data-bs-toggle="tab" data-bs-target="#commands" type="button" role="tab">
+                    Chat Commands
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="alerts-tab" data-bs-toggle="tab" data-bs-target="#alerts" type="button" role="tab">
+                    Discord Alerts
+                </button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="twitchTabContent">
+            <div class="tab-pane fade show active" id="stream" role="tabpanel" aria-labelledby="stream-tab">
+                <h3 class="mb-3">Stream Sync</h3>
+                <p>Automatically sync your Discord server with your Twitch stream. When you go live, AstroBot can:</p>
+                
+                <div class="row g-4 mt-3">
+                    <div class="col-md-6">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="liveRole">
+                            <label class="form-check-label" for="liveRole">Assign "Live Streamer" role when you go live</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="liveAnnouncement">
+                            <label class="form-check-label" for="liveAnnouncement">Post stream announcements in selected channel</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="liveChannel">
+                            <label class="form-check-label" for="liveChannel">Create temporary "Watching Stream" voice channel</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="discordStatus">
+                            <label class="form-check-label" for="discordStatus">Update bot status with your stream info</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <label for="announceChannel" class="form-label">Stream Announcement Channel</label>
+                    <select class="form-select" id="announceChannel">
+                        <option selected>Select a channel</option>
+                        <option value="1">🔊 stream-announcements</option>
+                        <option value="2">💬 general</option>
+                        <option value="3">🤖 bot-commands</option>
+                    </select>
+                </div>
+                
+                <div class="mt-4">
+                    <label for="announceTemplate" class="form-label">Announcement Template</label>
+                    <textarea class="form-control" id="announceTemplate" rows="3">Hey @everyone, {streamer} is now live playing {game}! 
+Title: {title}
+Come watch at {url}</textarea>
+                    <small class="text-muted">Available variables: {streamer}, {game}, {title}, {url}, {viewers}, {thumbnail}</small>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="points" role="tabpanel" aria-labelledby="points-tab">
+                <h3 class="mb-3">Points System</h3>
+                <p>Let your viewers earn points for watching your streams and engaging with your Discord server.</p>
+                
+                <div class="row g-4 mt-3">
+                    <div class="col-md-6">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="enablePoints">
+                            <label class="form-check-label" for="enablePoints">Enable points system</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="syncPoints">
+                            <label class="form-check-label" for="syncPoints">Sync points with Twitch channel points</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row g-4 mt-3">
+                    <div class="col-md-6">
+                        <label for="pointsName" class="form-label">Points Name</label>
+                        <input type="text" class="form-control" id="pointsName" value="AstroCoins">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="pointsEmoji" class="form-label">Points Emoji</label>
+                        <input type="text" class="form-control" id="pointsEmoji" value="⭐">
+                    </div>
+                </div>
+                
+                <h4 class="mt-4">Earning Rates</h4>
+                <div class="row g-4 mt-2">
+                    <div class="col-md-3">
+                        <label for="baseRate" class="form-label">Watching (per 5 min)</label>
+                        <input type="number" class="form-control" id="baseRate" value="10">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="subBonus" class="form-label">Subscriber Bonus</label>
+                        <input type="number" class="form-control" id="subBonus" value="5">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="chatBonus" class="form-label">Chat Message Bonus</label>
+                        <input type="number" class="form-control" id="chatBonus" value="3">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="raidBonus" class="form-label">Raid Bonus</label>
+                        <input type="number" class="form-control" id="raidBonus" value="100">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="commands" role="tabpanel" aria-labelledby="commands-tab">
+                <h3 class="mb-3">Twitch Chat Commands</h3>
+                <p>Configure commands that AstroBot will respond to in your Twitch chat.</p>
+                
+                <div class="table-responsive mt-4">
+                    <table class="table table-borderless">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Command</th>
+                                <th>Response</th>
+                                <th>Enabled</th>
+                                <th>Cooldown</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>!discord</td>
+                                <td>Join our Discord server: https://discord.gg/example</td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" checked>
+                                    </div>
+                                </td>
+                                <td>10s</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>!points</td>
+                                <td>You have {points} AstroCoins!</td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" checked>
+                                    </div>
+                                </td>
+                                <td>5s</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>!rank</td>
+                                <td>Your rank is {rank}. You need {next_points} points to reach the next rank!</td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" checked>
+                                    </div>
+                                </td>
+                                <td>10s</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button class="btn btn-primary mt-3">
+                    <i class="bi bi-plus-circle me-2"></i>Add New Command
+                </button>
+            </div>
+            
+            <div class="tab-pane fade" id="alerts" role="tabpanel" aria-labelledby="alerts-tab">
+                <h3 class="mb-3">Discord Alerts</h3>
+                <p>Configure alerts that AstroBot will send to your Discord server based on Twitch events.</p>
+                
+                <div class="row g-4 mt-4">
+                    <div class="col-lg-6">
+                        <div class="card bg-dark">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Follow Alert</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" checked>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <label class="form-label">Alert Message</label>
+                                <textarea class="form-control" rows="2">🎉 {username} just followed the channel! Welcome to the community!</textarea>
+                                
+                                <div class="mt-3">
+                                    <label class="form-label">Alert Channel</label>
+                                    <select class="form-select">
+                                        <option selected>🔔 stream-alerts</option>
+                                        <option>💬 general</option>
+                                        <option>🤖 bot-commands</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-6">
+                        <div class="card bg-dark">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Subscription Alert</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" checked>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <label class="form-label">Alert Message</label>
+                                <textarea class="form-control" rows="2">💜 {username} just subscribed for {months} month(s)! Thank you for the support!</textarea>
+                                
+                                <div class="mt-3">
+                                    <label class="form-label">Alert Channel</label>
+                                    <select class="form-select">
+                                        <option selected>🔔 stream-alerts</option>
+                                        <option>💬 general</option>
+                                        <option>🤖 bot-commands</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-6">
+                        <div class="card bg-dark">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Bits/Donation Alert</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" checked>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <label class="form-label">Alert Message</label>
+                                <textarea class="form-control" rows="2">🎁 {username} cheered {amount} bits! "{message}"</textarea>
+                                
+                                <div class="mt-3">
+                                    <label class="form-label">Alert Channel</label>
+                                    <select class="form-select">
+                                        <option selected>🔔 stream-alerts</option>
+                                        <option>💬 general</option>
+                                        <option>🤖 bot-commands</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <label class="form-label">Minimum Amount</label>
+                                    <input type="number" class="form-control" value="100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-6">
+                        <div class="card bg-dark">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Raid Alert</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" checked>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <label class="form-label">Alert Message</label>
+                                <textarea class="form-control" rows="2">⚡ RAID ALERT! {username} just raided with {viewers} viewers! Welcome raiders!</textarea>
+                                
+                                <div class="mt-3">
+                                    <label class="form-label">Alert Channel</label>
+                                    <select class="form-select">
+                                        <option selected>🔔 stream-alerts</option>
+                                        <option>💬 general</option>
+                                        <option>🤖 bot-commands</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-end mt-4">
+            <button type="button" class="btn btn-secondary me-2">Cancel</button>
+            <button type="button" class="btn btn-primary">Save Changes</button>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Premium Feature Banner -->
+    {% if not current_user.is_premium %}
+    <div class="alert alert-info" style="border-left: 4px solid #9146FF;">
+        <div class="d-flex align-items-center">
+            <div class="me-3">
+                <i class="bi bi-stars" style="font-size: 2rem; color: #9146FF;"></i>
+            </div>
+            <div>
+                <h4 class="alert-heading mb-1">Unlock Advanced Twitch Features</h4>
+                <p class="mb-1">Custom alerts, viewer rewards, and more Twitch integration features are available with AstroBot Premium.</p>
+                <a href="{{ url_for('premium_plans') }}" class="alert-link">Upgrade to Premium</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Bootstrap tabs
+        // This is using vanilla JS since we're not using full Bootstrap JS
+        const tabLinks = document.querySelectorAll('.nav-link');
+        const tabContents = document.querySelectorAll('.tab-pane');
+        
+        tabLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all tabs
+                tabLinks.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => {
+                    c.classList.remove('show', 'active');
+                });
+                
+                // Add active class to current tab
+                this.classList.add('active');
+                
+                // Get the tab content to show
+                const tabId = this.getAttribute('data-bs-target').substring(1);
+                document.getElementById(tabId).classList.add('show', 'active');
+            });
+        });
+    });
+</script>
+{% endblock %}

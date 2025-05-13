@@ -1,0 +1,85 @@
+{% macro premium_feature_lock(title, description, required_plan="Premium", upgrade_url="#") %}
+<div class="premium-lock-overlay">
+  <div class="premium-lock-content">
+    <div class="premium-lock-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+    </div>
+    
+    <h4 class="premium-lock-title">{{ title }}</h4>
+    <p class="premium-lock-description">{{ description }}</p>
+    
+    <div class="premium-lock-required">
+      <span class="premium-badge">{{ required_plan }}</span> required
+    </div>
+    
+    <a href="{{ upgrade_url }}" class="premium-lock-cta">
+      Upgrade to Unlock
+    </a>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro premium_feature_preview(feature_image_url, title, description, required_plan="Premium", upgrade_url="#", blur_level="medium") %}
+<div class="premium-feature-preview">
+  <div class="premium-preview-image {% if blur_level == 'high' %}blur-high{% elif blur_level == 'medium' %}blur-medium{% elif blur_level == 'low' %}blur-low{% endif %}">
+    <img src="{{ feature_image_url }}" alt="{{ title }} Preview" />
+  </div>
+  
+  <div class="premium-preview-overlay">
+    <div class="premium-preview-content">
+      <div class="premium-lock">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+      
+      <h4 class="premium-preview-title">{{ title }}</h4>
+      <p class="premium-preview-description">{{ description }}</p>
+      
+      <div class="premium-preview-footer">
+        <span class="premium-badge">{{ required_plan }}</span>
+        <a href="{{ upgrade_url }}" class="premium-preview-cta">
+          Upgrade to Unlock
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro premium_feature_teaser(title, description, features=[], required_plan="Premium", upgrade_url="#") %}
+<div class="premium-feature-teaser">
+  <div class="premium-teaser-header">
+    <div class="premium-lock">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+    </div>
+    
+    <h4 class="premium-teaser-title">{{ title }}</h4>
+    <span class="premium-badge">{{ required_plan }}</span>
+  </div>
+  
+  <p class="premium-teaser-description">{{ description }}</p>
+  
+  {% if features %}
+  <ul class="premium-teaser-features">
+    {% for feature in features %}
+    <li class="premium-teaser-feature">
+      <span class="premium-feature-icon">✦</span>
+      {{ feature }}
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  
+  <a href="{{ upgrade_url }}" class="premium-teaser-cta">
+    Upgrade to Unlock
+  </a>
+</div>
+{% endmacro %}

@@ -1,0 +1,303 @@
+/**
+ * AstroBot AI - Ultra-Aggressive Left Side Fix
+ * 
+ * This is a last-resort CSS solution for persistent clipping issues
+ * with absolutely maximum priority enforcement for all selectors.
+ */
+
+/* Target every possible selector with maximum specificity */
+html body .cosmic-sidebar,
+html body .sidebar,
+html body .side-nav,
+html body .md-sidebar,
+html body [class*="sidebar"],
+html body [id*="sidebar"],
+html body [class*="side-nav"],
+html body [id*="side-nav"],
+html body .navigation-sidebar,
+html body .doc-sidebar,
+html body .astro-sidebar,
+html body .nav-column,
+html body .side-column,
+html body .left-nav,
+html body .left-column,
+html body [class*="-sidebar"],
+html body [id*="-sidebar"],
+html body [class*="side-"],
+body > [class*="sidebar"],
+#root > [class*="sidebar"],
+#app > [class*="sidebar"],
+.wrapper > [class*="sidebar"],
+.container > [class*="sidebar"] {
+  /* !important flags on every property */
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: fixed !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: auto !important;
+  margin: 0 !important;
+  margin-top: 0 !important;
+  margin-right: 0 !important;
+  margin-bottom: 0 !important;
+  margin-left: 0 !important;
+  padding: 0 !important;
+  width: 16rem !important;
+  max-width: 16rem !important;
+  min-width: 16rem !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  min-height: 100vh !important;
+  transform: none !important;
+  transform-origin: left top !important;
+  transition: none !important;
+  animation: none !important;
+  z-index: 9999 !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+  border-right: 1px solid rgba(78, 119, 255, 0.15) !important;
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2) !important;
+  background: rgba(15, 23, 42, 0.98) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  text-align: left !important;
+  clip: auto !important;
+  clip-path: none !important;
+  -webkit-clip-path: none !important;
+}
+
+/* Mobile behavior override */
+@media (max-width: 768px) {
+  html body .cosmic-sidebar,
+  html body .sidebar,
+  html body .side-nav,
+  html body .md-sidebar,
+  html body [class*="sidebar"],
+  html body [id*="sidebar"],
+  html body [class*="side-nav"],
+  html body [id*="side-nav"] {
+    transform: translateX(-100%) !important;
+  }
+  
+  html body .cosmic-sidebar.mobile-active,
+  html body .sidebar.mobile-active,
+  html body .side-nav.mobile-active,
+  html body .md-sidebar.mobile-active,
+  html body [class*="sidebar"].mobile-active,
+  html body [id*="sidebar"].mobile-active,
+  html body [class*="side-nav"].mobile-active,
+  html body [id*="side-nav"].mobile-active {
+    transform: translateX(0) !important;
+  }
+}
+
+/* Fix for collapsed sidebar */
+html body .cosmic-sidebar.collapsed,
+html body .sidebar.collapsed,
+html body .side-nav.collapsed,
+html body [class*="sidebar"].collapsed,
+html body [id*="sidebar"].collapsed,
+html body [class*="side-nav"].collapsed,
+html body [id*="side-nav"].collapsed {
+  width: 5rem !important;
+  max-width: 5rem !important;
+  min-width: 5rem !important;
+}
+
+/* Fix main content margins */
+html body .main-content,
+html body .content-wrapper,
+html body .content-area,
+html body .cosmic-content,
+html body [class*="content"],
+html body [id*="content"],
+html body .page-content,
+html body .documentation-content,
+html body #page-wrapper,
+html body #content-wrapper,
+html body .page-container {
+  margin-left: 16rem !important;
+  width: calc(100% - 16rem) !important;
+  max-width: calc(100% - 16rem) !important;
+  position: relative !important;
+  transition: margin-left 0.3s ease !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+}
+
+/* Fix main content margins when sidebar is collapsed */
+html body.sidebar-collapsed .main-content,
+html body.sidebar-collapsed .content-wrapper,
+html body.sidebar-collapsed .content-area,
+html body.sidebar-collapsed .cosmic-content,
+html body.sidebar-collapsed [class*="content"],
+html body.sidebar-collapsed [id*="content"],
+html body.sidebar-collapsed .page-content,
+html body.sidebar-collapsed .documentation-content,
+html body.sidebar-collapsed #page-wrapper,
+html body.sidebar-collapsed #content-wrapper,
+html body.sidebar-collapsed .page-container,
+html body .main-content.expanded,
+html body .content-wrapper.expanded,
+html body .content-area.expanded,
+html body .cosmic-content.expanded,
+html body [class*="content"].expanded,
+html body [id*="content"].expanded {
+  margin-left: 5rem !important;
+  width: calc(100% - 5rem) !important;
+  max-width: calc(100% - 5rem) !important;
+}
+
+/* Fix main content on mobile */
+@media (max-width: 768px) {
+  html body .main-content,
+  html body .content-wrapper,
+  html body .content-area,
+  html body .cosmic-content,
+  html body [class*="content"],
+  html body [id*="content"],
+  html body .page-content,
+  html body .documentation-content,
+  html body #page-wrapper,
+  html body #content-wrapper,
+  html body .page-container {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Apply to all inner elements to ensure no clipping */
+html body .cosmic-sidebar *,
+html body .sidebar *,
+html body .side-nav *,
+html body .md-sidebar *,
+html body [class*="sidebar"] *,
+html body [id*="sidebar"] *,
+html body [class*="side-nav"] *,
+html body [id*="side-nav"] * {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Force scrolling container in sidebar */
+html body .cosmic-sidebar-content,
+html body .sidebar-content,
+html body .md-sidebar__scrollwrap,
+html body .side-nav-content,
+html body .sidebar-inner,
+html body [class*="sidebar"] > div,
+html body [class*="sidebar"] > ul,
+html body [class*="sidebar"] > nav,
+html body [class*="side-nav"] > div,
+html body [class*="side-nav"] > ul,
+html body [class*="side-nav"] > nav {
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(78, 119, 255, 0.5) rgba(15, 23, 42, 0.2) !important;
+}
+
+/* Fix for links inside sidebar */
+html body .cosmic-sidebar a,
+html body .sidebar a,
+html body .side-nav a,
+html body .md-sidebar a,
+html body [class*="sidebar"] a,
+html body [id*="sidebar"] a,
+html body [class*="side-nav"] a,
+html body [id*="side-nav"] a {
+  display: flex !important;
+  align-items: center !important;
+  max-width: 100% !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+}
+
+/* Fix for icons in sidebar links */
+html body .cosmic-sidebar a i,
+html body .sidebar a i,
+html body .side-nav a i,
+html body .md-sidebar a i,
+html body [class*="sidebar"] a i,
+html body [id*="sidebar"] a i,
+html body [class*="side-nav"] a i,
+html body [id*="side-nav"] a i,
+html body .cosmic-sidebar a svg,
+html body .sidebar a svg,
+html body .side-nav a svg,
+html body .md-sidebar a svg,
+html body [class*="sidebar"] a svg,
+html body [id*="sidebar"] a svg,
+html body [class*="side-nav"] a svg,
+html body [id*="side-nav"] a svg {
+  flex-shrink: 0 !important;
+  min-width: 1.5rem !important;
+  text-align: center !important;
+  margin-right: 0.75rem !important;
+}
+
+/* Reset any margin/padding on non-link text */
+html body .cosmic-sidebar h1,
+html body .cosmic-sidebar h2,
+html body .cosmic-sidebar h3,
+html body .cosmic-sidebar h4,
+html body .cosmic-sidebar h5,
+html body .cosmic-sidebar h6,
+html body .cosmic-sidebar p,
+html body .cosmic-sidebar span,
+html body .sidebar h1,
+html body .sidebar h2,
+html body .sidebar h3,
+html body .sidebar h4,
+html body .sidebar h5,
+html body .sidebar h6,
+html body .sidebar p,
+html body .sidebar span,
+html body .side-nav h1,
+html body .side-nav h2,
+html body .side-nav h3,
+html body .side-nav h4,
+html body .side-nav h5,
+html body .side-nav h6,
+html body .side-nav p,
+html body .side-nav span,
+html body .md-sidebar h1,
+html body .md-sidebar h2,
+html body .md-sidebar h3,
+html body .md-sidebar h4,
+html body .md-sidebar h5,
+html body .md-sidebar h6,
+html body .md-sidebar p,
+html body .md-sidebar span {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Fix for lists in sidebar */
+html body .cosmic-sidebar ul,
+html body .sidebar ul,
+html body .side-nav ul,
+html body .md-sidebar ul,
+html body [class*="sidebar"] ul,
+html body [id*="sidebar"] ul,
+html body [class*="side-nav"] ul,
+html body [id*="side-nav"] ul {
+  margin: 0 !important;
+  padding: 0 !important;
+  padding-left: 0.5rem !important;
+  list-style: none !important;
+  max-width: 100% !important;
+}

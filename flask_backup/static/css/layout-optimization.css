@@ -1,0 +1,192 @@
+/**
+ * AstroBot AI - Layout Optimization Styles
+ * This file contains comprehensive fixes for layout issues 
+ * focusing on preventing content clipping and overflow
+ */
+
+/* ===== Global Container Structure ===== */
+/* Fix root structure */
+html, body {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+    height: auto !important;
+    min-height: 100% !important;
+}
+
+/* Ensure main content properly aligns */
+main {
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+    position: relative !important;
+    transform: translateZ(0) !important; /* Hardware acceleration */
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+}
+
+/* Container rules to prevent overflow */
+.container,
+.container-fluid,
+.container-sm,
+.container-md,
+.container-lg,
+.container-xl,
+.container-xxl {
+    width: auto !important;
+    max-width: calc(100% - 30px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: max(15px, 5%) !important;
+    padding-right: max(15px, 5%) !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    overflow-x: hidden !important;
+}
+
+/* ===== Content Layout Fixes ===== */
+/* Card constraints to prevent overflow */
+.card {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+.card-body {
+    padding: 1rem !important; /* Consistent padding */
+    overflow-wrap: break-word !important;
+}
+
+/* Row and column positioning fixes */
+.row {
+    margin-left: -10px !important;
+    margin-right: -10px !important;
+    width: calc(100% + 20px) !important;
+    max-width: calc(100% + 20px) !important;
+    box-sizing: border-box !important;
+}
+
+.row > [class^="col-"] {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    box-sizing: border-box !important;
+}
+
+/* Position-based element fixes */
+.position-absolute,
+.position-fixed {
+    max-width: 100% !important;
+    overflow: hidden !important;
+}
+
+/* ===== Hero Sections ===== */
+/* Hero container constraints */
+.hero-section, 
+.jumbotron,
+.bg-gradient-cosmic,
+section.py-10 {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+}
+
+/* ===== Cosmic Background Effects ===== */
+/* Ensure cosmic effects stay contained */
+.cosmic-dust,
+.shooting-star,
+.stars-bg,
+#starsContainer {
+    pointer-events: none !important;
+    z-index: 0 !important;
+    overflow: hidden !important;
+    max-width: 100vw !important;
+    position: absolute !important;
+}
+
+.absolute {
+    max-width: 100% !important;
+    overflow: hidden !important;
+}
+
+/* ===== Responsive Adjustments ===== */
+@media (max-width: 768px) {
+    .container,
+    .container-fluid,
+    .container-sm,
+    .container-md,
+    .container-lg,
+    .container-xl,
+    .container-xxl {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+    
+    .hero-section,
+    .jumbotron,
+    .bg-gradient-cosmic,
+    section.py-10 {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+    
+    .card {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    
+    .row {
+        margin-left: -5px !important;
+        margin-right: -5px !important;
+        width: calc(100% + 10px) !important;
+        max-width: calc(100% + 10px) !important;
+    }
+    
+    .row > [class^="col-"] {
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+    }
+}
+
+/* ===== SVG Optimizations ===== */
+svg {
+    max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+/* ===== Glass Card Fixes ===== */
+.glass-card,
+.glass-surface {
+    max-width: 100% !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+}
+
+/* ===== Timeline Component Fixes ===== */
+.timeline,
+.timeline-item {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+/* ===== Form Element Constraints ===== */
+input,
+select,
+textarea,
+.form-control {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* ===== Image Constraints ===== */
+img {
+    max-width: 100% !important;
+    height: auto !important;
+}

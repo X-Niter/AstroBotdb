@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Glowing effect -->
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2.5" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+        
+        <!-- Radial gradient for the background -->
+        <radialGradient id="bg-gradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+            <stop offset="0%" stop-color="#111827" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#111827" stop-opacity="1"/>
+        </radialGradient>
+        
+        <!-- Gradient for the orbits -->
+        <linearGradient id="orbit-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#4f46e5" stop-opacity="0.3"/>
+            <stop offset="50%" stop-color="#6366f1" stop-opacity="0.2"/>
+            <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.3"/>
+        </linearGradient>
+    </defs>
+
+    <!-- Background -->
+    <rect x="0" y="0" width="200" height="200" fill="#0f172a"/>
+    <circle cx="100" cy="100" r="90" fill="url(#bg-gradient)"/>
+    
+    <!-- Star field background -->
+    <g opacity="0.6">
+        <circle cx="30" cy="40" r="1" fill="#ffffff" opacity="0.7"/>
+        <circle cx="50" cy="25" r="0.8" fill="#ffffff" opacity="0.5"/>
+        <circle cx="70" cy="60" r="1.2" fill="#ffffff" opacity="0.8"/>
+        <circle cx="90" cy="20" r="1" fill="#ffffff" opacity="0.6"/>
+        <circle cx="120" cy="35" r="0.8" fill="#ffffff" opacity="0.5"/>
+        <circle cx="140" cy="70" r="1.2" fill="#ffffff" opacity="0.7"/>
+        <circle cx="160" cy="40" r="1" fill="#ffffff" opacity="0.8"/>
+        <circle cx="25" cy="90" r="0.8" fill="#ffffff" opacity="0.6"/>
+        <circle cx="45" cy="120" r="1" fill="#ffffff" opacity="0.7"/>
+        <circle cx="75" cy="140" r="0.8" fill="#ffffff" opacity="0.5"/>
+        <circle cx="110" cy="170" r="1.2" fill="#ffffff" opacity="0.8"/>
+        <circle cx="155" cy="150" r="1" fill="#ffffff" opacity="0.6"/>
+        <circle cx="170" cy="110" r="0.8" fill="#ffffff" opacity="0.7"/>
+        <circle cx="180" cy="80" r="1" fill="#ffffff" opacity="0.5"/>
+    </g>
+    
+    <!-- Orbit paths -->
+    <circle cx="100" cy="100" r="70" fill="none" stroke="url(#orbit-gradient)" stroke-width="1" stroke-dasharray="4 4"/>
+    <circle cx="100" cy="100" r="55" fill="none" stroke="url(#orbit-gradient)" stroke-width="1" stroke-dasharray="4 4"/>
+    
+    <!-- Orbital bodies -->
+    <circle cx="100" cy="30" r="5" fill="#60a5fa" filter="url(#glow)">
+        <animate attributeName="cx" from="100" to="100" dur="15s" values="100;130;170;170;130;100;70;30;30;70;100" repeatCount="indefinite"/>
+        <animate attributeName="cy" from="30" to="30" dur="15s" values="30;30;70;130;170;170;130;70;30;30;30" repeatCount="indefinite"/>
+    </circle>
+    
+    <circle cx="170" cy="100" r="4" fill="#8b5cf6" filter="url(#glow)">
+        <animate attributeName="cx" from="170" to="170" dur="12s" values="170;170;130;100;70;30;30;70;100;130;170" repeatCount="indefinite"/>
+        <animate attributeName="cy" from="100" to="100" dur="12s" values="100;170;170;130;70;30;30;70;130;170;100" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Robot head -->
+    <g filter="url(#glow)">
+        <!-- Head -->
+        <rect x="65" y="65" width="70" height="70" rx="35" fill="#2e3c5a"/>
+        
+        <!-- Eyes -->
+        <circle cx="85" cy="95" r="10" fill="#60a5fa">
+            <animate attributeName="r" values="10;8;10" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="115" cy="95" r="10" fill="#60a5fa">
+            <animate attributeName="r" values="10;8;10" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        
+        <!-- Antenna -->
+        <circle cx="100" cy="50" r="5" fill="#60a5fa">
+            <animate attributeName="opacity" values="1;0.7;1" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <line x1="100" y1="55" x2="100" y2="65" stroke="#60a5fa" stroke-width="3"/>
+        
+        <!-- Mouth -->
+        <rect x="80" y="120" width="40" height="5" rx="2.5" fill="#c7d2fe"/>
+    </g>
+    
+    <!-- Pulse circles -->
+    <circle cx="100" cy="100" r="45" fill="none" stroke="#60a5fa" stroke-width="1" opacity="0.3">
+        <animate attributeName="r" from="45" to="55" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" from="0.3" to="0" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="100" cy="100" r="40" fill="none" stroke="#60a5fa" stroke-width="1" opacity="0.3">
+        <animate attributeName="r" from="40" to="50" dur="3s" begin="1s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" from="0.3" to="0" dur="3s" begin="1s" repeatCount="indefinite"/>
+    </circle>
+</svg>

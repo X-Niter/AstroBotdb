@@ -1,0 +1,320 @@
+{% extends "layouts/clean.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Status Cards -->
+<div class="row">
+    <!-- Discord Status -->
+    <div class="col-md-4 mb-4">
+        <div class="card status-discord">
+            <div class="card-body">
+                <div class="status-card-header">
+                    <div class="status-icon">
+                        <i class="bi bi-discord"></i>
+                    </div>
+                    <div class="status-info">
+                        <h3 class="status-title">Discord Bot</h3>
+                        <div class="status-text">
+                            <span class="status-indicator status-online"></span>
+                            <span>Online</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="status-metrics">
+                    <div class="metric">
+                        <div class="metric-header">
+                            <span class="metric-label">Uptime</span>
+                            <span class="metric-value">99.8%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar progress-discord" style="width: 99.8%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric">
+                        <div class="metric-header">
+                            <span class="metric-label">Servers</span>
+                            <span class="metric-value">128 / 150</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar progress-discord" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="metric-label">Last restart:</span>
+                            <span class="badge badge-dark">12 hours ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Minecraft Status -->
+    <div class="col-md-4 mb-4">
+        <div class="card status-minecraft">
+            <div class="card-body">
+                <div class="status-card-header">
+                    <div class="status-icon">
+                        <i class="bi bi-box-fill"></i>
+                    </div>
+                    <div class="status-info">
+                        <h3 class="status-title">Minecraft Servers</h3>
+                        <div class="status-text">
+                            <span class="status-indicator status-online"></span>
+                            <span>8 Online</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="status-metrics">
+                    <div class="metric">
+                        <div class="metric-header">
+                            <span class="metric-label">Player Count</span>
+                            <span class="metric-value">187 / 250</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar progress-minecraft" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric">
+                        <div class="metric-header">
+                            <span class="metric-label">Monitored Plugins</span>
+                            <span class="metric-value">24 / 24</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar progress-minecraft" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="metric-label">Auto-recovery events:</span>
+                            <span class="badge badge-dark">3 this week</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Twitch Status -->
+    <div class="col-md-4 mb-4">
+        <div class="card status-twitch">
+            <div class="card-body">
+                <div class="status-card-header">
+                    <div class="status-icon">
+                        <i class="bi bi-twitch"></i>
+                    </div>
+                    <div class="status-info">
+                        <h3 class="status-title">Twitch Integration</h3>
+                        <div class="status-text">
+                            <span class="status-indicator status-online"></span>
+                            <span style="color: #9146ff;">Connected</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="status-metrics">
+                    <div class="metric">
+                        <div class="metric-header">
+                            <span class="metric-label">Connected Streamers</span>
+                            <span class="metric-value">42</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar progress-twitch" style="width: 84%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric">
+                        <div class="metric-header">
+                            <span class="metric-label">Points Awarded</span>
+                            <span class="metric-value">145,328 this month</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar progress-twitch" style="width: 78%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="metric-label">Active streams:</span>
+                            <span class="badge bg-twitch">12 now</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Activity Section -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h2 class="card-title">Recent Activity</h2>
+        <div class="btn-group">
+            <button class="btn btn-secondary btn-sm">Today</button>
+            <button class="btn btn-primary btn-sm">This Week</button>
+            <button class="btn btn-secondary btn-sm">This Month</button>
+        </div>
+    </div>
+    
+    <div class="card-body">
+        <!-- Timeline -->
+        <div class="timeline">
+            <!-- Activity 1 -->
+            <div class="timeline-item timeline-discord">
+                <div class="timeline-icon">
+                    <i class="bi bi-discord"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-header">
+                        <div class="timeline-title">
+                            New Server Connected
+                            <span class="badge badge-discord">Discord</span>
+                        </div>
+                        <span class="timeline-time">2 hours ago</span>
+                    </div>
+                    <p class="timeline-description">AstroFrame Modding Community joined with 750+ members</p>
+                </div>
+            </div>
+            
+            <!-- Activity 2 -->
+            <div class="timeline-item timeline-minecraft">
+                <div class="timeline-icon">
+                    <i class="bi bi-box-fill"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-header">
+                        <div class="timeline-title">
+                            Plugin Auto-Updated
+                            <span class="badge badge-minecraft">Minecraft</span>
+                        </div>
+                        <span class="timeline-time">5 hours ago</span>
+                    </div>
+                    <p class="timeline-description">WorldGuard updated to version 7.0.7 on 3 servers with AI-powered config migration</p>
+                </div>
+            </div>
+            
+            <!-- Activity 3 -->
+            <div class="timeline-item timeline-twitch">
+                <div class="timeline-icon">
+                    <i class="bi bi-twitch"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-header">
+                        <div class="timeline-title">
+                            Streamer Milestone
+                            <span class="badge badge-twitch">Twitch</span>
+                        </div>
+                        <span class="timeline-time">Yesterday</span>
+                    </div>
+                    <p class="timeline-description">CosmoGamer reached 10,000 total viewers - StreamSync activated special reward</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="#" class="btn btn-outline">
+                View All Activity <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row">
+    <!-- AI Responses -->
+    <div class="col-sm-6 col-lg-3 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h4 class="stat-value">17,532</h4>
+                        <p class="stat-label">AI Responses</p>
+                        <div class="stat-trend trend-up">
+                            <i class="bi bi-arrow-up"></i> 14% from last month
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Commands -->
+    <div class="col-sm-6 col-lg-3 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-terminal-fill"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h4 class="stat-value">92,417</h4>
+                        <p class="stat-label">Commands Processed</p>
+                        <div class="stat-trend trend-up">
+                            <i class="bi bi-arrow-up"></i> 8% from last month
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Users -->
+    <div class="col-sm-6 col-lg-3 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: rgba(145, 70, 255, 0.15); color: #9146ff;">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h4 class="stat-value">135,892</h4>
+                        <p class="stat-label">Community Members</p>
+                        <div class="stat-trend trend-up">
+                            <i class="bi bi-arrow-up"></i> 22% from last month
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Uptime -->
+    <div class="col-sm-6 col-lg-3 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: rgba(14, 165, 233, 0.15); color: #0ea5e9;">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h4 class="stat-value">99.98%</h4>
+                        <p class="stat-label">System Uptime</p>
+                        <div class="stat-trend">
+                            <i class="bi bi-arrow-repeat"></i> Self-healing: 12 events
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Dashboard initialized');
+    });
+</script>
+{% endblock %}

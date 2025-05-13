@@ -1,0 +1,627 @@
+{% extends "layouts/clean.html" %}
+
+{% block title %}Minecraft Servers{% endblock %}
+
+{% block styles %}
+<style>
+    .server-card {
+        background: rgba(30, 41, 59, 0.5);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        border: 1px solid rgba(55, 65, 81, 0.3);
+    }
+    
+    .server-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        border-color: rgba(79, 70, 229, 0.4);
+    }
+    
+    .server-header {
+        padding: 1.25rem;
+        background: linear-gradient(to right, rgba(55, 65, 81, 0.7), rgba(17, 24, 39, 0.7));
+        border-bottom: 1px solid rgba(55, 65, 81, 0.5);
+    }
+    
+    .server-body {
+        padding: 1.25rem;
+    }
+    
+    .server-status {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    .status-online {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10B981;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    .status-offline {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #EF4444;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+    }
+    
+    .dot-online {
+        background-color: #10B981;
+    }
+    
+    .dot-offline {
+        background-color: #EF4444;
+    }
+    
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    .badge-blue {
+        background-color: rgba(59, 130, 246, 0.1);
+        color: #3B82F6;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    
+    .badge-purple {
+        background-color: rgba(139, 92, 246, 0.1);
+        color: #8B5CF6;
+        border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+    
+    .badge-amber {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: #F59E0B;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    
+    .server-actions {
+        border-top: 1px solid rgba(55, 65, 81, 0.3);
+        padding: 1rem 1.25rem;
+    }
+    
+    .server-actions button {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .empty-state {
+        padding: 4rem 2rem;
+        text-align: center;
+        background: rgba(30, 41, 59, 0.3);
+        border-radius: 12px;
+        border: 1px dashed rgba(75, 85, 99, 0.5);
+    }
+    
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+        color: #6B7280;
+    }
+    
+    .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+    
+    .whitelist-table {
+        width: 100%;
+    }
+    
+    .whitelist-table th,
+    .whitelist-table td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+    }
+    
+    .whitelist-table th {
+        background-color: rgba(31, 41, 55, 0.6);
+        font-weight: 500;
+    }
+    
+    .whitelist-table tr {
+        border-bottom: 1px solid rgba(75, 85, 99, 0.2);
+    }
+    
+    .whitelist-table tr:last-child {
+        border-bottom: none;
+    }
+    
+    .tab-content {
+        padding: 1.5rem;
+        background: rgba(31, 41, 55, 0.3);
+        border-radius: 0 0 0.5rem 0.5rem;
+        border: 1px solid rgba(75, 85, 99, 0.2);
+        border-top: none;
+    }
+    
+    .nav-tabs {
+        border-bottom: none;
+    }
+    
+    .nav-tabs .nav-link {
+        color: #9CA3AF;
+        background: rgba(31, 41, 55, 0.2);
+        border-radius: 0.5rem 0.5rem 0 0;
+        border: 1px solid rgba(75, 85, 99, 0.2);
+        border-bottom: none;
+        margin-right: 0.25rem;
+        font-weight: 500;
+    }
+    
+    .nav-tabs .nav-link:hover {
+        color: #F9FAFB;
+        background: rgba(31, 41, 55, 0.4);
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: #F9FAFB;
+        background: rgba(31, 41, 55, 0.3);
+        border-color: rgba(75, 85, 99, 0.2);
+        border-bottom: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0 fw-bold">Minecraft Servers</h1>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addServerModal">
+            <i class="bi bi-plus-lg me-2"></i> Add Server
+        </button>
+    </div>
+    
+    {% if servers %}
+    <div class="row g-4">
+        {% for server in servers %}
+        <div class="col-md-6 col-lg-4">
+            <div class="server-card h-100 d-flex flex-column">
+                <div class="server-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 text-truncate">{{ server.name }}</h5>
+                    
+                    <div class="server-status {% if server.is_online %}status-online{% else %}status-offline{% endif %}">
+                        <div class="status-dot {% if server.is_online %}dot-online{% else %}dot-offline{% endif %}"></div>
+                        <span>{% if server.is_online %}Online{% else %}Offline{% endif %}</span>
+                    </div>
+                </div>
+                
+                <div class="server-body flex-grow-1">
+                    <div class="d-flex mb-3">
+                        <div class="status-badge badge-blue me-2">
+                            {{ server.version }}
+                        </div>
+                        <div class="status-badge badge-purple me-2">
+                            {{ server.type }}
+                        </div>
+                        {% if server.is_modded %}
+                        <div class="status-badge badge-amber">
+                            Modded
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="text-muted mb-1 small">Server Address</div>
+                        <div class="d-flex align-items-center">
+                            <code class="me-2">{{ server.address }}</code>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="navigator.clipboard.writeText('{{ server.address }}')">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    {% if server.is_online %}
+                    <div class="mb-3">
+                        <div class="text-muted mb-1 small">Players</div>
+                        <div>{{ server.online_players }}/{{ server.max_players }}</div>
+                        <div class="progress mt-1" style="height: 6px;">
+                            <div class="progress-bar bg-success" style="width: {{ (server.online_players / server.max_players) * 100 }}%;"></div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div>
+                        <div class="text-muted mb-1 small">Status</div>
+                        <div>{{ server.status_message or "No status message" }}</div>
+                    </div>
+                </div>
+                
+                <div class="server-actions d-flex flex-wrap gap-2">
+                    <button class="btn btn-outline-primary" onclick="window.location.href='{{ url_for('console', server_id=server.id) }}'">
+                        <i class="bi bi-terminal me-1"></i> Console
+                    </button>
+                    <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#whitelistModal{{ server.id }}">
+                        <i class="bi bi-person-check me-1"></i> Whitelist
+                    </button>
+                    <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#pluginsModal{{ server.id }}">
+                        <i class="bi bi-plugin me-1"></i> Plugins
+                    </button>
+                    <button class="btn btn-outline-danger">
+                        <i class="bi bi-power me-1"></i> {% if server.is_online %}Stop{% else %}Start{% endif %}
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="bi bi-hdd-stack"></i>
+        </div>
+        <h3 class="mb-3">No Servers Found</h3>
+        <p class="text-muted mb-4">You haven't added any Minecraft servers yet. Add your first server to manage it with AstroBot.</p>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addServerModal">
+            <i class="bi bi-plus-lg me-2"></i> Add Your First Server
+        </button>
+    </div>
+    {% endif %}
+    
+    <!-- Add Server Modal -->
+    <div class="modal fade" id="addServerModal" tabindex="-1" aria-labelledby="addServerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addServerModalLabel">Add New Server</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addServerForm">
+                        <div class="mb-3">
+                            <label for="serverName" class="form-label">Server Name</label>
+                            <input type="text" class="form-control" id="serverName" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="serverAddress" class="form-label">Server Address</label>
+                            <input type="text" class="form-control" id="serverAddress" placeholder="mc.example.com or 192.168.1.100" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="serverPort" class="form-label">Server Port</label>
+                            <input type="number" class="form-control" id="serverPort" value="25565">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="serverVersion" class="form-label">Minecraft Version</label>
+                            <select class="form-select" id="serverVersion">
+                                <option value="1.20.4">1.20.4 (Latest)</option>
+                                <option value="1.20">1.20</option>
+                                <option value="1.19.4">1.19.4</option>
+                                <option value="1.18.2">1.18.2</option>
+                                <option value="1.17.1">1.17.1</option>
+                                <option value="1.16.5">1.16.5</option>
+                                <option value="1.12.2">1.12.2</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="serverType" class="form-label">Server Type</label>
+                            <select class="form-select" id="serverType">
+                                <option value="Vanilla">Vanilla</option>
+                                <option value="Spigot">Spigot</option>
+                                <option value="Paper">Paper</option>
+                                <option value="Forge">Forge</option>
+                                <option value="Fabric">Fabric</option>
+                                <option value="Bukkit">Bukkit</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="serverModded">
+                                <label class="form-check-label" for="serverModded">
+                                    This server is modded
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="serverRcon" class="form-label">RCON Password (Optional)</label>
+                            <input type="password" class="form-control" id="serverRcon" placeholder="For remote console access">
+                            <div class="form-text">Required for console access and server management</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Add Server</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if servers %}
+    {% for server in servers %}
+    <!-- Whitelist Modal -->
+    <div class="modal fade" id="whitelistModal{{ server.id }}" tabindex="-1" aria-labelledby="whitelistModalLabel{{ server.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="whitelistModalLabel{{ server.id }}">Whitelist - {{ server.name }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs" id="whitelistTabs{{ server.id }}" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="currentWhitelist{{ server.id }}-tab" data-bs-toggle="tab" data-bs-target="#currentWhitelist{{ server.id }}" type="button" role="tab">Current Whitelist</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="addPlayer{{ server.id }}-tab" data-bs-toggle="tab" data-bs-target="#addPlayer{{ server.id }}" type="button" role="tab">Add Player</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="bulkImport{{ server.id }}-tab" data-bs-toggle="tab" data-bs-target="#bulkImport{{ server.id }}" type="button" role="tab">Bulk Import</button>
+                        </li>
+                    </ul>
+                    
+                    <!-- Tab Content -->
+                    <div class="tab-content" id="whitelistTabsContent{{ server.id }}">
+                        <!-- Current Whitelist Tab -->
+                        <div class="tab-pane fade show active" id="currentWhitelist{{ server.id }}" role="tabpanel">
+                            {% if server.whitelist %}
+                            <div class="table-responsive">
+                                <table class="whitelist-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50px;">#</th>
+                                            <th>Username</th>
+                                            <th>UUID</th>
+                                            <th>Added On</th>
+                                            <th style="width: 100px;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for player in server.whitelist %}
+                                        <tr>
+                                            <td>{{ loop.index }}</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://crafatar.com/avatars/{{ player.uuid }}?size=24&overlay" alt="{{ player.username }}" class="me-2 rounded">
+                                                    {{ player.username }}
+                                                </div>
+                                            </td>
+                                            <td><code>{{ player.uuid }}</code></td>
+                                            <td>{{ player.added_on }}</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-danger">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="text-center py-4">
+                                <i class="bi bi-people text-muted mb-3" style="font-size: 2rem;"></i>
+                                <h5>No players whitelisted</h5>
+                                <p class="text-muted">Add players to your whitelist to restrict server access</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Add Player Tab -->
+                        <div class="tab-pane fade" id="addPlayer{{ server.id }}" role="tabpanel">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="playerUsername{{ server.id }}" class="form-label">Minecraft Username</label>
+                                    <input type="text" class="form-control" id="playerUsername{{ server.id }}" required>
+                                </div>
+                                
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">Add to Whitelist</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Bulk Import Tab -->
+                        <div class="tab-pane fade" id="bulkImport{{ server.id }}" role="tabpanel">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="bulkNames{{ server.id }}" class="form-label">Usernames (One per line)</label>
+                                    <textarea class="form-control" id="bulkNames{{ server.id }}" rows="10" placeholder="player1&#10;player2&#10;player3"></textarea>
+                                </div>
+                                
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">Import Players</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Plugins Modal -->
+    <div class="modal fade" id="pluginsModal{{ server.id }}" tabindex="-1" aria-labelledby="pluginsModalLabel{{ server.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pluginsModalLabel{{ server.id }}">Plugins - {{ server.name }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs" id="pluginsTabs{{ server.id }}" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="installedPlugins{{ server.id }}-tab" data-bs-toggle="tab" data-bs-target="#installedPlugins{{ server.id }}" type="button" role="tab">Installed</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="browsePlugins{{ server.id }}-tab" data-bs-toggle="tab" data-bs-target="#browsePlugins{{ server.id }}" type="button" role="tab">Browse</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="uploadPlugin{{ server.id }}-tab" data-bs-toggle="tab" data-bs-target="#uploadPlugin{{ server.id }}" type="button" role="tab">Upload</button>
+                        </li>
+                    </ul>
+                    
+                    <!-- Tab Content -->
+                    <div class="tab-content" id="pluginsTabsContent{{ server.id }}">
+                        <!-- Installed Plugins Tab -->
+                        <div class="tab-pane fade show active" id="installedPlugins{{ server.id }}" role="tabpanel">
+                            {% if server.plugins %}
+                            <div class="table-responsive">
+                                <table class="whitelist-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Plugin</th>
+                                            <th>Version</th>
+                                            <th>Status</th>
+                                            <th style="width: 160px;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for plugin in server.plugins %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="bi bi-plugin me-2"></i>
+                                                    <div>
+                                                        <div>{{ plugin.name }}</div>
+                                                        <div class="text-muted small">{{ plugin.description }}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>{{ plugin.version }}</td>
+                                            <td>
+                                                {% if plugin.enabled %}
+                                                <span class="server-status status-online">
+                                                    <div class="status-dot dot-online"></div>
+                                                    <span>Enabled</span>
+                                                </span>
+                                                {% else %}
+                                                <span class="server-status status-offline">
+                                                    <div class="status-dot dot-offline"></div>
+                                                    <span>Disabled</span>
+                                                </span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <button class="btn btn-sm btn-outline-primary">Configure</button>
+                                                    {% if plugin.enabled %}
+                                                    <button class="btn btn-sm btn-outline-warning">Disable</button>
+                                                    {% else %}
+                                                    <button class="btn btn-sm btn-outline-success">Enable</button>
+                                                    {% endif %}
+                                                    <button class="btn btn-sm btn-outline-danger">Remove</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="text-center py-4">
+                                <i class="bi bi-plugin text-muted mb-3" style="font-size: 2rem;"></i>
+                                <h5>No plugins installed</h5>
+                                <p class="text-muted">Install plugins to add functionality to your server</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Browse Plugins Tab -->
+                        <div class="tab-pane fade" id="browsePlugins{{ server.id }}" role="tabpanel">
+                            <div class="input-group mb-4">
+                                <input type="text" class="form-control" placeholder="Search plugins..." aria-label="Search plugins">
+                                <button class="btn btn-outline-secondary" type="button">Search</button>
+                            </div>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h5 class="card-title">WorldGuard</h5>
+                                            <p class="card-text text-muted small">Protect your server with custom regions and permissions</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <span class="badge bg-primary">Protection</span>
+                                                    <span class="badge bg-secondary">Admin</span>
+                                                </div>
+                                                <button class="btn btn-sm btn-primary">Install</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Essentials</h5>
+                                            <p class="card-text text-muted small">Essential commands and utilities for any server</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <span class="badge bg-primary">Utility</span>
+                                                    <span class="badge bg-secondary">Commands</span>
+                                                </div>
+                                                <button class="btn btn-sm btn-primary">Install</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Upload Plugin Tab -->
+                        <div class="tab-pane fade" id="uploadPlugin{{ server.id }}" role="tabpanel">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="pluginFile{{ server.id }}" class="form-label">Plugin File (.jar)</label>
+                                    <input class="form-control" type="file" id="pluginFile{{ server.id }}" accept=".jar">
+                                </div>
+                                
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">Upload Plugin</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Fake server data for demo display
+    document.addEventListener('DOMContentLoaded', function() {
+        // Nothing special needed here - template uses fake data now
+        // In production this would be populated by the backend
+    });
+</script>
+{% endblock %}

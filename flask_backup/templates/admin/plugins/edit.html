@@ -1,0 +1,96 @@
+{% extends "layouts/admin.html" %}
+
+{% block admin_title %}Edit Plugin: {{ plugin.name }}{% endblock %}
+{% block admin_subtitle %}Update plugin configuration and settings{% endblock %}
+
+{% block admin_content %}
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary bg-gradient text-white d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="mb-0">
+                <i class="bi bi-pencil-square me-2"></i>Edit Plugin Settings
+            </h5>
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mt-1">
+                <ol class="breadcrumb mb-0" style="font-size: 0.8rem;">
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_plugins.plugin_list') }}" class="text-white opacity-75">Plugins</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_plugins.view_plugin', plugin_id=plugin.id) }}" class="text-white opacity-75">{{ plugin.name }}</a></li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">Edit</li>
+                </ol>
+            </nav>
+        </div>
+        <a href="{{ url_for('admin_plugins.view_plugin', plugin_id=plugin.id) }}" class="btn btn-light btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Back to Plugin
+        </a>
+    </div>
+
+    <div class="card-body">
+                    <form method="post" action="{{ url_for('admin_plugins.edit_plugin', plugin_id=plugin.id) }}">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Plugin Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" name="name" value="{{ plugin.name }}" required>
+                                <div class="form-text">A friendly name for your plugin</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="key" class="form-label">Plugin Key</label>
+                                <input type="text" class="form-control" id="key" name="key" value="{{ plugin.key }}" readonly disabled>
+                                <div class="form-text">Unique identifier (cannot be changed after creation)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3">{{ plugin.description or '' }}</textarea>
+                            <div class="form-text">What does your plugin do?</div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="version" class="form-label">Version</label>
+                                <input type="text" class="form-control" id="version" name="version" value="{{ plugin.version }}" pattern="[0-9]+\.[0-9]+\.[0-9]+">
+                                <div class="form-text">Semantic versioning (e.g., 1.0.0)</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="author" class="form-label">Author</label>
+                                <input type="text" class="form-control" id="author" name="author" value="{{ plugin.author or '' }}">
+                                <div class="form-text">Who created this plugin?</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="repository_url" class="form-label">Repository URL</label>
+                                <input type="url" class="form-control" id="repository_url" name="repository_url" value="{{ plugin.repository_url or '' }}">
+                                <div class="form-text">GitHub or other repository URL</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="entry_point" class="form-label">Entry Point <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="entry_point" name="entry_point" value="{{ plugin.entry_point }}" required>
+                            <div class="form-text">Python module path (e.g., plugins.my_plugin)</div>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="enabled" name="enabled" {% if plugin.enabled %}checked{% endif %} {% if plugin.is_system %}disabled{% endif %}>
+                            <label class="form-check-label" for="enabled">
+                                Enable plugin
+                                {% if plugin.is_system %}
+                                <span class="text-muted">(System plugins are always enabled)</span>
+                                {% endif %}
+                            </label>
+                        </div>
+                        
+                        {% if plugin.requires_restart %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            This plugin requires a system restart after making changes.
+                        </div>
+                        {% endif %}
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('admin_plugins.view_plugin', plugin_id=plugin.id) }}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+    </div>
+{% endblock admin_content %}

@@ -1,0 +1,624 @@
+/* Cosmic Cards Styling for AstroBot Documentation */
+
+.glass-card {
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.cosmic-shimmer {
+    position: relative;
+    overflow: hidden;
+}
+
+.cosmic-shimmer::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.03),
+        transparent
+    );
+    transform: rotate(45deg);
+    animation: shimmer 6s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.cosmic-start-glow {
+    box-shadow: 0 0 40px rgba(79, 70, 229, 0.15);
+}
+
+.cosmic-dust {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.cosmic-dust::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Ccircle cx='25' cy='25' r='1'/%3E%3Ccircle cx='75' cy='75' r='1'/%3E%3Ccircle cx='50' cy='50' r='1'/%3E%3Ccircle cx='25' cy='75' r='1'/%3E%3Ccircle cx='75' cy='25' r='1'/%3E%3Ccircle cx='40' cy='60' r='1'/%3E%3Ccircle cx='60' cy='40' r='1'/%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.4;
+}
+
+.cosmic-gradient-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(76, 0, 255, 0.05), rgba(0, 102, 255, 0.05));
+    pointer-events: none;
+    z-index: 0;
+}
+
+.dashboard-preview {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.dashboard-header {
+    background: rgba(13, 18, 30, 0.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dashboard-content {
+    background: rgba(16, 23, 36, 0.4);
+}
+
+.dashboard-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.dashboard-search {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    margin-right: 8px;
+    opacity: 0.5;
+}
+
+.search-placeholder {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.dashboard-commands {
+    margin-top: 12px;
+}
+
+.dashboard-command {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    transition: all 0.2s ease;
+}
+
+.dashboard-command.active {
+    background: rgba(79, 70, 229, 0.15);
+    border-color: rgba(79, 70, 229, 0.3);
+}
+
+.dashboard-command:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.command-name {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.command-action {
+    opacity: 0.5;
+    transition: all 0.2s ease;
+}
+
+.dashboard-command:hover .command-action {
+    opacity: 1;
+}
+
+.dashboard-actions {
+    text-align: center;
+}
+
+.dashboard-button {
+    display: inline-block;
+    background: rgba(79, 70, 229, 0.2);
+    border: 1px solid rgba(79, 70, 229, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dashboard-button:hover {
+    background: rgba(79, 70, 229, 0.3);
+}
+
+/* Example cards */
+.example-card {
+    padding: 20px;
+}
+
+.poll-preview, 
+.mc-status-preview {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.poll-embed, 
+.mc-server-status {
+    background: rgba(20, 30, 50, 0.6);
+    border-radius: 8px;
+    padding: 16px;
+    border-left: 4px solid #5865F2;
+    margin-bottom: 16px;
+}
+
+.poll-title, 
+.mc-status-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: white;
+}
+
+.poll-description, 
+.mc-status-desc {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 12px;
+}
+
+.poll-footer, 
+.mc-status-footer {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 8px;
+}
+
+.poll-votes {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 12px;
+}
+
+.poll-vote {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.vote-emoji {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.vote-count {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.poll-options {
+    margin: 10px 0;
+}
+
+.poll-option {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.poll-emoji {
+    margin-right: 10px;
+    width: 24px;
+    display: inline-block;
+}
+
+.mc-status-details {
+    margin-top: 16px;
+}
+
+.mc-status-row {
+    display: flex;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 8px;
+}
+
+.mc-status-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.mc-status-label {
+    width: 80px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+}
+
+.mc-status-value {
+    flex: 1;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Timeline for reminder */
+.time-display {
+    background: rgba(20, 30, 50, 0.4);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.time-header {
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-align: center;
+    color: white;
+}
+
+.time-now, .time-later {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.time-label {
+    background: rgba(79, 70, 229, 0.2);
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.time-message, .time-response, .time-reminder {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+}
+
+.time-response, .time-reminder {
+    background: rgba(79, 70, 229, 0.15);
+    border-left: 3px solid rgba(79, 70, 229, 0.5);
+}
+
+.message-user, .response-bot, .reminder-bot {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.message-content, .response-content, .reminder-content {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.time-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 16px 0;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+}
+
+/* Level card */
+.level-profile {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.level-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 12px;
+    border: 2px solid rgba(79, 70, 229, 0.5);
+}
+
+.level-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.level-info {
+    flex: 1;
+}
+
+.level-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: white;
+}
+
+.level-title {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.level-badge {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 16px;
+    padding: 4px 12px;
+    font-weight: 600;
+    font-size: 12px;
+    color: white;
+}
+
+.level-xp {
+    margin-bottom: 16px;
+}
+
+.level-xp-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 6px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.level-xp-bar {
+    height: 6px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.level-xp-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    border-radius: 3px;
+}
+
+.level-details {
+    display: flex;
+    justify-content: space-between;
+}
+
+.level-detail {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 8px 0;
+    width: 30%;
+}
+
+.detail-icon {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.detail-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Permission list */
+.permission-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.permission-item {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 8px 12px;
+    border-left: 3px solid rgba(164, 110, 245, 0.5);
+}
+
+.permission-name {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 3px;
+    color: white;
+}
+
+.permission-desc {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Documentation feedback */
+.documentation-feedback {
+    margin-top: 40px;
+}
+
+/* Admin statistics cards */
+.cosmic-stat-card {
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(12px);
+    border-radius: 12px;
+    border: 1px solid rgba(78, 119, 255, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.cosmic-stat-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(78, 119, 255, 0.4);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 15px rgba(78, 119, 255, 0.15);
+}
+
+.cosmic-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(78, 119, 255, 0.7), rgba(164, 110, 245, 0.7));
+    z-index: 1;
+}
+
+.cosmic-stat-card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.cosmic-stat-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.cosmic-stat-card-title {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.cosmic-stat-card-subtitle {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.cosmic-stat-card-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 0.5rem;
+}
+
+.cosmic-stat-card-change {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.cosmic-stat-card-change.positive {
+    color: rgba(16, 185, 129, 0.9);
+}
+
+.cosmic-stat-card-change.negative {
+    color: rgba(239, 68, 68, 0.9);
+}
+
+.cosmic-stat-card-change i {
+    margin-right: 0.25rem;
+}
+
+/* Admin action cards */
+.cosmic-action-card {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(12px);
+    border-radius: 12px;
+    padding: 1.25rem;
+    border: 1px solid rgba(78, 119, 255, 0.15);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.cosmic-action-card:hover {
+    border-color: rgba(78, 119, 255, 0.4);
+    background: rgba(15, 23, 42, 0.7);
+    transform: translateY(-2px);
+}
+
+.cosmic-action-card-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.cosmic-action-card-description {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 1rem;
+}
+
+.cosmic-action-card-cta {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgba(78, 119, 255, 0.9);
+}
+
+.cosmic-action-card-cta i {
+    margin-left: 0.25rem;
+    transition: transform 0.2s ease;
+}
+
+.cosmic-action-card:hover .cosmic-action-card-cta i {
+    transform: translateX(3px);
+}
+
+/* Animations */
+@keyframes shimmer {
+    0% {
+        transform: translateY(100%) translateX(100%) rotate(45deg);
+    }
+    100% {
+        transform: translateY(-100%) translateX(-100%) rotate(45deg);
+    }
+}

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" class="{% if current_user.is_authenticated and current_user.theme_preference %}{% if current_user.theme_preference in ['dark', 'space', 'neon', 'contrast'] %}dark{% endif %}{% if current_user.theme_preference != 'light' and current_user.theme_preference != 'dark' %}theme-{{ current_user.theme_preference }}{% endif %}{% else %}{% if request.cookies.get('theme') == 'dark' or (not request.cookies.get('theme') and request.user_agent.platform in ['android', 'iphone', 'ipad']) %}dark{% endif %}{% if request.cookies.get('theme') and request.cookies.get('theme') not in ['light', 'dark'] %}theme-{{ request.cookies.get('theme') }}{% endif %}{% endif %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() if csrf_token else '' }}">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111827">
+    <title>{% block title %}AstroBot AI{% endblock %} - {{ title }}</title>
+    
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themes.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/space-theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/card-styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern-navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cosmic-dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fixes.css') }}">
+    
+    <!-- Animation Library -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+    
+    {% block styles %}{% endblock %}
+    
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Initial theme setup to prevent flickering -->
+    <script>
+        // Theme detection with safe fallbacks
+        (function() {
+            try {
+                const getStoredTheme = () => {
+                    try {
+                        return localStorage.getItem('theme') || 
+                               (document.cookie.split('; ').find(row => row.startsWith('theme=')) || '').split('=')[1];
+                    } catch(e) {
+                        return null;
+                    }
+                };
+                
+                const getPreferredTheme = () => {
+                    const storedTheme = getStoredTheme();
+                    if (storedTheme) {
+                        return storedTheme;
+                    }
+                    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                };
+                
+                const theme = getPreferredTheme();
+                
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else if (theme.startsWith('theme-')) {
+                    document.documentElement.classList.add('dark', theme);
+                }
+            } catch (e) {
+                console.error("Theme initialization error:", e);
+            }
+        })();
+    </script>
+</head>
+
+<body class="bg-app">
+    <!-- Shooting Stars Effect -->
+    <div class="star-background">
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+    </div>
+    
+    <!-- Cosmic dust background with parallax effect -->
+    <div class="cosmic-dust" id="cosmicDust">
+        <!-- Stars will be added via JS -->
+    </div>
+
+    <!-- Modern Navigation -->
+    {% include 'components/modern_navbar.html' %}
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container position-fixed top-0 start-50 translate-middle-x" style="z-index: 1100; margin-top: 70px; width: auto; max-width: 90%;">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show animate__animated animate__fadeInDown" 
+                         role="alert"
+                         style="backdrop-filter: blur(10px); background-color: {{ 'rgba(15, 23, 42, 0.85)' if category == 'dark' else 'rgba(255, 255, 255, 0.85)' }};">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Content is injected into astro-content in the navbar component -->
+    {% block content %}{% endblock %}
+
+    <!-- Scripts -->
+    <!-- Bootstrap 5 JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom Scripts -->
+    <script>
+        // Create stars for cosmic background
+        function createStars(containerId, count) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random size (0.5px - 2px)
+                const size = Math.random() * 1.5 + 0.5;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Random position
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Random twinkle animation duration (3s - 8s)
+                const duration = Math.random() * 5 + 3;
+                star.style.setProperty('--twinkle-duration', `${duration}s`);
+                
+                // Random initial opacity
+                const opacity = Math.random() * 0.5 + 0.3;
+                star.style.setProperty('--initial-opacity', opacity);
+                
+                container.appendChild(star);
+            }
+        }
+        
+        // Initialize stars when document is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars('cosmicDust', 200);
+        });
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,27 @@
+{% extends 'modern_base.html' %}
+
+{% block title %}Server Error{% endblock %}
+
+{% block content %}
+<div class="container max-w-4xl mx-auto px-4 py-12">
+    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8 text-center">
+        <div class="flex flex-col items-center justify-center space-y-6">
+            <div class="h-32 w-32 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
+                <span class="text-6xl text-red-600 dark:text-red-300">500</span>
+            </div>
+            
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Server Error</h1>
+            
+            <p class="text-lg text-gray-600 dark:text-gray-300 max-w-md">
+                Something went wrong on our end. Our team has been notified and is working to fix the issue.
+            </p>
+            
+            <div class="space-y-4 mt-4">
+                <a href="{{ url_for('index') }}" class="inline-block px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition duration-200">
+                    Return to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

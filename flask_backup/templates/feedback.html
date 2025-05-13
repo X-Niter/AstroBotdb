@@ -1,0 +1,218 @@
+{% extends "layouts/clean.html" %}
+
+{% block title %}Feedback & Suggestions{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-header">
+        <h2 class="card-title">
+            <i class="bi bi-chat-dots"></i> 
+            Feedback & Suggestions
+        </h2>
+    </div>
+    <div class="card-body">
+        <div class="mb-4">
+            <p class="lead">
+                We value your input! Help us improve AstroBot by sharing your ideas, suggestions, or reporting issues.
+            </p>
+        </div>
+        
+        <form method="POST" action="{{ url_for('feedback') }}">
+            {{ form.csrf_token }}
+            
+            <div class="form-group mb-4">
+                <label for="feedback_type" class="form-label">Feedback Type</label>
+                {{ form.feedback_type(class="form-select") }}
+                {% if form.feedback_type.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.feedback_type.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group mb-4" id="feature_category_group">
+                <label for="feature_category" class="form-label">Feature Category</label>
+                {{ form.feature_category(class="form-select") }}
+                {% if form.feature_category.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.feature_category.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group mb-4">
+                <label for="subject" class="form-label">Subject</label>
+                {{ form.subject(class="form-control", placeholder="Brief summary of your feedback") }}
+                {% if form.subject.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.subject.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group mb-4">
+                <label for="message" class="form-label">Details</label>
+                {{ form.message(class="form-control", rows=6, placeholder="Please provide as much detail as possible") }}
+                {% if form.message.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.message.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group mb-4">
+                <label for="contact_info" class="form-label">Contact Information (Optional)</label>
+                {{ form.contact_info(class="form-control", placeholder="Email, Discord username, or other contact method") }}
+                <small class="form-text text-muted">Provide contact info if you'd like us to follow up with you directly.</small>
+                {% if form.contact_info.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.contact_info.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-check mb-4">
+                {{ form.can_contact(class="form-check-input") }}
+                <label class="form-check-label" for="can_contact">
+                    I consent to being contacted about this feedback
+                </label>
+                {% if form.can_contact.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.can_contact.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group mb-3">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bi bi-send"></i> Submit Feedback
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="bi bi-discord"></i> Discord Feedback
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <i class="bi bi-discord" style="font-size: 2rem; color: #5865F2;"></i>
+                    </div>
+                    <div>
+                        <h5>Discord Community</h5>
+                        <p>Join our Discord server to suggest features and report bugs.</p>
+                        <a href="https://discord.gg/astrobot" target="_blank" class="btn btn-outline-primary">
+                            <i class="bi bi-discord"></i> Join Discord
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="bi bi-robot"></i> Bot Commands
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <i class="bi bi-terminal-fill" style="font-size: 2rem; color: #6c63ff;"></i>
+                    </div>
+                    <div>
+                        <h5>Bot Command</h5>
+                        <p>Use the <code>!suggest</code> command directly in your Discord server.</p>
+                        <div class="code-block mt-2 p-2">
+                            <code>!suggest Your suggestion here</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="bi bi-lightbulb"></i> Recently Implemented Features
+        </h3>
+    </div>
+    <div class="card-body">
+        <p>Check out some recent improvements based on community feedback:</p>
+        <ul class="feature-list">
+            <li>
+                <i class="bi bi-check-circle-fill text-success"></i> 
+                Enhanced moderation system with AI context analysis
+            </li>
+            <li>
+                <i class="bi bi-check-circle-fill text-success"></i> 
+                Custom commands with variables and conditional logic
+            </li>
+            <li>
+                <i class="bi bi-check-circle-fill text-success"></i> 
+                Twitch integration with customizable stream announcements
+            </li>
+            <li>
+                <i class="bi bi-check-circle-fill text-success"></i> 
+                Minecraft server status monitoring and whitelist management
+            </li>
+            <li>
+                <i class="bi bi-check-circle-fill text-success"></i> 
+                Multi-server sharding for improved performance
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Custom Alpine collapse directive registered');
+    console.log('Alpine collapse plugin not available - using custom implementation');
+    console.log('Alpine.js initialization completed');
+    
+    // Show/hide feature category based on feedback type
+    const feedbackTypeSelect = document.getElementById('feedback_type');
+    const featureCategoryGroup = document.getElementById('feature_category_group');
+    
+    function updateFeatureCategory() {
+        const selectedType = feedbackTypeSelect.value;
+        if (selectedType === 'feature_request' || selectedType === 'improvement') {
+            featureCategoryGroup.style.display = 'block';
+        } else {
+            featureCategoryGroup.style.display = 'none';
+        }
+    }
+    
+    // Initial state
+    updateFeatureCategory();
+    
+    // Update on change
+    feedbackTypeSelect.addEventListener('change', updateFeatureCategory);
+});
+</script>
+{% endblock %}

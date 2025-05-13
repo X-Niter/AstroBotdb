@@ -1,0 +1,34 @@
+{
+  "name": "astrobot-discord",
+  "version": "1.0.0",
+  "description": "AstroBot AI Discord Bot",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "deploy-commands": "node scripts/deploy-commands.js",
+    "test": "jest"
+  },
+  "author": "AstroBot AI Team",
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.16.1",
+    "@discordjs/voice": "^0.16.0",
+    "axios": "^1.6.2",
+    "discord.js": "^14.13.0",
+    "dotenv": "^16.3.1",
+    "ffmpeg-static": "^5.2.0",
+    "libsodium-wrappers": "^0.7.11",
+    "openai": "^4.0.0",
+    "play-dl": "^1.9.6",
+    "winston": "^3.10.0",
+    "ytdl-core": "^4.11.5"
+  },
+  "devDependencies": {
+    "jest": "^29.6.4",
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=16.9.0"
+  }
+}

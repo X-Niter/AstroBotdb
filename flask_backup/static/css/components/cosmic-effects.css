@@ -1,0 +1,208 @@
+/* 
+ * AstroBot AI - Cosmic Effects Component
+ * 
+ * Visual effects to create space theme ambiance
+ * Includes particle animations, glows, and cosmic styling
+ */
+
+/* Cosmic Dust Starfield */
+.cosmic-dust-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.cosmic-dust-particle {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  animation: cosmic-float 15s linear infinite;
+}
+
+/* Star sizes */
+.cosmic-dust-particle:nth-child(3n) {
+  box-shadow: 0 0 3px 1px rgba(255, 255, 255, 0.3);
+}
+
+.cosmic-dust-particle:nth-child(3n+1) {
+  animation-duration: 25s;
+}
+
+.cosmic-dust-particle:nth-child(3n+2) {
+  animation-duration: 35s;
+}
+
+@keyframes cosmic-float {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.3;
+  }
+  25% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  75% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(100px);
+    opacity: 0.3;
+  }
+}
+
+/* Cosmic Glow Effects */
+.cosmic-glow-text {
+  position: relative;
+  z-index: 1;
+}
+
+.cosmic-glow-text::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  filter: blur(8px);
+  color: var(--color-cosmic-glow);
+  opacity: 0.6;
+}
+
+.cosmic-glow-border {
+  position: relative;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: -1px;
+    border-radius: inherit;
+    background: linear-gradient(to right, 
+      rgba(var(--color-cosmic-nebula), 0.7),
+      rgba(var(--color-cosmic-highlight), 0.7),
+      rgba(var(--color-cosmic-glow), 0.7));
+    z-index: -1;
+  }
+}
+
+/* Cosmic Gradient Text */
+.cosmic-gradient-text {
+  background: linear-gradient(to right, #4e77ff, #8b5cf6, #ec4899);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+  font-weight: 600;
+  position: relative;
+}
+
+/* Ambient Light Effect */
+.cosmic-ambient-light {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.15;
+  z-index: 0;
+}
+
+.cosmic-ambient-light.primary {
+  background-color: rgb(var(--color-primary));
+  width: 20vw;
+  height: 20vw;
+  top: -10vw;
+  left: -10vw;
+}
+
+.cosmic-ambient-light.secondary {
+  background-color: rgb(var(--color-cosmic-glow));
+  width: 25vw;
+  height: 25vw;
+  bottom: -15vw;
+  right: -15vw;
+}
+
+.cosmic-ambient-light.accent {
+  background-color: rgb(var(--color-cosmic-highlight));
+  width: 15vw;
+  height: 15vw;
+  top: 30%;
+  right: -5vw;
+}
+
+/* Animated Pulse */
+.cosmic-pulse {
+  animation: cosmic-pulse 3s ease-in-out infinite;
+}
+
+@keyframes cosmic-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+/* Orbit Animation */
+.cosmic-orbit {
+  animation: cosmic-orbit 20s linear infinite;
+}
+
+@keyframes cosmic-orbit {
+  0% {
+    transform: rotate(0deg) translateX(10px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(10px) rotate(-360deg);
+  }
+}
+
+/* Shimmer Effect */
+.cosmic-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.cosmic-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translateX(-100%);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(50%);
+  }
+}
+
+/* Glass Effect */
+.cosmic-glass {
+  background: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}

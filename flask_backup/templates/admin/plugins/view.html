@@ -1,0 +1,285 @@
+{% extends "layouts/admin.html" %}
+
+{% block admin_title %}Plugin Details: {{ plugin.name }}{% endblock %}
+{% block admin_subtitle %}View and manage plugin configuration{% endblock %}
+
+{% block admin_content %}
+
+    <div class="row">
+        <!-- Plugin Details -->
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary bg-gradient text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-puzzle-piece me-2"></i>{{ plugin.name }}
+                        {% if plugin.is_system %}
+                        <span class="badge bg-info ms-2">System</span>
+                        {% endif %}
+                        {% if plugin.enabled %}
+                        <span class="badge bg-success ms-2">Enabled</span>
+                        {% else %}
+                        <span class="badge bg-secondary ms-2">Disabled</span>
+                        {% endif %}
+                    </h5>
+                    <div>
+                        <a href="{{ url_for('admin_plugins.edit_plugin', plugin_id=plugin.id) }}" class="btn btn-light btn-sm">
+                            <i class="fas fa-edit me-1"></i>Edit
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-muted">Key:</div>
+                        <div class="col-md-9"><code>{{ plugin.key }}</code></div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-muted">Description:</div>
+                        <div class="col-md-9">{{ plugin.description or 'No description provided.' }}</div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-muted">Version:</div>
+                        <div class="col-md-9">{{ plugin.version }}</div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-muted">Author:</div>
+                        <div class="col-md-9">{{ plugin.author or 'Unknown' }}</div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-muted">Repository:</div>
+                        <div class="col-md-9">
+                            {% if plugin.repository_url %}
+                            <a href="{{ plugin.repository_url }}" target="_blank">{{ plugin.repository_url }} <i class="fas fa-external-link-alt fa-xs"></i></a>
+                            {% else %}
+                            None
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-muted">Entry Point:</div>
+                        <div class="col-md-9"><code>{{ plugin.entry_point }}</code></div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-muted">Created:</div>
+                        <div class="col-md-9">{{ plugin.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-muted">Last Updated:</div>
+                        <div class="col-md-9">{{ plugin.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-muted">Created By:</div>
+                        <div class="col-md-9">
+                            {% if plugin.created_by %}
+                            {{ plugin.created_by.username }}
+                            {% else %}
+                            System
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-muted">Requires Restart:</div>
+                        <div class="col-md-9">
+                            {% if plugin.requires_restart %}
+                            <span class="badge bg-warning">Yes</span>
+                            {% else %}
+                            <span class="badge bg-success">No</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if plugin.plugin_metadata %}
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-muted">Metadata:</div>
+                        <div class="col-md-9">
+                            <pre class="bg-light p-3 rounded"><code>{{ plugin.plugin_metadata | tojson(indent=2) }}</code></pre>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Plugin Actions -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cogs me-2"></i>Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('admin_plugins.plugin_settings', plugin_id=plugin.id) }}" class="btn btn-outline-primary">
+                            <i class="fas fa-sliders-h me-2"></i>Configure Settings
+                        </a>
+                        
+                        <button type="button" class="btn btn-outline-primary toggle-plugin" 
+                            data-plugin-id="{{ plugin.id }}" 
+                            data-plugin-enabled="{{ 'true' if plugin.enabled else 'false' }}">
+                            <i class="fas {{ 'fa-toggle-on text-success' if plugin.enabled else 'fa-toggle-off' }} me-2"></i>
+                            {{ 'Disable' if plugin.enabled else 'Enable' }} Plugin
+                        </button>
+                        
+                        <form method="post" action="{{ url_for('admin_plugins.initialize_plugin', plugin_id=plugin.id) }}">
+                            <button type="submit" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-sync-alt me-2"></i>Initialize Plugin
+                            </button>
+                        </form>
+                        
+                        {% if not plugin.is_system %}
+                        <button type="button" class="btn btn-outline-danger delete-plugin" 
+                            data-plugin-id="{{ plugin.id }}" 
+                            data-plugin-name="{{ plugin.name }}">
+                            <i class="fas fa-trash me-2"></i>Delete Plugin
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Plugin Settings Summary -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-sliders-h me-2"></i>Settings
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if plugin.settings %}
+                    <div class="list-group">
+                        {% for setting in plugin.settings %}
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ setting.label or setting.key }}</h6>
+                                <small class="text-muted">{{ setting.type }}</small>
+                            </div>
+                            <p class="mb-1 text-truncate" title="{{ setting.value }}">
+                                {% if setting.value %}
+                                {{ setting.value }}
+                                {% else %}
+                                <span class="text-muted">Not set</span>
+                                {% endif %}
+                            </p>
+                            {% if setting.description %}
+                            <small class="text-muted">{{ setting.description }}</small>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-3">
+                        <p class="text-muted mb-0">No settings configured</p>
+                        <a href="{{ url_for('admin_plugins.plugin_settings', plugin_id=plugin.id) }}" class="btn btn-sm btn-primary mt-2">
+                            <i class="fas fa-plus me-1"></i>Add Settings
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Plugin Modal -->
+<div class="modal fade" id="deletePluginModal" tabindex="-1" aria-labelledby="deletePluginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deletePluginModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the plugin "<span id="pluginToDelete"></span>"?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deletePluginForm" method="post">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock admin_content %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle plugin enabled/disabled status
+        document.querySelectorAll('.toggle-plugin').forEach(button => {
+            button.addEventListener('click', function() {
+                const pluginId = this.dataset.pluginId;
+                const isEnabled = this.dataset.pluginEnabled === 'true';
+                const icon = this.querySelector('i');
+                
+                fetch(`/admin/plugins/${pluginId}/toggle`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update button state
+                        this.dataset.pluginEnabled = (!isEnabled).toString();
+                        icon.className = isEnabled ? 'fas fa-toggle-off me-2' : 'fas fa-toggle-on text-success me-2';
+                        this.textContent = '';
+                        this.appendChild(icon);
+                        this.appendChild(document.createTextNode(isEnabled ? 'Enable Plugin' : 'Disable Plugin'));
+                        
+                        // Update status badge in header
+                        const statusBadge = document.querySelector('.card-header .badge:nth-of-type(2)');
+                        statusBadge.className = isEnabled ? 'badge bg-secondary ms-2' : 'badge bg-success ms-2';
+                        statusBadge.textContent = isEnabled ? 'Disabled' : 'Enabled';
+                        
+                        // Show success message
+                        showToast('success', data.message);
+                    } else {
+                        showToast('error', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('error', 'An error occurred while updating the plugin status.');
+                });
+            });
+        });
+        
+        // Delete plugin modal
+        document.querySelectorAll('.delete-plugin').forEach(button => {
+            button.addEventListener('click', function() {
+                const pluginId = this.dataset.pluginId;
+                const pluginName = this.dataset.pluginName;
+                
+                document.getElementById('pluginToDelete').textContent = pluginName;
+                document.getElementById('deletePluginForm').action = `/admin/plugins/${pluginId}/delete`;
+                
+                const deleteModal = new bootstrap.Modal(document.getElementById('deletePluginModal'));
+                deleteModal.show();
+            });
+        });
+        
+        // Toast notification function
+        function showToast(type, message) {
+            // Check if the global showToast function exists
+            if (typeof window.showToast === 'function') {
+                window.showToast(type, message);
+            } else {
+                // Fallback alert
+                alert(message);
+            }
+        }
+    });
+</script>
+{% endblock scripts %}

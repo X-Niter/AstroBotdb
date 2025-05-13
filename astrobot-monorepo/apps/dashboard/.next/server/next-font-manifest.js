@@ -1,0 +1,1 @@
+self.__NEXT_FONT_MANIFEST="{\"pages\":{},\"app\":{\"/home/runner/workspace/astrobot-monorepo/apps/dashboard/src/app/layout\":[\"static/media/7cba1811e3c25a15-s.p.woff2\",\"static/media/fc727f226c737876-s.p.woff2\",\"static/media/806de4d605d3ad01-s.p.woff2\"]},\"appUsingSizeAdjust\":true,\"pagesUsingSizeAdjust\":false}"

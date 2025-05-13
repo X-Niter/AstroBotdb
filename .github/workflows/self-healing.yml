@@ -1,0 +1,896 @@
+name: Self-Healing Workflow
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Run every 6 hours
+  workflow_dispatch:
+    inputs:
+      scan_type:
+        description: 'Type of scan to perform'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - security
+          - performance
+          - code_quality
+          - deployment
+          - syntax
+          - database
+
+jobs:
+  self-healing:
+    name: Self-Healing Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openai black pylint mypy pytest pytest-cov bandit safety
+          
+          # Install project dependencies
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          elif [ -f pyproject.toml ]; then
+            pip install -e .
+          fi
+      
+      # Determine scan type
+      - name: Determine scan type
+        id: scan-type
+        run: |
+          SCAN_TYPE="${{ github.event.inputs.scan_type || 'all' }}"
+          echo "SCAN_TYPE=$SCAN_TYPE" >> $GITHUB_ENV
+          
+          mkdir -p .github/scan_results
+      
+      # Run the security scan
+      - name: Security scan
+        if: env.SCAN_TYPE == 'all' || env.SCAN_TYPE == 'security'
+        run: |
+          echo "Running security scan..."
+          
+          # Use bandit to scan for security issues
+          bandit -r . -f json -o .github/scan_results/bandit.json || true
+          
+          # Use safety to check for vulnerable dependencies
+          safety check --json > .github/scan_results/safety.json || true
+          
+          # Count issues found
+          BANDIT_ISSUES=$(jq '.results | length' .github/scan_results/bandit.json 2>/dev/null || echo 0)
+          SAFETY_ISSUES=$(jq '.vulnerabilities | length' .github/scan_results/safety.json 2>/dev/null || echo 0)
+          
+          TOTAL_SECURITY_ISSUES=$((BANDIT_ISSUES + SAFETY_ISSUES))
+          echo "SECURITY_ISSUES=$TOTAL_SECURITY_ISSUES" >> $GITHUB_ENV
+          echo "Found $TOTAL_SECURITY_ISSUES security issues"
+      
+      # Run code quality scan
+      - name: Code quality scan
+        if: env.SCAN_TYPE == 'all' || env.SCAN_TYPE == 'code_quality'
+        run: |
+          echo "Running code quality scan..."
+          
+          # Use pylint to scan for code quality issues
+          find . -name "*.py" -not -path "*/\.*" -not -path "*/venv/*" | xargs pylint --output-format=json > .github/scan_results/pylint.json || true
+          
+          # Use black to check for formatting issues
+          python -m black --check . > .github/scan_results/black.txt 2>&1 || echo "BLACK_ISSUES=true" >> $GITHUB_ENV
+          
+          # Count issues found
+          PYLINT_ISSUES=$(jq '. | length' .github/scan_results/pylint.json 2>/dev/null || echo 0)
+          
+          echo "CODE_QUALITY_ISSUES=$PYLINT_ISSUES" >> $GITHUB_ENV
+          echo "Found $PYLINT_ISSUES code quality issues"
+      
+      # Run syntax check
+      - name: Syntax check
+        if: env.SCAN_TYPE == 'all' || env.SCAN_TYPE == 'syntax'
+        run: |
+          echo "Running syntax check..."
+          
+          # Find Python files
+          find . -name "*.py" -not -path "*/\.*" -not -path "*/venv/*" > .github/scan_results/python-files.txt
+          
+          # Check each file for syntax errors
+          SYNTAX_ERRORS=0
+          while read -r file; do
+            python -m py_compile "$file" 2> .github/scan_results/syntax_error_$SYNTAX_ERRORS.txt || {
+              echo "$file" >> .github/scan_results/syntax-errors.txt
+              SYNTAX_ERRORS=$((SYNTAX_ERRORS + 1))
+            }
+          done < .github/scan_results/python-files.txt
+          
+          echo "SYNTAX_ERRORS=$SYNTAX_ERRORS" >> $GITHUB_ENV
+          echo "Found $SYNTAX_ERRORS syntax errors"
+      
+      # Run performance check
+      - name: Performance check
+        if: env.SCAN_TYPE == 'all' || env.SCAN_TYPE == 'performance'
+        run: |
+          echo "Running performance check..."
+          
+          # Create and run a simple performance scanner
+          cat > performance_scanner.py << 'EOF'
+          import ast
+          import os
+          import re
+          import sys
+          import json
+          from pathlib import Path
+
+          def scan_file_for_performance_issues(file_path):
+              """Scan a Python file for potential performance issues"""
+              issues = []
+              
+              try:
+                  with open(file_path, 'r', encoding='utf-8') as f:
+                      content = f.read()
+                  
+                  # Parse the AST
+                  tree = ast.parse(content, filename=file_path)
+                  
+                  # Look for nested loops
+                  nested_loops = []
+                  
+                  class NestedLoopVisitor(ast.NodeVisitor):
+                      def __init__(self):
+                          self.loop_depth = 0
+                          self.in_function = False
+                          self.function_name = ""
+                      
+                      def visit_FunctionDef(self, node):
+                          old_in_function = self.in_function
+                          old_function_name = self.function_name
+                          self.in_function = True
+                          self.function_name = node.name
+                          self.generic_visit(node)
+                          self.in_function = old_in_function
+                          self.function_name = old_function_name
+                      
+                      def visit_For(self, node):
+                          self.loop_depth += 1
+                          if self.loop_depth > 1:
+                              nested_loops.append({
+                                  "file": file_path,
+                                  "line": node.lineno,
+                                  "function": self.function_name if self.in_function else "global",
+                                  "depth": self.loop_depth
+                              })
+                          self.generic_visit(node)
+                          self.loop_depth -= 1
+                      
+                      def visit_While(self, node):
+                          self.loop_depth += 1
+                          if self.loop_depth > 1:
+                              nested_loops.append({
+                                  "file": file_path,
+                                  "line": node.lineno,
+                                  "function": self.function_name if self.in_function else "global",
+                                  "depth": self.loop_depth
+                              })
+                          self.generic_visit(node)
+                          self.loop_depth -= 1
+                  
+                  visitor = NestedLoopVisitor()
+                  visitor.visit(tree)
+                  
+                  # Add nested loops that are more than 2 levels deep as high-priority issues
+                  for loop in nested_loops:
+                      if loop["depth"] > 2:
+                          issues.append({
+                              "file": loop["file"],
+                              "line": loop["line"],
+                              "function": loop["function"],
+                              "issue": f"Nested loop with depth {loop['depth']}",
+                              "priority": "high",
+                              "type": "nested_loop"
+                          })
+                      else:
+                          issues.append({
+                              "file": loop["file"],
+                              "line": loop["line"],
+                              "function": loop["function"],
+                              "issue": f"Nested loop with depth {loop['depth']}",
+                              "priority": "medium",
+                              "type": "nested_loop"
+                          })
+                  
+                  # Check for large data structures in global scope
+                  class GlobalDataVisitor(ast.NodeVisitor):
+                      def visit_Module(self, node):
+                          for n in node.body:
+                              if isinstance(n, ast.Assign):
+                                  for target in n.targets:
+                                      if isinstance(target, ast.Name):
+                                          value = n.value
+                                          if isinstance(value, (ast.Dict, ast.List, ast.Set)) and hasattr(value, 'elts') and len(value.elts) > 20:
+                                              issues.append({
+                                                  "file": file_path,
+                                                  "line": n.lineno,
+                                                  "function": "global",
+                                                  "issue": f"Large data structure defined in global scope with {len(value.elts)} elements",
+                                                  "priority": "medium",
+                                                  "type": "global_data"
+                                              })
+                  
+                  global_visitor = GlobalDataVisitor()
+                  global_visitor.visit(tree)
+                  
+                  # Look for inefficient patterns in the content
+                  
+                  # Check for +/+= string concatenation in loops
+                  string_concat_pattern = r'for\s+.+\s+in\s+.+:\s*\n\s+.*\s*\+=\s*[\'"](.*)[\'"]'
+                  matches = re.finditer(string_concat_pattern, content, re.MULTILINE)
+                  for match in matches:
+                      line_number = content[:match.start()].count('\n') + 1
+                      issues.append({
+                          "file": file_path,
+                          "line": line_number,
+                          "issue": "String concatenation in loop - consider using join() or a list comprehension",
+                          "priority": "medium",
+                          "type": "string_concat"
+                      })
+                  
+                  # Check for inefficient list comprehensions that should be generator expressions
+                  list_comp_pattern = r'\[.*for\s+.+\s+in\s+.+\s+if\s+.+\]'
+                  matches = re.finditer(list_comp_pattern, content, re.MULTILINE)
+                  for match in matches:
+                      line_number = content[:match.start()].count('\n') + 1
+                      issues.append({
+                          "file": file_path,
+                          "line": line_number,
+                          "issue": "Complex list comprehension - consider using a generator expression",
+                          "priority": "low",
+                          "type": "list_comp"
+                      })
+                  
+                  return issues
+              except Exception as e:
+                  print(f"Error scanning {file_path}: {str(e)}")
+                  return []
+
+          def scan_directory(directory, excluded_dirs=None):
+              """Scan a directory for Python files with performance issues"""
+              if excluded_dirs is None:
+                  excluded_dirs = ['.git', 'venv', '.venv', '__pycache__']
+              
+              all_issues = []
+              
+              for root, dirs, files in os.walk(directory):
+                  # Skip excluded directories
+                  dirs[:] = [d for d in dirs if d not in excluded_dirs]
+                  
+                  for file in files:
+                      if file.endswith('.py'):
+                          file_path = os.path.join(root, file)
+                          issues = scan_file_for_performance_issues(file_path)
+                          all_issues.extend(issues)
+              
+              return all_issues
+
+          if __name__ == "__main__":
+              directory = "."
+              issues = scan_directory(directory)
+              
+              # Write results to JSON file
+              output_file = ".github/scan_results/performance.json"
+              os.makedirs(os.path.dirname(output_file), exist_ok=True)
+              
+              with open(output_file, 'w') as f:
+                  json.dump(issues, f, indent=2)
+              
+              print(f"Found {len(issues)} potential performance issues")
+              sys.exit(0 if len(issues) == 0 else 1)
+          EOF
+          
+          # Run the performance scanner
+          python performance_scanner.py || true
+          
+          # Count performance issues
+          PERFORMANCE_ISSUES=$(jq '. | length' .github/scan_results/performance.json 2>/dev/null || echo 0)
+          echo "PERFORMANCE_ISSUES=$PERFORMANCE_ISSUES" >> $GITHUB_ENV
+          echo "Found $PERFORMANCE_ISSUES performance issues"
+      
+      # Run database check
+      - name: Database check
+        if: env.SCAN_TYPE == 'all' || env.SCAN_TYPE == 'database'
+        run: |
+          echo "Running database check..."
+          
+          # Check for database files
+          DB_FILES=$(grep -l "SQLAlchemy\|create_engine\|db.init_app\|Base(" --include="*.py" -r . || echo "")
+          
+          if [ ! -z "$DB_FILES" ]; then
+            echo "$DB_FILES" > .github/scan_results/database-files.txt
+            
+            # Check for common database anti-patterns
+            ISSUES=0
+            
+            for file in $DB_FILES; do
+              # Check for missing connection pooling
+              if ! grep -q "pool_recycle\|pool_pre_ping" "$file"; then
+                echo "$file: Missing connection pooling configuration" >> .github/scan_results/database-issues.txt
+                ISSUES=$((ISSUES + 1))
+              fi
+              
+              # Check for missing error handling in database operations
+              if grep -q "db\.session" "$file" && ! grep -q "try.*except.*db\.session" "$file"; then
+                echo "$file: Missing error handling in database operations" >> .github/scan_results/database-issues.txt
+                ISSUES=$((ISSUES + 1))
+              fi
+              
+              # Check for unbounded queries
+              if grep -q "\.query\.all()" "$file" && ! grep -q "\.limit(" "$file"; then
+                echo "$file: Potentially unbounded query result with .all()" >> .github/scan_results/database-issues.txt
+                ISSUES=$((ISSUES + 1))
+              fi
+            done
+            
+            echo "DATABASE_ISSUES=$ISSUES" >> $GITHUB_ENV
+            echo "Found $ISSUES database issues"
+          else
+            echo "No database files found"
+            echo "DATABASE_ISSUES=0" >> $GITHUB_ENV
+          fi
+      
+      # Enhanced Workflow Syntax Check
+      - name: Workflow Syntax Check
+        if: env.SCAN_TYPE == 'all' || env.SCAN_TYPE == 'syntax' || env.SCAN_TYPE == 'deployment'
+        run: |
+          echo "Running workflow syntax check..."
+          
+          # Function to check YAML indentation issues in heredocs
+          check_heredoc_indentation() {
+            local file="$1"
+            local issues_found=0
+            
+            # Find all instances of heredoc markers
+            echo "Checking for heredoc indentation issues in $file"
+            local start_markers=$(grep -n "<<.*'EOF'" "$file" | cut -d: -f1)
+            
+            for start_line in $start_markers; do
+              # Find the matching end marker
+              end_line=$(tail -n +$start_line "$file" | grep -n "^[[:space:]]*EOF" | head -1 | cut -d: -f1)
+              if [ -n "$end_line" ]; then
+                end_line=$((start_line + end_line - 1))
+                
+                # Get the indentation of the starting line
+                start_indent=$(sed -n "${start_line}p" "$file" | grep -o "^[[:space:]]*" | wc -c)
+                
+                # Get the indentation of the ending line
+                end_indent=$(sed -n "${end_line}p" "$file" | grep -o "^[[:space:]]*" | wc -c)
+                
+                # Compare indentation levels
+                if [ "$start_indent" != "$end_indent" ]; then
+                  echo "  Heredoc indentation mismatch found in $file: start line $start_line (indent $start_indent), end line $end_line (indent $end_indent)"
+                  issues_found=$((issues_found + 1))
+                fi
+              fi
+            done
+            
+            return $issues_found
+          }
+          
+          # Find workflow files
+          WORKFLOW_FILES=$(find .github/workflows -name "*.yml" -o -name "*.yaml" | tr '\n' ' ')
+          WORKFLOW_ISSUES=0
+          
+          # Create directory for workflow issue reports
+          mkdir -p .github/workflow_checks
+          
+          echo "Found $(echo $WORKFLOW_FILES | wc -w) workflow files to check."
+          
+          # Advanced syntax checking for all workflow files
+          for file in $WORKFLOW_FILES; do
+            echo "Checking $file for syntax issues..."
+            
+            # Basic YAML syntax check
+            python -c "import yaml; yaml.safe_load(open('$file'))" 2> ".github/workflow_checks/$(basename "$file").yaml-error.txt"
+            
+            if [ $? -ne 0 ]; then
+              echo "  YAML syntax error in $file"
+              cat ".github/workflow_checks/$(basename "$file").yaml-error.txt"
+              WORKFLOW_ISSUES=$((WORKFLOW_ISSUES + 1))
+              
+              # Add to the issues list
+              echo "$file: YAML syntax error" >> .github/scan_results/workflow-issues.txt
+            else
+              echo "  Basic YAML syntax is valid"
+              
+              # Check for heredoc indentation issues
+              check_heredoc_indentation "$file"
+              if [ $? -gt 0 ]; then
+                WORKFLOW_ISSUES=$((WORKFLOW_ISSUES + 1))
+                # Add to the issues list
+                echo "$file: Heredoc indentation error" >> .github/scan_results/workflow-issues.txt
+              fi
+            fi
+            
+            # Check for GitHub Actions-specific syntax
+            grep -q "on:" "$file" || {
+              echo "  Missing trigger definition (on:) in $file"
+              WORKFLOW_ISSUES=$((WORKFLOW_ISSUES + 1))
+              echo "$file: Missing trigger definition" >> .github/scan_results/workflow-issues.txt
+            }
+            
+            grep -q "jobs:" "$file" || {
+              echo "  Missing jobs section in $file"
+              WORKFLOW_ISSUES=$((WORKFLOW_ISSUES + 1))
+              echo "$file: Missing jobs section" >> .github/scan_results/workflow-issues.txt
+            }
+            
+            # Check for proper indentation and structure
+            grep -n "uses:" "$file" | grep -v "^[[:space:]]*- uses:" | while read -r line; do
+              line_num=$(echo "$line" | cut -d: -f1)
+              echo "  Line $line_num: Incorrect 'uses:' indentation"
+              WORKFLOW_ISSUES=$((WORKFLOW_ISSUES + 1))
+              echo "$file:$line_num: Incorrect 'uses:' indentation" >> .github/scan_results/workflow-issues.txt
+            done
+          done
+          
+          echo "WORKFLOW_ISSUES=$WORKFLOW_ISSUES" >> $GITHUB_ENV
+          echo "Found $WORKFLOW_ISSUES workflow issues"
+          
+      # Check for deployment issues
+      - name: Deployment check
+        if: env.SCAN_TYPE == 'all' || env.SCAN_TYPE == 'deployment'
+        run: |
+          echo "Running deployment check..."
+          
+          # Check for workflow files
+          WORKFLOW_FILES=$(find .github/workflows -name "*.yml" -o -name "*.yaml" | tr '\n' ' ')
+          
+          if [ ! -z "$WORKFLOW_FILES" ]; then
+            ISSUES=0
+            
+            # Check each workflow file
+            for file in $WORKFLOW_FILES; do
+              # Check for YAML syntax
+              python -c "import yaml; yaml.safe_load(open('$file'))" 2> ".github/scan_results/$(basename "$file").yaml-error.txt" || {
+                echo "$file: YAML syntax error" >> .github/scan_results/workflow-issues.txt
+                ISSUES=$((ISSUES + 1))
+              }
+              
+              # Check for common workflow issues
+              if grep -q "ubuntu-latest" "$file" && ! grep -q "actions/checkout" "$file"; then
+                echo "$file: Missing checkout action" >> .github/scan_results/workflow-issues.txt
+                ISSUES=$((ISSUES + 1))
+              fi
+            done
+            
+            echo "WORKFLOW_ISSUES=$ISSUES" >> $GITHUB_ENV
+            echo "Found $ISSUES workflow issues"
+          else
+            echo "No workflow files found"
+            echo "WORKFLOW_ISSUES=0" >> $GITHUB_ENV
+          fi
+      
+      # Process results with AI and generate action plan
+      - name: Process results and generate action plan
+        run: |
+          # Create Python script to process results and generate action plan
+          cat > process_scan_results.py << 'EOF'
+          import json
+          import os
+          import re
+          import sys
+          from pathlib import Path
+          from openai import OpenAI
+
+          client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+          def load_scan_results():
+              """Load all scan results into a single structure"""
+              results_dir = ".github/scan_results"
+              all_results = {}
+              
+              # Load JSON results
+              for file in Path(results_dir).glob("*.json"):
+                  try:
+                      with open(file, 'r') as f:
+                          all_results[file.stem] = json.load(f)
+                  except:
+                      all_results[file.stem] = []
+              
+              # Load text results
+              for file in Path(results_dir).glob("*.txt"):
+                  try:
+                      with open(file, 'r') as f:
+                          all_results[file.stem] = f.read()
+                  except:
+                      all_results[file.stem] = ""
+              
+              return all_results
+
+          def prioritize_issues(scan_results):
+              """Prioritize issues based on severity and type"""
+              prioritized = {
+                  "critical": [],
+                  "high": [],
+                  "medium": [],
+                  "low": []
+              }
+              
+              # Process security issues (highest priority)
+              if "bandit" in scan_results and isinstance(scan_results["bandit"], dict) and "results" in scan_results["bandit"]:
+                  for issue in scan_results["bandit"]["results"]:
+                      severity = issue.get("issue_severity", "medium").lower()
+                      if severity == "high":
+                          prioritized["critical"].append({
+                              "type": "security",
+                              "subtype": "bandit",
+                              "file": issue.get("filename", ""),
+                              "line": issue.get("line_number", 0),
+                              "issue": issue.get("issue_text", ""),
+                              "details": issue
+                          })
+                      elif severity == "medium":
+                          prioritized["high"].append({
+                              "type": "security",
+                              "subtype": "bandit",
+                              "file": issue.get("filename", ""),
+                              "line": issue.get("line_number", 0),
+                              "issue": issue.get("issue_text", ""),
+                              "details": issue
+                          })
+                      else:
+                          prioritized["medium"].append({
+                              "type": "security",
+                              "subtype": "bandit",
+                              "file": issue.get("filename", ""),
+                              "line": issue.get("line_number", 0),
+                              "issue": issue.get("issue_text", ""),
+                              "details": issue
+                          })
+              
+              # Process vulnerable dependencies
+              if "safety" in scan_results and isinstance(scan_results["safety"], dict) and "vulnerabilities" in scan_results["safety"]:
+                  for issue in scan_results["safety"]["vulnerabilities"]:
+                      prioritized["critical"].append({
+                          "type": "security",
+                          "subtype": "dependency",
+                          "package": issue.get("package_name", ""),
+                          "issue": f"Vulnerable dependency: {issue.get('package_name', '')} {issue.get('vulnerable_spec', '')}",
+                          "details": issue
+                      })
+              
+              # Process syntax errors (high priority)
+              if "syntax-errors" in scan_results and isinstance(scan_results["syntax-errors"], str):
+                  for line in scan_results["syntax-errors"].strip().split('\n'):
+                      if line:
+                          prioritized["high"].append({
+                              "type": "syntax",
+                              "file": line,
+                              "issue": f"Syntax error in {line}"
+                          })
+              
+              # Process performance issues
+              if "performance" in scan_results and isinstance(scan_results["performance"], list):
+                  for issue in scan_results["performance"]:
+                      priority = issue.get("priority", "medium").lower()
+                      if priority == "high":
+                          prioritized["high"].append({
+                              "type": "performance",
+                              "file": issue.get("file", ""),
+                              "line": issue.get("line", 0),
+                              "issue": issue.get("issue", ""),
+                              "details": issue
+                          })
+                      elif priority == "medium":
+                          prioritized["medium"].append({
+                              "type": "performance",
+                              "file": issue.get("file", ""),
+                              "line": issue.get("line", 0),
+                              "issue": issue.get("issue", ""),
+                              "details": issue
+                          })
+                      else:
+                          prioritized["low"].append({
+                              "type": "performance",
+                              "file": issue.get("file", ""),
+                              "line": issue.get("line", 0),
+                              "issue": issue.get("issue", ""),
+                              "details": issue
+                          })
+              
+              # Process code quality issues
+              if "pylint" in scan_results and isinstance(scan_results["pylint"], list):
+                  for issue in scan_results["pylint"]:
+                      type = issue.get("type", "").lower()
+                      if type in ["error", "fatal"]:
+                          prioritized["high"].append({
+                              "type": "code_quality",
+                              "subtype": "pylint",
+                              "file": issue.get("path", ""),
+                              "line": issue.get("line", 0),
+                              "issue": issue.get("message", ""),
+                              "details": issue
+                          })
+                      elif type == "warning":
+                          prioritized["medium"].append({
+                              "type": "code_quality",
+                              "subtype": "pylint",
+                              "file": issue.get("path", ""),
+                              "line": issue.get("line", 0),
+                              "issue": issue.get("message", ""),
+                              "details": issue
+                          })
+                      else:
+                          prioritized["low"].append({
+                              "type": "code_quality",
+                              "subtype": "pylint",
+                              "file": issue.get("path", ""),
+                              "line": issue.get("line", 0),
+                              "issue": issue.get("message", ""),
+                              "details": issue
+                          })
+              
+              # Process database issues
+              if "database-issues" in scan_results and isinstance(scan_results["database-issues"], str):
+                  for line in scan_results["database-issues"].strip().split('\n'):
+                      if line:
+                          file_match = re.match(r'(.+): (.+)', line)
+                          if file_match:
+                              file, issue = file_match.groups()
+                              prioritized["high"].append({
+                                  "type": "database",
+                                  "file": file,
+                                  "issue": issue
+                              })
+              
+              # Process workflow issues
+              if "workflow-issues" in scan_results and isinstance(scan_results["workflow-issues"], str):
+                  for line in scan_results["workflow-issues"].strip().split('\n'):
+                      if line:
+                          file_match = re.match(r'(.+): (.+)', line)
+                          if file_match:
+                              file, issue = file_match.groups()
+                              prioritized["high"].append({
+                                  "type": "deployment",
+                                  "file": file,
+                                  "issue": issue
+                              })
+              
+              return prioritized
+
+          def generate_ai_action_plan(prioritized_issues):
+              """Generate an action plan using AI to fix the issues"""
+              # the newest OpenAI model is "gpt-4o" which was released May 13, 2024.
+              # do not change this unless explicitly requested by the user
+              
+              # Limit the number of issues to avoid token limits
+              critical_issues = prioritized_issues["critical"][:10]
+              high_issues = prioritized_issues["high"][:20]
+              medium_issues = prioritized_issues["medium"][:10]
+              
+              # Create system message
+              system_content = """You are an expert software engineer specializing in code quality, security, and performance optimization.
+              Your task is to create an action plan to fix issues found in a codebase during an automated scan.
+              
+              For each issue, provide:
+              1. A clear description of the problem
+              2. Why it matters (security risk, performance impact, etc.)
+              3. A specific, actionable fix with code examples where appropriate
+              
+              Group similar issues together and prioritize the most critical issues first.
+              Your report should be comprehensive but focused on the most important issues.
+              Use markdown formatting for better readability.
+              """
+              
+              # Create user message with issues
+              user_content = f"""
+              # Scan Results
+              
+              The scan has detected the following issues in the codebase:
+              
+              ## Critical Issues ({len(critical_issues)})
+              
+              {json.dumps(critical_issues, indent=2)}
+              
+              ## High Priority Issues ({len(high_issues)})
+              
+              {json.dumps(high_issues, indent=2)}
+              
+              ## Medium Priority Issues ({len(medium_issues)})
+              
+              {json.dumps(medium_issues, indent=2)}
+              
+              Please create a comprehensive action plan to fix these issues, focusing on the most critical ones first.
+              The action plan should include specific code examples and explanations for each fix.
+              """
+              
+              try:
+                  response = client.chat.completions.create(
+                      model="gpt-4o",
+                      messages=[
+                          {"role": "system", "content": system_content},
+                          {"role": "user", "content": user_content}
+                      ],
+                      temperature=0.3,
+                      max_tokens=4096
+                  )
+                  
+                  return response.choices[0].message.content
+              except Exception as e:
+                  print(f"Error generating AI action plan: {str(e)}")
+                  return f"""
+                  # Error Generating Action Plan
+                  
+                  An error occurred while trying to generate the action plan with AI:
+                  
+                  ```
+                  {str(e)}
+                  ```
+                  
+                  ## Manual Review Required
+                  
+                  Please review the scan results manually:
+                  
+                  - Critical issues: {len(critical_issues)}
+                  - High priority issues: {len(high_issues)}
+                  - Medium priority issues: {len(medium_issues)}
+                  """
+
+          def count_priority_issues(prioritized_issues):
+              """Count the total number of issues for each priority level"""
+              counts = {}
+              for priority, issues in prioritized_issues.items():
+                  counts[priority] = len(issues)
+              return counts
+
+          def has_critical_issues(prioritized_issues):
+              """Determine if there are any critical or high priority issues"""
+              return (len(prioritized_issues["critical"]) > 0 or 
+                      len(prioritized_issues["high"]) > 0)
+
+          if __name__ == "__main__":
+              # Load scan results
+              scan_results = load_scan_results()
+              
+              # Prioritize issues
+              prioritized_issues = prioritize_issues(scan_results)
+              
+              # Count issues by priority
+              issue_counts = count_priority_issues(prioritized_issues)
+              print(f"Issues found: {json.dumps(issue_counts, indent=2)}")
+              
+              # Generate action plan
+              action_plan = generate_ai_action_plan(prioritized_issues)
+              
+              # Save action plan
+              os.makedirs(".github/action_plans", exist_ok=True)
+              with open(".github/action_plans/self_healing_plan.md", "w") as f:
+                  f.write(action_plan)
+              
+              # Save issue counts
+              with open(".github/action_plans/issue_counts.json", "w") as f:
+                  json.dump(issue_counts, f, indent=2)
+              
+              # Save prioritized issues
+              with open(".github/action_plans/prioritized_issues.json", "w") as f:
+                  json.dump(prioritized_issues, f, indent=2)
+              
+              # Determine if there are critical issues
+              has_critical = has_critical_issues(prioritized_issues)
+              with open(".github/action_plans/has_critical_issues.txt", "w") as f:
+                  f.write("true" if has_critical else "false")
+              
+              print("Action plan generated")
+              sys.exit(0)
+          EOF
+          
+          # Run the script
+          python process_scan_results.py
+          
+          # Check results
+          if [ -f .github/action_plans/has_critical_issues.txt ]; then
+            HAS_CRITICAL=$(cat .github/action_plans/has_critical_issues.txt)
+            echo "HAS_CRITICAL_ISSUES=$HAS_CRITICAL" >> $GITHUB_ENV
+          fi
+          
+          if [ -f .github/action_plans/issue_counts.json ]; then
+            # Extract counts as environment variables
+            CRITICAL_COUNT=$(jq '.critical' .github/action_plans/issue_counts.json)
+            HIGH_COUNT=$(jq '.high' .github/action_plans/issue_counts.json)
+            MEDIUM_COUNT=$(jq '.medium' .github/action_plans/issue_counts.json)
+            LOW_COUNT=$(jq '.low' .github/action_plans/issue_counts.json)
+            
+            echo "CRITICAL_ISSUES=$CRITICAL_COUNT" >> $GITHUB_ENV
+            echo "HIGH_ISSUES=$HIGH_COUNT" >> $GITHUB_ENV
+            echo "MEDIUM_ISSUES=$MEDIUM_COUNT" >> $GITHUB_ENV
+            echo "LOW_ISSUES=$LOW_COUNT" >> $GITHUB_ENV
+            
+            TOTAL_ISSUES=$((CRITICAL_COUNT + HIGH_COUNT + MEDIUM_COUNT + LOW_COUNT))
+            echo "TOTAL_ISSUES=$TOTAL_ISSUES" >> $GITHUB_ENV
+          fi
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      
+      # Create GitHub issue with results for critical issues
+      - name: Create issue for critical issues
+        if: env.HAS_CRITICAL_ISSUES == 'true'
+        run: |
+          # Create issue title
+          ISSUE_TITLE="🚨 Critical issues detected - Self-healing scan [$(date +%Y-%m-%d)]"
+          
+          # Use the action plan as issue body
+          if [ -f .github/action_plans/self_healing_plan.md ]; then
+            ACTION_PLAN=$(cat .github/action_plans/self_healing_plan.md)
+            
+            # Add summary
+            ISSUE_BODY="# Self-Healing Scan Results\n\n"
+            ISSUE_BODY+="**Scan Date:** $(date +%Y-%m-%d)\n\n"
+            ISSUE_BODY+="**Issues Found:**\n"
+            ISSUE_BODY+="- Critical: ${{ env.CRITICAL_ISSUES }}\n"
+            ISSUE_BODY+="- High: ${{ env.HIGH_ISSUES }}\n"
+            ISSUE_BODY+="- Medium: ${{ env.MEDIUM_ISSUES }}\n"
+            ISSUE_BODY+="- Low: ${{ env.LOW_ISSUES }}\n\n"
+            ISSUE_BODY+="## Action Plan\n\n"
+            ISSUE_BODY+="$ACTION_PLAN\n\n"
+            ISSUE_BODY+="---\n\n"
+            ISSUE_BODY+="*This issue was automatically created by the self-healing workflow. You can trigger the auto-fix workflow to address these issues by commenting on this issue with `@ai fix`.*"
+            
+            echo -e "$ISSUE_BODY" > issue_body.md
+            
+            # Create the issue
+            gh issue create --title "$ISSUE_TITLE" --body-file issue_body.md --label "critical" --label "auto-healing"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      # Trigger auto-fix for critical issues
+      - name: Trigger auto-fix for critical issues
+        if: env.HAS_CRITICAL_ISSUES == 'true'
+        run: |
+          # Trigger the auto-fix-code-issues workflow
+          gh workflow run auto-fix-code-issues.yml -f fix_type=all
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      # Create summary report even for non-critical issues
+      - name: Create summary report for non-critical issues
+        if: env.HAS_CRITICAL_ISSUES == 'false' && env.TOTAL_ISSUES > 0
+        run: |
+          # Create issue title
+          ISSUE_TITLE="📊 Self-healing scan report [$(date +%Y-%m-%d)]"
+          
+          # Use the action plan as issue body
+          if [ -f .github/action_plans/self_healing_plan.md ]; then
+            ACTION_PLAN=$(cat .github/action_plans/self_healing_plan.md)
+            
+            # Add summary
+            ISSUE_BODY="# Self-Healing Scan Results\n\n"
+            ISSUE_BODY+="**Scan Date:** $(date +%Y-%m-%d)\n\n"
+            ISSUE_BODY+="**Issues Found:**\n"
+            ISSUE_BODY+="- Critical: ${{ env.CRITICAL_ISSUES }}\n"
+            ISSUE_BODY+="- High: ${{ env.HIGH_ISSUES }}\n"
+            ISSUE_BODY+="- Medium: ${{ env.MEDIUM_ISSUES }}\n"
+            ISSUE_BODY+="- Low: ${{ env.LOW_ISSUES }}\n\n"
+            ISSUE_BODY+="## Suggested Improvements\n\n"
+            ISSUE_BODY+="$ACTION_PLAN\n\n"
+            ISSUE_BODY+="---\n\n"
+            ISSUE_BODY+="*This issue was automatically created by the self-healing workflow. You can request AI assistance to implement these suggestions by commenting on this issue with `@ai improve`.*"
+            
+            echo -e "$ISSUE_BODY" > issue_body.md
+            
+            # Create the issue
+            gh issue create --title "$ISSUE_TITLE" --body-file issue_body.md --label "enhancement" --label "auto-healing"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

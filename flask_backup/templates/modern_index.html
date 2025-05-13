@@ -1,0 +1,468 @@
+{% extends "modern_base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- No additional container needed as we're using the astro-content container from navbar component -->
+
+<!-- Status Cards Section -->
+<div class="row g-4 mb-4">
+  <!-- Discord Status -->
+  <div class="col-md-4">
+    <div class="card status-card discord-card h-100">
+      <div class="card-body">
+        <div class="status-title">
+          <div class="icon-wrapper">
+            <i class="bi bi-discord" style="color: #5865f2;"></i>
+          </div>
+          <div>
+            <h5>Discord Bot</h5>
+            <div class="status-indicator-text">
+              <span class="status-indicator status-online"></span>
+              <span class="text-success">Online</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="status-detail">
+          <div class="status-detail-item">
+            <div class="label">
+              <span>Uptime</span>
+              <span class="value" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">99.8% <i class="example-data-indicator">ⓘ</i></span>
+            </div>
+            <div class="progress animated-progress">
+              <div class="progress-bar bg-success" role="progressbar" style="width: 99.8%"></div>
+            </div>
+          </div>
+          
+          <div class="status-detail-item">
+            <div class="label">
+              <span>Servers</span>
+              <span class="value" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">128 / 150 <i class="example-data-indicator">ⓘ</i></span>
+            </div>
+            <div class="progress animated-progress">
+              <div class="progress-bar" role="progressbar" style="width: 85%"></div>
+            </div>
+          </div>
+          
+          <div class="status-detail-item mb-0">
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="small text-light-emphasis">Last restart:</span>
+              <span class="badge bg-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">12 hours ago <i class="example-data-indicator">ⓘ</i></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Minecraft Status -->
+  <div class="col-md-4">
+    <div class="card status-card minecraft-card h-100">
+      <div class="card-body">
+        <div class="status-title">
+          <div class="icon-wrapper">
+            <i class="bi bi-box-fill" style="color: #5dc11f;"></i>
+          </div>
+          <div>
+            <h5>Minecraft Servers</h5>
+            <div class="status-indicator-text">
+              <span class="status-indicator status-online"></span>
+              <span class="text-success">8 Online</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="status-detail">
+          <div class="status-detail-item">
+            <div class="label">
+              <span>Player Count</span>
+              <span class="value" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">187 / 250 <i class="example-data-indicator">ⓘ</i></span>
+            </div>
+            <div class="progress animated-progress">
+              <div class="progress-bar bg-success" role="progressbar" style="width: 75%"></div>
+            </div>
+          </div>
+          
+          <div class="status-detail-item">
+            <div class="label">
+              <span>Monitored Plugins</span>
+              <span class="value" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">24 / 24 <i class="example-data-indicator">ⓘ</i></span>
+            </div>
+            <div class="progress animated-progress">
+              <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+            </div>
+          </div>
+          
+          <div class="status-detail-item mb-0">
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="small text-light-emphasis">Auto-recovery events:</span>
+              <span class="badge bg-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">3 this week <i class="example-data-indicator">ⓘ</i></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Twitch Status -->
+  <div class="col-md-4">
+    <div class="card status-card twitch-card h-100">
+      <div class="card-body">
+        <div class="status-title">
+          <div class="icon-wrapper">
+            <i class="bi bi-twitch" style="color: #9146ff;"></i>
+          </div>
+          <div>
+            <h5>Twitch Integration</h5>
+            <div class="status-indicator-text">
+              <span class="status-indicator status-online" style="background-color: #9146ff;"></span>
+              <span style="color: #9146ff;">Connected</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="status-detail">
+          <div class="status-detail-item">
+            <div class="label">
+              <span>Connected Streamers</span>
+              <span class="value" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">42 <i class="example-data-indicator">ⓘ</i></span>
+            </div>
+            <div class="progress animated-progress">
+              <div class="progress-bar" role="progressbar" style="width: 84%; background-color: #9146ff;"></div>
+            </div>
+          </div>
+          
+          <div class="status-detail-item">
+            <div class="label">
+              <span>Points Awarded</span>
+              <span class="value" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">145,328 this month <i class="example-data-indicator">ⓘ</i></span>
+            </div>
+            <div class="progress animated-progress">
+              <div class="progress-bar" role="progressbar" style="width: 78%; background-color: #9146ff;"></div>
+            </div>
+          </div>
+          
+          <div class="status-detail-item mb-0">
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="small text-light-emphasis">Active streams:</span>
+              <span class="badge glow-indicator" style="background-color: #9146ff;" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">12 now <i class="example-data-indicator">ⓘ</i></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Activity Timeline -->
+<div class="card activity-card mb-4">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h5 class="card-title mb-0">Recent Activity</h5>
+      <div class="btn-group btn-group-sm">
+        <button type="button" class="btn btn-outline-secondary">Today</button>
+        <button type="button" class="btn btn-primary">This Week</button>
+        <button type="button" class="btn btn-outline-secondary">This Month</button>
+      </div>
+    </div>
+    
+    <!-- Activity Items -->
+    <div class="timeline">
+      <!-- New Server Connected -->
+      <div class="timeline-item d-flex hover-translate">
+        <div class="timeline-icon glow-blue" style="background-color: rgba(88, 101, 242, 0.2); color: #5865f2;">
+          <i class="bi bi-discord"></i>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <div class="d-flex align-items-center">
+              <span class="timeline-title">New Server Connected</span>
+              <span class="badge badge-discord ms-2">Discord</span>
+              <span class="example-data-indicator ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">ⓘ</span>
+            </div>
+            <span class="timeline-time" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">2 hours ago</span>
+          </div>
+          <p class="timeline-description" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">AstroFrame Modding Community joined with 750+ members <i class="example-data-indicator">ⓘ</i></p>
+        </div>
+      </div>
+      
+      <!-- Plugin Auto-Updated -->
+      <div class="timeline-item d-flex hover-translate">
+        <div class="timeline-icon glow-green" style="background-color: rgba(93, 193, 31, 0.2); color: #5dc11f;">
+          <i class="bi bi-box-fill"></i>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <div class="d-flex align-items-center">
+              <span class="timeline-title">Plugin Auto-Updated</span>
+              <span class="badge badge-minecraft ms-2">Minecraft</span>
+              <span class="example-data-indicator ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">ⓘ</span>
+            </div>
+            <span class="timeline-time" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">5 hours ago</span>
+          </div>
+          <p class="timeline-description" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">WorldGuard updated to version 7.0.7 on 3 servers with AI-powered config migration <i class="example-data-indicator">ⓘ</i></p>
+        </div>
+      </div>
+      
+      <!-- Streamer Milestone -->
+      <div class="timeline-item d-flex hover-translate">
+        <div class="timeline-icon glow-purple" style="background-color: rgba(145, 70, 255, 0.2); color: #9146ff;">
+          <i class="bi bi-twitch"></i>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <div class="d-flex align-items-center">
+              <span class="timeline-title">Streamer Milestone</span>
+              <span class="badge badge-twitch ms-2">Twitch</span>
+              <span class="example-data-indicator ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">ⓘ</span>
+            </div>
+            <span class="timeline-time" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">Yesterday</span>
+          </div>
+          <p class="timeline-description" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">CosmoGamer reached 10,000 total viewers - StreamSync activated special reward <i class="example-data-indicator">ⓘ</i></p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="text-center mt-4">
+      <a href="#" class="btn btn-cosmic-outline btn-sm hover-scale">
+        View All Activity <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row g-4">
+  <!-- AI Responses -->
+  <div class="col-sm-6 col-lg-3">
+    <div class="card h-100">
+      <div class="card-body d-flex flex-column">
+        <div class="d-flex align-items-center mb-3">
+          <div class="stat-icon" style="background-color: rgba(79, 70, 229, 0.2); color: #4f46e5;">
+            <i class="bi bi-robot"></i>
+          </div>
+          <div>
+            <h5 class="mb-0" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">17,532 <i class="example-data-indicator">ⓘ</i></h5>
+            <p class="text-light-emphasis small mb-0">AI Responses</p>
+          </div>
+        </div>
+        <div class="mt-auto">
+          <span class="small text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">
+            <i class="bi bi-arrow-up me-1"></i> 14% from last month <i class="example-data-indicator">ⓘ</i>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Commands Processed -->
+  <div class="col-sm-6 col-lg-3">
+    <div class="card h-100">
+      <div class="card-body d-flex flex-column">
+        <div class="d-flex align-items-center mb-3">
+          <div class="stat-icon" style="background-color: rgba(79, 70, 229, 0.2); color: #4f46e5;">
+            <i class="bi bi-terminal-fill"></i>
+          </div>
+          <div>
+            <h5 class="mb-0" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">92,417 <i class="example-data-indicator">ⓘ</i></h5>
+            <p class="text-light-emphasis small mb-0">Commands Processed</p>
+          </div>
+        </div>
+        <div class="mt-auto">
+          <span class="small text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">
+            <i class="bi bi-arrow-up me-1"></i> 8% from last month <i class="example-data-indicator">ⓘ</i>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Community Members -->
+  <div class="col-sm-6 col-lg-3">
+    <div class="card h-100">
+      <div class="card-body d-flex flex-column">
+        <div class="d-flex align-items-center mb-3">
+          <div class="stat-icon" style="background-color: rgba(145, 70, 255, 0.2); color: #9146ff;">
+            <i class="bi bi-people-fill"></i>
+          </div>
+          <div>
+            <h5 class="mb-0" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">135,892 <i class="example-data-indicator">ⓘ</i></h5>
+            <p class="text-light-emphasis small mb-0">Community Members</p>
+          </div>
+        </div>
+        <div class="mt-auto">
+          <span class="small text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">
+            <i class="bi bi-arrow-up me-1"></i> 22% from last month <i class="example-data-indicator">ⓘ</i>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- System Uptime -->
+  <div class="col-sm-6 col-lg-3">
+    <div class="card h-100">
+      <div class="card-body d-flex flex-column">
+        <div class="d-flex align-items-center mb-3">
+          <div class="stat-icon" style="background-color: rgba(14, 165, 233, 0.2); color: #0ea5e9;">
+            <i class="bi bi-clock-history"></i>
+          </div>
+          <div>
+            <h5 class="mb-0" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">99.98% <i class="example-data-indicator">ⓘ</i></h5>
+            <p class="text-light-emphasis small mb-0">System Uptime</p>
+          </div>
+        </div>
+        <div class="mt-auto">
+          <span class="small text-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Example data">
+            <i class="bi bi-arrow-repeat me-1"></i> Self-healing: 12 events <i class="example-data-indicator">ⓘ</i>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('Dashboard initialized');
+    
+    // Initialize tooltips with custom classes
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function(tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl, {
+        template: '<div class="tooltip cosmic-tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
+        animation: true
+      });
+    });
+    
+    // Add hover effects to cards
+    const statusCards = document.querySelectorAll('.status-card');
+    statusCards.forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        // Create subtle particle effect
+        const particles = 5;
+        for (let i = 0; i < particles; i++) {
+          createParticle(card);
+        }
+      });
+    });
+    
+    // Create cosmic particle effect
+    function createParticle(element) {
+      const particle = document.createElement('div');
+      particle.classList.add('cosmic-particle');
+      
+      // Random size (3-8px)
+      const size = Math.random() * 5 + 3;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      
+      // Random position
+      const rect = element.getBoundingClientRect();
+      const x = Math.random() * rect.width;
+      const y = Math.random() * rect.height;
+      particle.style.left = `${x}px`;
+      particle.style.top = `${y}px`;
+      
+      // Add to card
+      element.appendChild(particle);
+      
+      // Animate and remove
+      setTimeout(() => {
+        particle.style.transform = `translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px)`;
+        particle.style.opacity = '0';
+        
+        setTimeout(() => {
+          particle.remove();
+        }, 1000);
+      }, 10);
+    }
+    
+    // Add styles for particles
+    const style = document.createElement('style');
+    style.textContent = `
+      .cosmic-particle {
+        position: absolute;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 100;
+        opacity: 0.7;
+        transition: all 1s ease;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Add timeline animation effects
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    timelineItems.forEach(item => {
+      item.addEventListener('mouseenter', function() {
+        // Get the icon element
+        const icon = this.querySelector('.timeline-icon');
+        if (!icon) return;
+        
+        // Create glow particles
+        for (let i = 0; i < 3; i++) {
+          createGlowParticle(icon);
+        }
+      });
+    });
+    
+    // Create glow particles for timeline icons
+    function createGlowParticle(element) {
+      // Determine the color based on the icon class
+      let color = 'rgba(255, 255, 255, 0.7)';
+      if (element.classList.contains('glow-blue')) {
+        color = 'rgba(88, 101, 242, 0.7)';
+      } else if (element.classList.contains('glow-green')) {
+        color = 'rgba(93, 193, 31, 0.7)';
+      } else if (element.classList.contains('glow-purple')) {
+        color = 'rgba(145, 70, 255, 0.7)';
+      }
+      
+      const particle = document.createElement('div');
+      particle.classList.add('cosmic-particle');
+      
+      // Custom styling for timeline particles
+      particle.style.backgroundColor = color;
+      particle.style.boxShadow = `0 0 5px ${color}`;
+      
+      // Random size (2-5px)
+      const size = Math.random() * 3 + 2;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      
+      // Position around the icon
+      const rect = element.getBoundingClientRect();
+      const angle = Math.random() * Math.PI * 2; // Random angle
+      const distance = 20 + Math.random() * 10; // Random distance
+      const x = Math.cos(angle) * distance + rect.width / 2;
+      const y = Math.sin(angle) * distance + rect.height / 2;
+      
+      particle.style.left = `${x}px`;
+      particle.style.top = `${y}px`;
+      
+      // Add to element
+      element.appendChild(particle);
+      
+      // Animate and remove
+      setTimeout(() => {
+        const endAngle = angle + (Math.random() * Math.PI / 4 - Math.PI / 8);
+        const endDistance = distance + Math.random() * 15;
+        const endX = Math.cos(endAngle) * endDistance;
+        const endY = Math.sin(endAngle) * endDistance;
+        
+        particle.style.transform = `translate(${endX}px, ${endY}px)`;
+        particle.style.opacity = '0';
+        
+        setTimeout(() => {
+          particle.remove();
+        }, 1000);
+      }, 10);
+    }
+  });
+</script>
+{% endblock %}
